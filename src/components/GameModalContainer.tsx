@@ -15,6 +15,7 @@ interface GameModalContainerProps {
   onTaxExemption: (turns: number) => void;
   levels: Level[];
   players: Player[];
+  isSinglePlayer: boolean;
 }
 
 const GameModalContainer: React.FC<GameModalContainerProps> = ({
@@ -29,6 +30,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   onTaxExemption,
   levels,
   players,
+  isSinglePlayer,
 }) => {
   const isAuctionActive = multiplayer.state.auction.active;
   const isGameOver = multiplayer.state.status === 'finished';
@@ -36,7 +38,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   // Jail Skip logic: If it's MY turn and I am in jail, show JailSkipModal
   const myProfile = multiplayer.getMyProfile();
   const isMyTurn = players[multiplayer.state.currentTurnIndex]?.id === myProfile?.id;
-  const showJailSkip = isMyTurn && myProfile?.status === 'jail' && !multiplayer.state.auction.active;
+  const showJailSkip = isMyTurn && myProfile?.status === 'jail' && !myProfile?.jailSkipped && !multiplayer.state.auction.active;
 
   const showModal = activeField || isAuctionActive || isGameOver || showJailSkip;
 
@@ -44,7 +46,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
 
   // Prioritize VictoryModal
   if (isGameOver) {
-    return <VictoryModal players={players} mode={mode} />;
+    return <VictoryModal players={players} />;
   }
 
   // Prioritize JailSkipModal
@@ -156,11 +158,19 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
           balance={balance}
           mode={mode}
           onPay={() => {
-            onBalanceChange(-75000);
+            if (isSinglePlayer) {
+              onBalanceChange(-75000);
+            } else {
+              multiplayer.sendAction({ type: 'ACTION_JAIL_PAY', fine: 75000 });
+            }
             onClose();
           }}
           onSkip={() => {
-            multiplayer.sendAction({ type: 'ACTION_JAIL_WAIT' });
+            if (isSinglePlayer) {
+              multiplayer.state.currentTurnIndex = (multiplayer.state.currentTurnIndex + 1) % players.length;
+            } else {
+              multiplayer.sendAction({ type: 'ACTION_JAIL_WAIT' });
+            }
             onClose();
           }}
         />

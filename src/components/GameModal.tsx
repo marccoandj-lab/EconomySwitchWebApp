@@ -881,41 +881,40 @@ export function InsuranceModal({ balance, price, onBuy, onClose, mode }: { balan
 // ── VICTORY MODAL ──
 interface VictoryModalProps {
   players: Player[];
-  mode: GameMode;
 }
 
-export function VictoryModal({ players, mode }: VictoryModalProps) {
+export function VictoryModal({ players }: VictoryModalProps) {
   const sortedPlayers = [...players].sort((a, b) => b.capital - a.capital);
   const winner = sortedPlayers[0];
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl p-8 overflow-hidden">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-xl overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-4 sm:p-8 my-auto overflow-hidden">
         {/* Animated Background effects */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-blue-500/20 to-transparent blur-3xl" />
 
         <div className="relative z-10 text-center">
-          <div className="text-7xl mb-4 animate-bounce">🏆</div>
-          <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter">Partija je Završena!</h1>
-          <p className="text-white/50 text-base mb-8 italic">Prvi igrač koji je stigao do 1,000,000 € je krunisan!</p>
+          <div className="text-5xl sm:text-7xl mb-2 sm:mb-4 animate-bounce">🏆</div>
+          <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2 uppercase tracking-tighter">Partija je Završena!</h1>
+          <p className="text-white/50 text-[10px] sm:text-base mb-4 sm:mb-8 italic leading-tight">Prvi igrač koji je stigao do 1,000,000 € je krunisan!</p>
 
           {/* Winner Stats */}
-          <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/20 rounded-3xl p-6 mb-8 text-left">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center text-4xl border border-blue-500/30">
+          <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-8 text-left">
+            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-blue-500/20 flex items-center justify-center text-3xl sm:text-4xl border border-blue-500/30 shrink-0">
                 {winner.avatar === 'male' ? '👨' : winner.avatar === 'female' ? '👩' : '🤖'}
               </div>
-              <div>
-                <div className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Pobednik</div>
-                <div className="text-2xl font-black text-white">{winner.name}</div>
+              <div className="min-w-0">
+                <div className="text-[8px] sm:text-[10px] text-blue-400 font-bold uppercase tracking-widest">Pobednik</div>
+                <div className="text-lg sm:text-2xl font-black text-white truncate">{winner.name}</div>
               </div>
-              <div className="ml-auto text-right">
-                <div className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Konačan Kapital</div>
-                <div className="text-2xl font-black text-green-400">{winner.capital.toLocaleString()} €</div>
+              <div className="ml-auto text-right shrink-0">
+                <div className="text-[8px] sm:text-[10px] text-white/40 uppercase font-bold tracking-widest">Konačan Kapital</div>
+                <div className="text-lg sm:text-2xl font-black text-green-400">{winner.capital.toLocaleString()} €</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               <StatItem label="Kviz Tačno" value={winner.stats.correctQuizzes} icon="✅" />
               <StatItem label="Kviz Netočno" value={winner.stats.wrongQuizzes} icon="❌" />
               <StatItem label="Aukcije Pobjeda" value={winner.stats.auctionWins} icon="⚖️" />
@@ -926,18 +925,18 @@ export function VictoryModal({ players, mode }: VictoryModalProps) {
           </div>
 
           {/* Rankings */}
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-1.5 sm:space-y-2 max-h-32 sm:max-h-48 overflow-y-auto pr-1 custom-scrollbar">
             {sortedPlayers.map((p, idx) => (
-              <div key={p.id} className={`flex items-center gap-4 p-3 rounded-2xl border ${idx === 0 ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}>
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center font-bold text-white/50">{idx + 1}.</div>
-                <span className="text-xl">{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
-                <span className="font-bold text-white text-sm">{p.name}</span>
-                <span className="ml-auto font-black text-white/80 text-sm">{p.capital.toLocaleString()} €</span>
+              <div key={p.id} className={`flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl sm:rounded-2xl border ${idx === 0 ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}>
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-white/5 flex items-center justify-center font-bold text-white/50 text-xs sm:text-sm">{idx + 1}.</div>
+                <span className="text-lg sm:text-xl shrink-0">{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
+                <span className="font-bold text-white text-[11px] sm:text-sm truncate">{p.name}</span>
+                <span className="ml-auto font-black text-white/80 text-[11px] sm:text-sm shrink-0">{p.capital.toLocaleString()} €</span>
               </div>
             ))}
           </div>
 
-          <button onClick={() => window.location.reload()} className="mt-8 px-8 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest">
+          <button onClick={() => window.location.reload()} className="mt-4 sm:mt-8 w-full sm:w-auto px-8 py-3 sm:py-4 bg-white text-slate-900 font-black rounded-xl sm:rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs sm:text-sm uppercase tracking-widest">
             Igraj Ponovo
           </button>
         </div>

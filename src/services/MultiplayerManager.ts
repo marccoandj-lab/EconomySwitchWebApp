@@ -17,6 +17,7 @@ export type GameState = {
     turnIndex: number;
   };
   levels: Level[];
+  taxPool: number;
 };
 
 export type Message =
@@ -39,6 +40,7 @@ export type Message =
   | { type: 'ACTION_INTERACTION_END' }
   | { type: 'ACTION_AUCTION_END' }
   | { type: 'ACTION_JAIL_SKIP' }
+  | { type: 'ACTION_JAIL_PAY'; fine: number }
   | { type: 'ACTION_LISTING_RESULT'; success: boolean; reward: number; penalty: number; count: number }
   | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
@@ -56,7 +58,8 @@ class MultiplayerManager {
     turnTimeLeft: 60,
     mode: 'finance',
     auction: { active: false, rolls: {}, turnIndex: 0 },
-    levels: []
+    levels: [],
+    taxPool: 0
   };
 
   private myId: string = nanoid(10);
@@ -99,6 +102,7 @@ class MultiplayerManager {
       taxExemptTurns: 0,
       hasPaidTax: false,
       isInteracting: false,
+      jailSkipped: false,
       stats: this.createInitialStats()
     };
 
@@ -141,6 +145,7 @@ class MultiplayerManager {
       taxExemptTurns: 0,
       hasPaidTax: false,
       isInteracting: false,
+      jailSkipped: false,
       stats: this.createInitialStats()
     };
 
@@ -188,6 +193,7 @@ class MultiplayerManager {
         case 'ACTION_AUCTION_ROLL':
         case 'ACTION_JAIL_WAIT':
         case 'ACTION_JAIL_SKIP':
+        case 'ACTION_JAIL_PAY':
         case 'ACTION_LISTING_RESULT':
         case 'ACTION_TAX_EXEMPT':
         case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
@@ -223,9 +229,17 @@ class MultiplayerManager {
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
 
         // Calculate next turn
-        // We no longer automatically skip jailed players here.
-        // The turn will land on them, and they will use JailSkipModal.
-        this.state.currentTurnIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        let nextIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
+
+        // If the NEXT player is currently in jail and already skipped their turn, release them now
+        // so they can play when it's their turn
+        const nextPlayer = this.state.players[nextIndex];
+        if (nextPlayer.status === 'jail' && nextPlayer.jailSkipped) {
+          nextPlayer.status = 'playing';
+          nextPlayer.jailSkipped = false;
+        }
+
+        this.state.currentTurnIndex = nextIndex;
 
         // AUTO TRIGGER AUCTION FOR EVERYONE
         const boardField = this.state.levels[player.position]?.type;
@@ -295,13 +309,29 @@ class MultiplayerManager {
         break;
       case 'ACTION_JAIL_WAIT':
         player.status = 'jail';
+        player.jailSkipped = false;
         player.stats.jailVisits++;
         break;
       case 'ACTION_JAIL_SKIP':
-        player.status = 'playing';
+        // DON'T set status to playing immediately.
+        // Keep status as 'jail' so lock icon persists.
+        player.jailSkipped = true;
         player.stats.jailSkips++;
         // Manually move to next turn since they skipped
         this.state.currentTurnIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
+
+        // If the NEXT player is also in jail and skipped, release them
+        const skipNextPlayer = this.state.players[this.state.currentTurnIndex];
+        if (skipNextPlayer.status === 'jail' && skipNextPlayer.jailSkipped) {
+          skipNextPlayer.status = 'playing';
+          skipNextPlayer.jailSkipped = false;
+        }
+        break;
+      case 'ACTION_JAIL_PAY':
+        player.capital -= msg.fine;
+        player.status = 'playing';
+        player.jailSkipped = false;
+        this.state.taxPool += msg.fine;
         break;
       case 'ACTION_TAX_EXEMPT':
         if (msg.playerId) {

@@ -224,6 +224,7 @@ export const App: React.FC = () => {
         players={isSinglePlayer ? [{
           id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
           isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
+          jailSkipped: false,
           stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
         }] : (mpState?.players || [])}
         currentTurnIndex={mpState?.currentTurnIndex || 0}
@@ -245,6 +246,7 @@ export const App: React.FC = () => {
         currentPlayer={myProfile || {
           id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
           isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
+          jailSkipped: false,
           stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
         }}
         mode={gameMode}
@@ -273,6 +275,7 @@ export const App: React.FC = () => {
         mode={gameMode}
         levels={levels}
         players={isSinglePlayer ? [] : (mpState?.players || [])}
+        isSinglePlayer={isSinglePlayer}
         onBalanceChange={(change) => {
           if (isSinglePlayer) {
             setBalance(prev => prev + change);

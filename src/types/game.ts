@@ -16,6 +16,7 @@ export interface Player {
   taxExemptTurns: number;
   hasPaidTax: boolean;
   isInteracting: boolean;
+  jailSkipped: boolean;
   stats: {
     correctQuizzes: number;
     wrongQuizzes: number;
