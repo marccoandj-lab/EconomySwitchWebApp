@@ -45,14 +45,18 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
 
   // If Auction is active, prioritize it
   if (isAuctionActive) {
-    const activePlayerId = players[multiplayer.state.currentTurnIndex]?.id;
-    const canContinue = multiplayer.getMyId() === activePlayerId;
+    const numPlayers = players.length;
+    const currentTurnIndex = multiplayer.state.currentTurnIndex;
+    // The mover is the player whose turn JUST passed (since index is incremented on roll)
+    const moverIndex = (currentTurnIndex - 1 + numPlayers) % numPlayers;
+    const moverId = players[moverIndex]?.id;
+    const canContinue = multiplayer.getMyId() === moverId;
 
     return (
       <AuctionModal
         mode={mode}
         players={multiplayer.state.players}
-        currentPlayerIndex={multiplayer.state.currentTurnIndex}
+        currentPlayerIndex={moverIndex}
         canContinue={canContinue}
         onResult={(won) => {
           if (won) onTaxExemption(3);

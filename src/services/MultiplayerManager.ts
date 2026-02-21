@@ -283,6 +283,7 @@ class MultiplayerManager {
         break;
       case 'ACTION_AUCTION_END':
         this.state.auction.active = false;
+        player.isInteracting = false;
         break;
       case 'UPDATE_LEVELS':
         this.state.levels = msg.levels;
