@@ -34,7 +34,10 @@ export type Message =
   | { type: 'ACTION_AUCTION_ROLL'; roll: number }
   | { type: 'ACTION_JAIL_WAIT' }
   | { type: 'ACTION_TAX_EXEMPT'; turns: number; playerId?: string }
-  | { type: 'ACTION_TAX_COLLECT_FROM_PLAYERS'; targets: string[]; amountPerPlayer: number };
+  | { type: 'ACTION_TAX_COLLECT_FROM_PLAYERS'; targets: string[]; amountPerPlayer: number }
+  | { type: 'ACTION_INTERACTION_START' }
+  | { type: 'ACTION_INTERACTION_END' }
+  | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
 class MultiplayerManager {
   private peer: Peer | null = null;
@@ -76,7 +79,8 @@ class MultiplayerManager {
       isHost: true,
       status: 'waiting',
       taxExemptTurns: 0,
-      hasPaidTax: false
+      hasPaidTax: false,
+      isInteracting: false
     };
 
     this.state.players = [this.myProfile];
@@ -116,7 +120,8 @@ class MultiplayerManager {
       isHost: false,
       status: 'waiting',
       taxExemptTurns: 0,
-      hasPaidTax: false
+      hasPaidTax: false,
+      isInteracting: false
     };
 
     this.peer.on('open', () => {
@@ -164,6 +169,9 @@ class MultiplayerManager {
         case 'ACTION_JAIL_WAIT':
         case 'ACTION_TAX_EXEMPT':
         case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
+        case 'ACTION_INTERACTION_START':
+        case 'ACTION_INTERACTION_END':
+        case 'UPDATE_LEVELS':
           this.handleAction(senderId || this.myId, msg);
           break;
       }
@@ -199,6 +207,12 @@ class MultiplayerManager {
         const allJailed = this.state.players.every(p => p.status === 'jail');
         if (allJailed) {
           this.state.players.forEach(p => p.status = 'playing');
+        }
+
+        // AUTO TRIGGER AUCTION FOR EVERYONE
+        const boardField = this.state.levels[player.position]?.type;
+        if (boardField === 'auction_insurance' && this.state.mode === 'finance') {
+          this.state.auction = { active: true, rolls: {}, turnIndex: 0 };
         }
         break;
       case 'ACTION_QUIZ_RESULT':
@@ -257,6 +271,15 @@ class MultiplayerManager {
             player.capital += msg.amountPerPlayer;
           }
         });
+        break;
+      case 'ACTION_INTERACTION_START':
+        player.isInteracting = true;
+        break;
+      case 'ACTION_INTERACTION_END':
+        player.isInteracting = false;
+        break;
+      case 'UPDATE_LEVELS':
+        this.state.levels = msg.levels;
         break;
     }
     this.broadcastState();

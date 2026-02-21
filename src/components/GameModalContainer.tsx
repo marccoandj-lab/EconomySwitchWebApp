@@ -26,8 +26,12 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   onModeChange,
   onTaxExemption,
   levels,
+  players,
 }) => {
-  if (!activeField) return null;
+  const isAuctionActive = multiplayer.state.auction.active;
+  const showModal = activeField || isAuctionActive;
+
+  if (!showModal) return null;
 
   const currentQuizzes = mode === 'finance' ? financeQuizzes : sustainabilityQuizzes;
   const currentListings = mode === 'finance' ? financeListings : sustainabilityListings;
@@ -38,6 +42,23 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   const income = incomeEvents[levelIndex % incomeEvents.length];
   const expense = expenseEvents[levelIndex % expenseEvents.length];
   const jail = jailMessages[levelIndex % jailMessages.length];
+
+  // If Auction is active, prioritize it
+  if (isAuctionActive) {
+    return (
+      <AuctionModal
+        mode={mode}
+        players={multiplayer.state.players}
+        currentPlayerIndex={multiplayer.state.currentTurnIndex}
+        onResult={(won) => {
+          if (won) onTaxExemption(3);
+          // Only host should close the auction state to avoid race conditions, 
+          // but for now we follow the existing pattern
+          onClose();
+        }}
+      />
+    );
+  }
 
   switch (activeField) {
     case 'income':
@@ -162,19 +183,8 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         />
       );
     case 'auction_insurance':
-      if (mode === 'finance') {
-        return (
-          <AuctionModal
-            mode={mode}
-            players={multiplayer.state.players}
-            currentPlayerIndex={multiplayer.state.currentTurnIndex}
-            onResult={(won) => {
-              if (won) onTaxExemption(3);
-              onClose();
-            }}
-          />
-        );
-      } else {
+      // This is now handled by the isAuctionActive check at top for Finance mode
+      if (mode === 'sustainability') {
         return (
           <InsuranceModal
             balance={balance}
@@ -189,6 +199,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
           />
         );
       }
+      return null;
     default:
       return null;
   }

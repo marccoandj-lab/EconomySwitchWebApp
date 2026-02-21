@@ -65,6 +65,10 @@ export const App: React.FC = () => {
   const handleRollDice = () => {
     if (isMoving || isRolling) return;
 
+    // Block if ANY player is interacting with a modal
+    const anyoneInteracting = mpState?.players.some(p => p.isInteracting);
+    if (!isSinglePlayer && anyoneInteracting) return;
+
     if (!isSinglePlayer && mpState) {
       const myId = multiplayer.getMyId();
       const myIndex = mpState.players.findIndex(p => p.id === myId);
@@ -88,8 +92,17 @@ export const App: React.FC = () => {
       currentPos++;
       setCurrentLevelIndex(currentPos);
 
+      // Level generation only by HOST to ensure sync
       if (currentPos >= levels.length - 10) {
-        setLevels(prev => [...prev, ...generateLevels(50, mode, prev[prev.length - 1].id + 1)]);
+        const isHost = isSinglePlayer || mpState?.players.find(p => p.id === multiplayer.getMyId())?.isHost;
+        if (isHost) {
+          const newLevels = generateLevels(50, mode, levels[levels.length - 1].id + 1);
+          const updatedLevels = [...levels, ...newLevels];
+          setLevels(updatedLevels);
+          if (!isSinglePlayer) {
+            multiplayer.sendAction({ type: 'UPDATE_LEVELS', levels: updatedLevels });
+          }
+        }
       }
 
       await new Promise(resolve => setTimeout(resolve, 350));
@@ -103,6 +116,9 @@ export const App: React.FC = () => {
 
     const landingField = levels[currentPos].type;
     setActiveModal(landingField);
+    if (!isSinglePlayer) {
+      multiplayer.sendAction({ type: 'ACTION_INTERACTION_START' });
+    }
   };
 
   const myProfile = isSinglePlayer ? null : mpState?.players.find(p => p.id === multiplayer.getMyId());
@@ -207,7 +223,7 @@ export const App: React.FC = () => {
       <Sidebar
         players={isSinglePlayer ? [{
           id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
-          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false
+          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false
         }] : (mpState?.players || [])}
         currentTurnIndex={mpState?.currentTurnIndex || 0}
         myId={isSinglePlayer ? 'single' : multiplayer.getMyId()}
@@ -225,7 +241,7 @@ export const App: React.FC = () => {
       <GameMap
         levels={levels}
         currentLevel={currentLevelIndex}
-        currentPlayer={myProfile || { id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex, isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false }}
+        currentPlayer={myProfile || { id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex, isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false }}
         mode={gameMode}
         balance={currentBalance}
         onRollDice={handleRollDice}
@@ -241,7 +257,12 @@ export const App: React.FC = () => {
 
       <GameModal
         activeField={activeModal}
-        onClose={() => setActiveModal(null)}
+        onClose={() => {
+          setActiveModal(null);
+          if (!isSinglePlayer) {
+            multiplayer.sendAction({ type: 'ACTION_INTERACTION_END' });
+          }
+        }}
         balance={currentBalance}
         levelIndex={currentLevelIndex}
         mode={gameMode}
@@ -268,9 +289,9 @@ export const App: React.FC = () => {
         }}
       />
 
-      {/* Exemption Expiry Notification */}
+      {/* Exemption Expiry Notification - Fixed Position to top-24 */}
       {showExpiry && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] animate-bounce">
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] animate-bounce">
           <div className="bg-rose-500 text-white px-6 py-3 rounded-2xl shadow-2xl border border-rose-400 flex items-center gap-3">
             <span className="text-2xl">⚠️</span>
             <div>

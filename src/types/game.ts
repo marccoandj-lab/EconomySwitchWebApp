@@ -15,6 +15,7 @@ export interface Player {
   status: 'playing' | 'waiting' | 'jail';
   taxExemptTurns: number;
   hasPaidTax: boolean;
+  isInteracting: boolean;
 }
 
 export interface GameState {
