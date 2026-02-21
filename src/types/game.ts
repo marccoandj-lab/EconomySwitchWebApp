@@ -16,6 +16,17 @@ export interface Player {
   taxExemptTurns: number;
   hasPaidTax: boolean;
   isInteracting: boolean;
+  stats: {
+    correctQuizzes: number;
+    wrongQuizzes: number;
+    listedItems: number;
+    investmentGains: number;
+    investmentLosses: number;
+    jailVisits: number;
+    jailSkips: number;
+    auctionWins: number;
+    taxesPaid: number;
+  };
 }
 
 export interface GameState {

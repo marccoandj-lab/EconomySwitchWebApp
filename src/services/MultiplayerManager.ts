@@ -8,7 +8,7 @@ export type GameState = {
   roomId: string;
   players: Player[];
   currentTurnIndex: number;
-  status: 'waiting' | 'starting' | 'playing' | 'ended';
+  status: 'waiting' | 'starting' | 'playing' | 'ended' | 'finished';
   turnTimeLeft: number;
   mode: 'finance' | 'sustainability';
   auction: {
@@ -38,6 +38,8 @@ export type Message =
   | { type: 'ACTION_INTERACTION_START' }
   | { type: 'ACTION_INTERACTION_END' }
   | { type: 'ACTION_AUCTION_END' }
+  | { type: 'ACTION_JAIL_SKIP' }
+  | { type: 'ACTION_LISTING_RESULT'; success: boolean; reward: number; penalty: number; count: number }
   | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
 class MultiplayerManager {
@@ -60,6 +62,21 @@ class MultiplayerManager {
   private myId: string = nanoid(10);
   private myProfile: Player | null = null;
 
+  private createInitialStats() {
+    return {
+      correctQuizzes: 0,
+      wrongQuizzes: 0,
+      listedItems: 0,
+      investmentGains: 0,
+      investmentLosses: 0,
+      jailVisits: 0,
+      jailSkips: 0,
+      auctionWins: 0,
+      taxesPaid: 0
+    };
+  }
+
+
   init(onUpdate: (state: GameState) => void) {
     this.onStateUpdate = onUpdate;
   }
@@ -81,7 +98,8 @@ class MultiplayerManager {
       status: 'waiting',
       taxExemptTurns: 0,
       hasPaidTax: false,
-      isInteracting: false
+      isInteracting: false,
+      stats: this.createInitialStats()
     };
 
     this.state.players = [this.myProfile];
@@ -122,7 +140,8 @@ class MultiplayerManager {
       status: 'waiting',
       taxExemptTurns: 0,
       hasPaidTax: false,
-      isInteracting: false
+      isInteracting: false,
+      stats: this.createInitialStats()
     };
 
     this.peer.on('open', () => {
@@ -168,6 +187,8 @@ class MultiplayerManager {
         case 'ACTION_AUCTION_START':
         case 'ACTION_AUCTION_ROLL':
         case 'ACTION_JAIL_WAIT':
+        case 'ACTION_JAIL_SKIP':
+        case 'ACTION_LISTING_RESULT':
         case 'ACTION_TAX_EXEMPT':
         case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
         case 'ACTION_INTERACTION_START':
@@ -185,6 +206,13 @@ class MultiplayerManager {
     }
   }
 
+  private checkWinCondition() {
+    const winner = this.state.players.find(p => p.capital >= 1000000);
+    if (winner && this.state.status !== 'finished') {
+      this.state.status = 'finished';
+    }
+  }
+
   private handleAction(playerId: string, msg: Message) {
     const player = this.state.players.find(p => p.id === playerId);
     if (!player) return;
@@ -195,22 +223,9 @@ class MultiplayerManager {
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
 
         // Calculate next turn
-        let nextIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
-
-        // Turn skip logic for jailed players
-        while (this.state.players[nextIndex].status === 'jail') {
-          // If everyone is in jail, free everyone and break
-          if (this.state.players.every(p => p.status === 'jail')) {
-            this.state.players.forEach(p => p.status = 'playing');
-            break;
-          }
-
-          // release for the NEXT round, but they are skipped THIS turn
-          this.state.players[nextIndex].status = 'playing';
-          nextIndex = (nextIndex + 1) % this.state.players.length;
-        }
-
-        this.state.currentTurnIndex = nextIndex;
+        // We no longer automatically skip jailed players here.
+        // The turn will land on them, and they will use JailSkipModal.
+        this.state.currentTurnIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
 
         // AUTO TRIGGER AUCTION FOR EVERYONE
         const boardField = this.state.levels[player.position]?.type;
@@ -219,14 +234,36 @@ class MultiplayerManager {
         }
         break;
       case 'ACTION_QUIZ_RESULT':
-        player.capital += msg.success ? msg.reward : -msg.penalty;
+        if (msg.success) {
+          player.capital += msg.reward;
+          player.stats.correctQuizzes++;
+        } else {
+          player.capital -= msg.penalty;
+          player.stats.wrongQuizzes++;
+        }
+        break;
+      case 'ACTION_LISTING_RESULT':
+        if (msg.success) {
+          player.capital += msg.reward;
+          player.stats.listedItems += msg.count;
+        } else {
+          player.capital -= msg.penalty;
+        }
         break;
       case 'ACTION_TAX_PAY':
+        player.stats.taxesPaid++;
+        break;
       case 'ACTION_TAX_COLLECT':
         break;
       case 'ACTION_INVEST':
         player.capital -= msg.stake;
-        player.capital += Math.floor(msg.stake * msg.result);
+        const investResult = Math.floor(msg.stake * msg.result);
+        player.capital += investResult;
+        if (investResult > msg.stake) {
+          player.stats.investmentGains += (investResult - msg.stake);
+        } else if (investResult < msg.stake) {
+          player.stats.investmentLosses += (msg.stake - investResult);
+        }
         break;
       case 'ACTION_INSURANCE_BUY':
         player.capital -= msg.cost;
@@ -244,19 +281,27 @@ class MultiplayerManager {
 
         // If everyone rolled, determine winner
         if (this.state.auction.turnIndex >= this.state.players.length) {
-          const rolls = Object.entries(this.state.auction.rolls);
-          const maxRoll = Math.max(...rolls.map(([_, r]) => r));
-          const winner = rolls.find(([_, r]) => r === maxRoll);
-          if (winner) {
-            const winnerPlayer = this.state.players.find(p => p.id === winner[0]);
+          const auctionRolls = Object.entries(this.state.auction.rolls);
+          const maxAuctionRoll = Math.max(...auctionRolls.map(([_, r]) => r));
+          const winners = auctionRolls.filter(([_, r]) => r === maxAuctionRoll);
+          winners.forEach(([winId]) => {
+            const winnerPlayer = this.state.players.find(p => p.id === winId);
             if (winnerPlayer) {
               winnerPlayer.taxExemptTurns = 3;
+              winnerPlayer.stats.auctionWins++;
             }
-          }
+          });
         }
         break;
       case 'ACTION_JAIL_WAIT':
         player.status = 'jail';
+        player.stats.jailVisits++;
+        break;
+      case 'ACTION_JAIL_SKIP':
+        player.status = 'playing';
+        player.stats.jailSkips++;
+        // Manually move to next turn since they skipped
+        this.state.currentTurnIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
         break;
       case 'ACTION_TAX_EXEMPT':
         if (msg.playerId) {
@@ -272,6 +317,7 @@ class MultiplayerManager {
           if (target && target.taxExemptTurns === 0) {
             target.capital -= msg.amountPerPlayer;
             player.capital += msg.amountPerPlayer;
+            target.stats.taxesPaid++;
           }
         });
         break;
@@ -289,6 +335,7 @@ class MultiplayerManager {
         this.state.levels = msg.levels;
         break;
     }
+    this.checkWinCondition();
     this.broadcastState();
   }
 

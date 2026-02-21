@@ -1,5 +1,5 @@
 import { GameMode, financeQuizzes, sustainabilityQuizzes, financeListings, sustainabilityListings, incomeEvents, expenseEvents, jailMessages, Level } from '../data/gameData';
-import { IncomeModal, ExpenseModal, QuizModal, ListingModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal } from './GameModal';
+import { IncomeModal, ExpenseModal, QuizModal, ListingModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal, VictoryModal, JailSkipModal } from './GameModal';
 import { multiplayer } from '../services/MultiplayerManager';
 import { Player } from '../types/game';
 
@@ -10,6 +10,7 @@ interface GameModalContainerProps {
   levelIndex: number;
   mode: GameMode;
   onBalanceChange: (change: number) => void;
+  onListingResult: (count: number, reward: number, penalty: number) => void;
   onModeChange: (mode: GameMode) => void;
   onTaxExemption: (turns: number) => void;
   levels: Level[];
@@ -23,15 +24,41 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   levelIndex,
   mode,
   onBalanceChange,
+  onListingResult,
   onModeChange,
   onTaxExemption,
   levels,
   players,
 }) => {
   const isAuctionActive = multiplayer.state.auction.active;
-  const showModal = activeField || isAuctionActive;
+  const isGameOver = multiplayer.state.status === 'finished';
+
+  // Jail Skip logic: If it's MY turn and I am in jail, show JailSkipModal
+  const myProfile = multiplayer.getMyProfile();
+  const isMyTurn = players[multiplayer.state.currentTurnIndex]?.id === myProfile?.id;
+  const showJailSkip = isMyTurn && myProfile?.status === 'jail' && !multiplayer.state.auction.active;
+
+  const showModal = activeField || isAuctionActive || isGameOver || showJailSkip;
 
   if (!showModal) return null;
+
+  // Prioritize VictoryModal
+  if (isGameOver) {
+    return <VictoryModal players={players} mode={mode} />;
+  }
+
+  // Prioritize JailSkipModal
+  if (showJailSkip) {
+    return (
+      <JailSkipModal
+        mode={mode}
+        onSkip={() => {
+          multiplayer.sendAction({ type: 'ACTION_JAIL_SKIP' });
+          onClose();
+        }}
+      />
+    );
+  }
 
   const currentQuizzes = mode === 'finance' ? financeQuizzes : sustainabilityQuizzes;
   const currentListings = mode === 'finance' ? financeListings : sustainabilityListings;
@@ -112,9 +139,9 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         <ListingModal
           challenge={listing}
           mode={mode}
-          onResult={(success, reward, penalty) => {
-            if (success) onBalanceChange(reward);
-            else onBalanceChange(-penalty);
+          onResult={(success, reward, penalty, itemsCount) => {
+            if (success) onListingResult(itemsCount || 0, reward, penalty);
+            else onListingResult(0, reward, penalty);
             onClose();
           }}
         />

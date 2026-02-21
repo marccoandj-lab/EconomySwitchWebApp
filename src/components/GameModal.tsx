@@ -217,7 +217,7 @@ export function QuizModal({ quiz, mode, onResult }: QuizModalProps) {
 interface ListingModalProps {
   challenge: ListingChallenge;
   mode: GameMode;
-  onResult: (success: boolean, reward: number, penalty: number) => void;
+  onResult: (success: boolean, reward: number, penalty: number, itemsCount: number) => void;
 }
 
 export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
@@ -236,7 +236,7 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
           clearInterval(timer);
           setFinished(true);
           const success = found.length >= challenge.required;
-          setTimeout(() => onResult(success, challenge.reward, challenge.penalty), 1500);
+          setTimeout(() => onResult(success, challenge.reward, challenge.penalty, found.length), 1500);
           return 0;
         }
         return t - 1;
@@ -258,7 +258,7 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
       setInput('');
       if (newFound.length >= challenge.required) {
         setFinished(true);
-        setTimeout(() => onResult(true, challenge.reward, challenge.penalty), 1200);
+        setTimeout(() => onResult(true, challenge.reward, challenge.penalty, newFound.length), 1200);
       }
     } else if (alreadyFound) {
       setMessage('⚠️ Already listed!');
@@ -270,7 +270,7 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
 
   const handleSkip = () => {
     setFinished(true);
-    onResult(false, 0, 0);
+    onResult(false, 0, 0, found.length);
   };
 
   const timerColor = timeLeft > 15 ? 'text-emerald-400' : timeLeft > 8 ? 'text-amber-400' : 'text-rose-400';
@@ -571,26 +571,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
   );
 }
 
-// Victory Modal
-export function VictoryModal({ balance, onReplay }: { balance: number, steps: number, onReplay: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="absolute inset-0 bg-black/80 animate-backdrop-fade" />
-      <div className="relative w-full max-w-md bg-gradient-to-br from-yellow-900/95 to-amber-900/95 rounded-3xl border border-yellow-400/30 p-8 text-center my-4 animate-modal-pop">
-        <div className="text-7xl mb-4">🏆</div>
-        <h1 className="text-3xl font-black text-yellow-400 mb-1 uppercase">Winner!</h1>
-        <p className="text-white text-lg mb-6">You reached 1,000,000 €!</p>
-        <div className="bg-white/10 rounded-2xl p-4 mb-6 space-y-3">
-          <div className="flex justify-between text-white">
-            <span className="text-white/70">Final Capital</span>
-            <span className="font-bold text-yellow-400">{balance.toLocaleString('en')} €</span>
-          </div>
-        </div>
-        <button onClick={onReplay} className="w-full bg-yellow-500 hover:bg-yellow-400 text-white font-black py-4 rounded-2xl transition-all active:scale-95 text-xl shadow-xl shadow-yellow-500/30">🔄 Play Again</button>
-      </div>
-    </div>
-  );
-}
+
 
 // ── TAX SMALL MODAL ──
 export function TaxSmallModal({ taxExemptionTurns, onClose, mode }: { taxExemptionTurns: number, onClose: () => void, mode: GameMode }) {
@@ -892,6 +873,115 @@ export function InsuranceModal({ balance, price, onBuy, onClose, mode }: { balan
             ✅ Buy
           </button>
         </div>
+      </div>
+    </Modal>
+  );
+}
+
+// ── VICTORY MODAL ──
+interface VictoryModalProps {
+  players: Player[];
+  mode: GameMode;
+}
+
+export function VictoryModal({ players, mode }: VictoryModalProps) {
+  const sortedPlayers = [...players].sort((a, b) => b.capital - a.capital);
+  const winner = sortedPlayers[0];
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+      <div className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl p-8 overflow-hidden">
+        {/* Animated Background effects */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-blue-500/20 to-transparent blur-3xl" />
+
+        <div className="relative z-10 text-center">
+          <div className="text-7xl mb-4 animate-bounce">🏆</div>
+          <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter">Partija je Završena!</h1>
+          <p className="text-white/50 text-base mb-8 italic">Prvi igrač koji je stigao do 1,000,000 € je krunisan!</p>
+
+          {/* Winner Stats */}
+          <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/20 rounded-3xl p-6 mb-8 text-left">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center text-4xl border border-blue-500/30">
+                {winner.avatar === 'male' ? '👨' : winner.avatar === 'female' ? '👩' : '🤖'}
+              </div>
+              <div>
+                <div className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Pobednik</div>
+                <div className="text-2xl font-black text-white">{winner.name}</div>
+              </div>
+              <div className="ml-auto text-right">
+                <div className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Konačan Kapital</div>
+                <div className="text-2xl font-black text-green-400">{winner.capital.toLocaleString()} €</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <StatItem label="Kviz Tačno" value={winner.stats.correctQuizzes} icon="✅" />
+              <StatItem label="Kviz Netočno" value={winner.stats.wrongQuizzes} icon="❌" />
+              <StatItem label="Aukcije Pobjeda" value={winner.stats.auctionWins} icon="⚖️" />
+              <StatItem label="Invest. Profit" value={`${winner.stats.investmentGains.toLocaleString()} €`} icon="📈" />
+              <StatItem label="Invest. Gubitak" value={`${winner.stats.investmentLosses.toLocaleString()} €`} icon="📉" />
+              <StatItem label="Boravak u Zatvoru" value={winner.stats.jailVisits} icon="🔒" />
+            </div>
+          </div>
+
+          {/* Rankings */}
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+            {sortedPlayers.map((p, idx) => (
+              <div key={p.id} className={`flex items-center gap-4 p-3 rounded-2xl border ${idx === 0 ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}>
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center font-bold text-white/50">{idx + 1}.</div>
+                <span className="text-xl">{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
+                <span className="font-bold text-white text-sm">{p.name}</span>
+                <span className="ml-auto font-black text-white/80 text-sm">{p.capital.toLocaleString()} €</span>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={() => window.location.reload()} className="mt-8 px-8 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest">
+            Igraj Ponovo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatItem({ label, value, icon }: { label: string, value: string | number, icon: string }) {
+  return (
+    <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-sm">{icon}</span>
+        <span className="text-[9px] text-white/40 uppercase font-bold truncate">{label}</span>
+      </div>
+      <div className="text-xs font-black text-white truncate">{value}</div>
+    </div>
+  );
+}
+
+// ── JAIL SKIP MODAL ──
+interface JailSkipModalProps {
+  onSkip: () => void;
+  mode: GameMode;
+}
+
+export function JailSkipModal({ onSkip, mode }: JailSkipModalProps) {
+  return (
+    <Modal onClose={() => { }} mode={mode}>
+      <div className="p-8 text-center">
+        <div className="text-7xl mb-6 relative">
+          🔒
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-rose-500/20 blur-2xl -z-10" />
+        </div>
+        <h2 className="text-3xl font-black text-white mb-2">U Zatvoru Ste!</h2>
+        <p className="text-white/50 text-base mb-8">Vaš krug je preskočen jer ste u zatvoru. Morate sačekati sledeći red da biste ponovo igrali.</p>
+
+        <button
+          onClick={onSkip}
+          className="w-full py-5 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white font-black rounded-[1.5rem] transition-all shadow-xl shadow-black/40 border border-white/10 active:scale-95 flex items-center justify-center gap-3 group"
+        >
+          <span className="text-xl group-hover:rotate-12 transition-transform">➡️</span>
+          PRESKOČI POTEZ
+        </button>
       </div>
     </Modal>
   );

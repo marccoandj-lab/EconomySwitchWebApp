@@ -223,7 +223,8 @@ export const App: React.FC = () => {
       <Sidebar
         players={isSinglePlayer ? [{
           id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
-          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false
+          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
+          stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
         }] : (mpState?.players || [])}
         currentTurnIndex={mpState?.currentTurnIndex || 0}
         myId={isSinglePlayer ? 'single' : multiplayer.getMyId()}
@@ -241,7 +242,11 @@ export const App: React.FC = () => {
       <GameMap
         levels={levels}
         currentLevel={currentLevelIndex}
-        currentPlayer={myProfile || { id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex, isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false }}
+        currentPlayer={myProfile || {
+          id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
+          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
+          stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
+        }}
         mode={gameMode}
         balance={currentBalance}
         onRollDice={handleRollDice}
@@ -273,6 +278,13 @@ export const App: React.FC = () => {
             setBalance(prev => prev + change);
           } else {
             multiplayer.sendAction({ type: 'ACTION_QUIZ_RESULT', reward: change > 0 ? change : 0, penalty: change < 0 ? -change : 0, success: change > 0 });
+          }
+        }}
+        onListingResult={(count, reward, penalty) => {
+          if (isSinglePlayer) {
+            setBalance(prev => prev + (count > 0 ? reward : -penalty));
+          } else {
+            multiplayer.sendAction({ type: 'ACTION_LISTING_RESULT', success: count > 0, reward, penalty, count });
           }
         }}
         onModeChange={(newMode) => {
