@@ -27,12 +27,13 @@ function getCol(idx: number): number {
 }
 
 // ── 3D Dice Component ──
-function DiceRoller({ value, isRolling, onRoll, disabled, isFinance }: {
+function DiceRoller({ value, isRolling, onRoll, disabled, isFinance, isJailed }: {
   value: number | null;
   isRolling: boolean;
   onRoll: () => void;
   disabled: boolean;
   isFinance: boolean;
+  isJailed: boolean;
 }) {
   const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
   const [displayFace, setDisplayFace] = useState(0);
@@ -72,7 +73,7 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance }: {
           {diceFaces[shownFace]}
         </span>
 
-        {disabled && !isRolling && (
+        {isJailed && !isRolling && (
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] rounded-2xl flex items-center justify-center animate-fade-in">
             <span className="text-3xl filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">🔒</span>
           </div>
@@ -99,7 +100,7 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance }: {
           }
         `}
       >
-        {isRolling ? '🎲 Rolling...' : disabled ? '🚔 In Jail' : '🎲 Roll Dice!'}
+        {isRolling ? '🎲 Rolling...' : isJailed ? '🚔 In Jail' : '🎲 Roll Dice!'}
       </button>
     </div>
   );
@@ -196,8 +197,8 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           <div className="text-center">
             <div
               className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${isFinance
-                  ? 'bg-blue-500/30 text-blue-300 border border-blue-400/30'
-                  : 'bg-green-500/30 text-green-300 border border-green-400/30'
+                ? 'bg-blue-500/30 text-blue-300 border border-blue-400/30'
+                : 'bg-green-500/30 text-green-300 border border-green-400/30'
                 }`}
             >
               {isFinance ? '💼 Finance' : '🌱 Sustainability'}
@@ -239,8 +240,8 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           <div className="w-full bg-white/10 rounded-full h-1.5">
             <div
               className={`h-1.5 rounded-full transition-all duration-700 ${isFinance
-                  ? 'bg-gradient-to-r from-blue-400 to-indigo-400'
-                  : 'bg-gradient-to-r from-green-400 to-teal-400'
+                ? 'bg-gradient-to-r from-blue-400 to-indigo-400'
+                : 'bg-gradient-to-r from-green-400 to-teal-400'
                 }`}
               style={{ width: `${Math.min((balance / 1000000) * 100, 100)}%` }}
             />
@@ -425,6 +426,7 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
             onRoll={onRollDice}
             disabled={jailed || isMoving}
             isFinance={isFinance}
+            isJailed={jailed}
           />
         </div>
       </div>

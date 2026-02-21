@@ -651,70 +651,94 @@ export function VictoryModal({ balance, onReplay }: { balance: number, steps: nu
 }
 
 // ── TAX SMALL MODAL ──
-interface TaxSmallModalProps {
-  balance: number;
-  taxExemptionTurns: number;
-  onPay: (amount: number) => void;
-  onClose: () => void;
-  mode: GameMode;
-}
-
-export function TaxSmallModal({ balance, taxExemptionTurns, onPay, onClose, mode }: TaxSmallModalProps) {
+export function TaxSmallModal({ taxExemptionTurns, onClose, mode }: { taxExemptionTurns: number, onClose: () => void, mode: GameMode }) {
   const isExempt = taxExemptionTurns > 0;
-  const taxAmount = Math.min(10000, Math.floor(balance * 0.05));
 
   useEffect(() => {
-    if (isExempt) {
-      const timer = setTimeout(onClose, 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [isExempt, onClose]);
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
 
   return (
-    <Modal onClose={isExempt ? onClose : () => { }} mode={mode}>
+    <Modal onClose={onClose} mode={mode}>
       <div className="p-6 text-center">
-        <div className="text-6xl mb-4">🟣</div>
-        <h2 className="text-2xl font-bold text-white mb-2">Tax Payment</h2>
+        <div className="text-6xl mb-4">⚠️</div>
+        <h2 className="text-2xl font-bold text-white mb-2">Caution!</h2>
         {isExempt ? (
           <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-6 mb-4">
             <p className="text-emerald-400 font-bold text-xl mb-1 text-center">🛡️ Tax Exempted!</p>
-            <p className="text-white/40 text-xs mt-4">{taxExemptionTurns} turns left.</p>
+            <p className="text-white/40 text-[10px] mt-2">You are safe from collection for {taxExemptionTurns} more turns.</p>
           </div>
         ) : (
-          <>
-            <p className="text-white/70 mb-6 italic text-sm leading-relaxed">Payments go to the public fund. Taxpayers collect from the Large Tax Field!</p>
-            <div className="bg-rose-500/20 border border-rose-400/30 rounded-2xl p-4 mb-6">
-              <p className="text-rose-400 font-black text-3xl">-{taxAmount.toLocaleString('en')} €</p>
-            </div>
-            <button onClick={() => onPay(taxAmount)} className="w-full bg-pink-500 hover:bg-pink-400 text-white font-bold py-4 rounded-2xl transition-all text-lg">Pay Tax & Register 💸</button>
-          </>
+          <div className="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-6 mb-4">
+            <p className="text-amber-400 font-bold text-lg mb-2">Vulnerable Zone</p>
+            <p className="text-white/70 text-sm leading-relaxed">
+              You are standing on a small tax field. If anyone lands on the Tax Collection (🏦) field, they can take money from you!
+            </p>
+          </div>
         )}
+        <p className="text-white/30 text-[10px] animate-pulse">Closing in 3s...</p>
       </div>
     </Modal>
   );
 }
 
 // ── TAX LARGE MODAL ──
-export function TaxLargeModal({ taxPool, isTaxpayer, onCollect, onClose, mode }: { taxPool: number, isTaxpayer: boolean, onCollect: () => void, onClose: () => void, mode: GameMode }) {
+interface TaxLargeModalProps {
+  targets: Player[];
+  onCollect: (targetIds: string[]) => void;
+  onClose: () => void;
+  mode: GameMode;
+}
+
+export function TaxLargeModal({ targets, onCollect, onClose, mode }: TaxLargeModalProps) {
+  const amountPerPlayer = 35000;
+  const totalPotential = targets.length * amountPerPlayer;
+
   return (
     <Modal onClose={onClose} mode={mode}>
       <div className="p-6 text-center">
         <div className="text-6xl mb-4 animate-pulse">🏦</div>
-        <h2 className="text-2xl font-bold text-white mb-2 text-center">Tax Collection</h2>
-        <div className="bg-pink-500/20 border border-pink-400/30 rounded-2xl p-6 mb-6">
-          <p className="text-pink-300 text-sm uppercase mb-1 tracking-widest">Public Fund</p>
-          <p className="text-5xl font-black text-pink-400">{taxPool.toLocaleString('en')} €</p>
-        </div>
-        {isTaxpayer ? (
-          <>
-            <p className="text-emerald-300 font-bold mb-6 italic">✅ You are a registered taxpayer!</p>
-            <button onClick={onCollect} disabled={taxPool <= 0} className={`w-full font-bold py-4 rounded-2xl transition-all text-lg ${taxPool > 0 ? 'bg-emerald-500 hover:bg-emerald-400 text-white' : 'bg-gray-600 text-white/50 cursor-not-allowed'}`}>Collect Fund 💰</button>
-          </>
+        <h2 className="text-2xl font-bold text-white mb-2">Tax Inspection</h2>
+        <p className="text-white/60 text-sm mb-6 italic">Collect taxes from players currently on small tax fields.</p>
+
+        {targets.length > 0 ? (
+          <div className="space-y-4">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 max-h-48 overflow-y-auto">
+              <p className="text-[10px] text-white/40 uppercase font-bold mb-3 tracking-widest">Liable Players:</p>
+              <div className="space-y-2">
+                {targets.map(p => (
+                  <div key={p.id} className="flex items-center justify-between bg-white/5 p-2 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <span>{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
+                      <span className="text-xs font-medium text-white">{p.name}</span>
+                    </div>
+                    <span className="text-rose-400 text-xs font-bold">{p.taxExemptTurns > 0 ? '🛡️ EXEMPT' : `-${amountPerPlayer.toLocaleString()} €`}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4">
+              <p className="text-white/60 text-[10px] uppercase font-bold tracking-widest mb-1">Total Collection</p>
+              <p className="text-3xl font-black text-emerald-400">{totalPotential.toLocaleString()} €</p>
+            </div>
+
+            <button
+              onClick={() => onCollect(targets.filter(p => p.taxExemptTurns === 0).map(p => p.id))}
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 text-lg"
+            >
+              COLLECT ALL 💰
+            </button>
+          </div>
         ) : (
-          <>
-            <div className="bg-rose-500/20 border border-rose-400/30 rounded-xl p-4 mb-6"><p className="text-rose-400 font-bold mb-1">⚠️ Not Eligible</p><p className="text-white/60 text-[10px]">Only Small Tax Field payers can collect.</p></div>
-            <button onClick={onClose} className="w-full bg-gray-600 text-white font-bold py-4 rounded-2xl">Continue ▶</button>
-          </>
+          <div className="space-y-6">
+            <div className="bg-rose-500/10 border border-rose-400/20 rounded-2xl p-8">
+              <p className="text-rose-300 font-bold mb-2">No Takers!</p>
+              <p className="text-white/40 text-xs">There are no players currently on small tax fields. You collect nothing this time.</p>
+            </div>
+            <button onClick={onClose} className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 rounded-2xl transition-all">Continue ▶</button>
+          </div>
         )}
       </div>
     </Modal>

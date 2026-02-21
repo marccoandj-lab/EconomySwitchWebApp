@@ -1,7 +1,7 @@
-import React from 'react';
-import { GameMode, financeQuizzes, sustainabilityQuizzes, financeListings, sustainabilityListings, incomeEvents, expenseEvents, jailMessages } from '../data/gameData';
+import { GameMode, financeQuizzes, sustainabilityQuizzes, financeListings, sustainabilityListings, incomeEvents, expenseEvents, jailMessages, Level } from '../data/gameData';
 import { IncomeModal, ExpenseModal, QuizModal, ListingModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal } from './GameModal';
 import { multiplayer } from '../services/MultiplayerManager';
+import { Player } from '../types/game';
 
 interface GameModalContainerProps {
   activeField: string | null;
@@ -12,6 +12,8 @@ interface GameModalContainerProps {
   onBalanceChange: (change: number) => void;
   onModeChange: (mode: GameMode) => void;
   onTaxExemption: (turns: number) => void;
+  levels: Level[];
+  players: Player[];
 }
 
 const GameModalContainer: React.FC<GameModalContainerProps> = ({
@@ -23,12 +25,13 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   onBalanceChange,
   onModeChange,
   onTaxExemption,
+  levels,
 }) => {
   if (!activeField) return null;
 
   const currentQuizzes = mode === 'finance' ? financeQuizzes : sustainabilityQuizzes;
   const currentListings = mode === 'finance' ? financeListings : sustainabilityListings;
-  
+
   // Pick random content
   const quiz = currentQuizzes[levelIndex % currentQuizzes.length];
   const listing = currentListings[levelIndex % currentListings.length];
@@ -127,27 +130,32 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         />
       );
     case 'tax_small':
+      const myTaxExemption = multiplayer.state.players.find(p => p.id === multiplayer.getMyId())?.taxExemptTurns || 0;
       return (
         <TaxSmallModal
-          balance={balance}
-          taxExemptionTurns={0}
+          taxExemptionTurns={myTaxExemption}
           mode={mode}
-          onPay={(amount) => {
-            multiplayer.sendAction({ type: 'ACTION_TAX_PAY', amount });
-            onClose();
-          }}
           onClose={onClose}
         />
       );
     case 'tax_large':
-      const myProfile = multiplayer.getMyProfile();
+      const myId = multiplayer.getMyId();
+      const otherPlayers = multiplayer.state.players.filter(p => p.id !== myId);
+      const targets = otherPlayers.filter(p => {
+        const field = levels[p.position % levels.length];
+        return field.type === 'tax_small';
+      });
+
       return (
         <TaxLargeModal
-          taxPool={multiplayer.state.taxPool}
-          isTaxpayer={myProfile?.hasPaidTax || false}
+          targets={targets}
           mode={mode}
-          onCollect={() => {
-            multiplayer.sendAction({ type: 'ACTION_TAX_COLLECT' });
+          onCollect={(targetIds) => {
+            multiplayer.sendAction({
+              type: 'ACTION_TAX_COLLECT_FROM_PLAYERS',
+              targets: targetIds,
+              amountPerPlayer: 35000
+            });
             onClose();
           }}
           onClose={onClose}

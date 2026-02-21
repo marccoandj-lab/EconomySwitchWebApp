@@ -184,11 +184,6 @@ export const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          {!isSinglePlayer && (
-            <div className="bg-purple-600/80 backdrop-blur-md px-4 py-2 rounded-xl border border-purple-400/30 text-white font-bold text-xs pointer-events-auto shadow-xl">
-              TAX POOL: {mpState?.taxPool.toLocaleString()} €
-            </div>
-          )}
           <div className={`px-4 py-2 rounded-xl backdrop-blur-md border text-white font-bold text-xs uppercase tracking-widest pointer-events-auto shadow-xl ${gameMode === 'finance' ? 'bg-blue-600/80 border-blue-400/30' : 'bg-green-600/80 border-green-400/30'
             }`}>
             {gameMode} mode
@@ -226,7 +221,7 @@ export const App: React.FC = () => {
         isRolling={isRolling}
         isMoving={isMoving}
         animatingLevel={currentLevelIndex}
-        taxPool={isSinglePlayer ? 0 : (mpState?.taxPool || 0)}
+        taxPool={0}
         isTaxpayer={isSinglePlayer ? false : (myProfile?.hasPaidTax || false)}
         taxExemptionTurns={isSinglePlayer ? 0 : (myProfile?.taxExemptTurns || 0)}
       />
@@ -237,6 +232,8 @@ export const App: React.FC = () => {
         balance={currentBalance}
         levelIndex={currentLevelIndex}
         mode={gameMode}
+        levels={levels}
+        players={isSinglePlayer ? [] : (mpState?.players || [])}
         onBalanceChange={(change) => {
           if (isSinglePlayer) {
             setBalance(prev => prev + change);

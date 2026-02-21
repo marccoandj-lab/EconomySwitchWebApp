@@ -8,7 +8,6 @@ export type GameState = {
   roomId: string;
   players: Player[];
   currentTurnIndex: number;
-  taxPool: number;
   status: 'waiting' | 'starting' | 'playing' | 'ended';
   turnTimeLeft: number;
   mode: 'finance' | 'sustainability';
@@ -33,7 +32,8 @@ export type Message =
   | { type: 'ACTION_AUCTION_START' }
   | { type: 'ACTION_AUCTION_ROLL'; roll: number }
   | { type: 'ACTION_JAIL_WAIT' }
-  | { type: 'ACTION_TAX_EXEMPT'; turns: number };
+  | { type: 'ACTION_TAX_EXEMPT'; turns: number }
+  | { type: 'ACTION_TAX_COLLECT_FROM_PLAYERS'; targets: string[]; amountPerPlayer: number };
 
 class MultiplayerManager {
   private peer: Peer | null = null;
@@ -45,7 +45,6 @@ class MultiplayerManager {
     roomId: '',
     players: [],
     currentTurnIndex: 0,
-    taxPool: 0,
     status: 'waiting',
     turnTimeLeft: 60,
     mode: 'finance',
@@ -163,6 +162,7 @@ class MultiplayerManager {
         case 'ACTION_AUCTION_ROLL':
         case 'ACTION_JAIL_WAIT':
         case 'ACTION_TAX_EXEMPT':
+        case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
           this.handleAction(senderId || this.myId, msg);
           break;
       }
@@ -193,21 +193,18 @@ class MultiplayerManager {
         }
 
         this.state.currentTurnIndex = nextIndex;
+
+        // Deadlock prevention: If everyone is in jail, free everyone
+        const allJailed = this.state.players.every(p => p.status === 'jail');
+        if (allJailed) {
+          this.state.players.forEach(p => p.status = 'playing');
+        }
         break;
       case 'ACTION_QUIZ_RESULT':
         player.capital += msg.success ? msg.reward : -msg.penalty;
         break;
       case 'ACTION_TAX_PAY':
-        player.capital -= msg.amount;
-        player.hasPaidTax = true;
-        this.state.taxPool += msg.amount;
-        break;
       case 'ACTION_TAX_COLLECT':
-        if (player.hasPaidTax) {
-          player.capital += this.state.taxPool;
-          this.state.taxPool = 0;
-          player.hasPaidTax = false;
-        }
         break;
       case 'ACTION_INVEST':
         player.capital -= msg.stake;
@@ -231,6 +228,15 @@ class MultiplayerManager {
         break;
       case 'ACTION_TAX_EXEMPT':
         player.taxExemptTurns = msg.turns;
+        break;
+      case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
+        msg.targets.forEach(targetId => {
+          const target = this.state.players.find(p => p.id === targetId);
+          if (target && target.taxExemptTurns === 0) {
+            target.capital -= msg.amountPerPlayer;
+            player.capital += msg.amountPerPlayer;
+          }
+        });
         break;
     }
     this.broadcastState();
