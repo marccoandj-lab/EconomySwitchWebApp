@@ -50,6 +50,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ players, currentTurnIndex, myI
                 </div>
               </div>
 
+              {player.taxExemptTurns > 0 && (
+                <div className="mt-2 bg-emerald-500/20 border border-emerald-400/30 rounded-lg p-2 flex items-center justify-between animate-pulse">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs">🛡️</span>
+                    <span className="text-[10px] text-emerald-300 font-bold uppercase tracking-wider">Tax Exempt</span>
+                  </div>
+                  <span className="text-xs font-black text-emerald-400">{player.taxExemptTurns}T</span>
+                </div>
+              )}
+
               <div className="mt-2 flex items-center justify-between text-[10px] text-white/50">
                 <div className="flex items-center gap-1">
                   <span>LVL {Math.floor(player.position / 5) + 1}</span>

@@ -772,16 +772,20 @@ export function AuctionModal({ onResult, mode, players, currentPlayerIndex }: Au
   };
 
   const rolls = auctionState.rolls || {};
-  const allRolled = players.every(p => rolls[p.id] !== undefined);
+  const turnIndex = auctionState.turnIndex || 0;
+  const allRolled = turnIndex >= players.length;
 
   let winnerId: string | null = null;
   if (allRolled) {
-    const maxVal = Math.max(...Object.values(rolls));
+    const rollsList = Object.entries(rolls);
+    const maxVal = Math.max(...rollsList.map(([_, r]) => r));
     const winners = players.filter(p => rolls[p.id] === maxVal);
-    winnerId = winners[0].id;
+    winnerId = winners[0]?.id || null;
   }
 
-  const currentPlayer = players[currentPlayerIndex];
+  const myIndex = players.findIndex(p => p.id === myId);
+  const isMyTurnToRoll = myIndex === turnIndex;
+  const activeRoller = players[turnIndex] || players[0];
 
   return (
     <Modal onClose={() => { }} mode={mode}>
@@ -792,31 +796,45 @@ export function AuctionModal({ onResult, mode, players, currentPlayerIndex }: Au
 
         {!allRolled ? (
           <div className="space-y-6">
+            <div className="bg-white/5 rounded-2xl p-4 border border-white/10 mb-4 text-center">
+              <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-1">Upcoming Roller:</p>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-lg">{activeRoller.avatar === 'male' ? '👨' : activeRoller.avatar === 'female' ? '👩' : '🤖'}</span>
+                <span className="text-white font-bold">{activeRoller.name} {activeRoller.id === myId && '(You)'}</span>
+              </div>
+            </div>
+
             <button
               onClick={handleRoll}
-              disabled={hasRolled}
-              className={`w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-xl ${hasRolled
-                ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              disabled={!isMyTurnToRoll || hasRolled}
+              className={`w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-xl ${!isMyTurnToRoll || hasRolled
+                ? 'bg-slate-700 text-slate-500 cursor-not-allowed opacity-50'
                 : 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white hover:scale-105 active:scale-95 shadow-amber-900/40'
                 }`}
             >
-              {hasRolled ? 'Waiting for others... ⏳' : 'Roll Dice! 🎲'}
+              {hasRolled ? 'Rolled! ⏳' : isMyTurnToRoll ? 'Roll Dice! 🎲' : 'Waiting for Turn... ⏳'}
             </button>
 
             <div className="grid grid-cols-3 gap-3">
-              {players.map(p => (
-                <div key={p.id} className="flex flex-col items-center gap-1">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl border-2 transition-all ${rolls[p.id]
-                    ? 'bg-emerald-500/20 border-emerald-400'
-                    : 'bg-white/5 border-white/10 animate-pulse'
-                    }`}>
-                    {rolls[p.id] ? rolls[p.id] : '🎲'}
+              {players.map(p => {
+                const pRoll = rolls[p.id];
+                const isRollingNow = players[turnIndex]?.id === p.id;
+                return (
+                  <div key={p.id} className="flex flex-col items-center gap-1">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl border-2 transition-all ${pRoll
+                      ? 'bg-emerald-500/20 border-emerald-400'
+                      : isRollingNow
+                        ? 'bg-blue-500/20 border-blue-400 animate-pulse'
+                        : 'bg-white/5 border-white/10 opacity-50'
+                      }`}>
+                      {pRoll ? pRoll : '🎲'}
+                    </div>
+                    <span className={`text-[10px] truncate w-16 text-center ${isRollingNow ? 'text-blue-400 font-bold' : 'text-white/40'}`}>
+                      {p.name}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-white/40 truncate w-16 text-center">
-                    {p.name}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ) : (
@@ -832,12 +850,12 @@ export function AuctionModal({ onResult, mode, players, currentPlayerIndex }: Au
                 </div>
               ))}
             </div>
-            <div className={`rounded-2xl p-4 mb-6 ${winnerId === multiplayer.getMyId() ? 'bg-emerald-500/20 border border-emerald-400/30' : 'bg-rose-500/20 border border-rose-400/30'}`}>
+            <div className={`rounded-2xl p-4 mb-6 ${winnerId === multiplayer.getMyId() ? 'bg-emerald-500/20 border border-emerald-400/30' : 'bg-white/5 border border-white/10'}`}>
               <p className="text-white font-bold text-center">
-                {winnerId === multiplayer.getMyId() ? '🎉 You Won!' : `😢 ${players.find(p => p.id === winnerId)?.name} Won!`}
+                {winnerId === multiplayer.getMyId() ? '🎉 You Won Tax Exemption!' : `😢 ${players.find(p => p.id === winnerId)?.name} Won!`}
               </p>
             </div>
-            <button onClick={() => onResult(winnerId === currentPlayer.id)} className="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-4 rounded-2xl transition-all">Continue ▶</button>
+            <button onClick={() => onResult(winnerId === players[currentPlayerIndex].id)} className="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-4 rounded-2xl transition-all">Continue ▶</button>
           </>
         )}
       </div>
@@ -852,9 +870,39 @@ export function InsuranceModal({ balance, price, onBuy, onClose, mode }: { balan
     <Modal onClose={onClose} mode={mode}>
       <div className="p-6 text-center">
         <div className="text-6xl mb-4">🛡️</div>
-        <h2 className="text-2xl font-bold text-white mb-2">Insurance</h2>
-        <div className="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-4 mb-6 text-center"><p className="text-amber-300 text-[10px] uppercase mb-1">Price</p><p className="text-4xl font-black text-amber-400">{price.toLocaleString('en')} €</p></div>
-        <div className="grid grid-cols-2 gap-3"><button onClick={onClose} className="bg-gray-600 text-white font-bold py-4 rounded-2xl transition-all">❌ Skip</button><button onClick={() => onBuy(price)} disabled={!canAfford} className={`font-bold py-4 rounded-2xl transition-all ${canAfford ? "bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/20" : "bg-gray-700 text-white/30 cursor-not-allowed"}`}>✅ Buy</button></div>
+        <h2 className="text-2xl font-bold text-white mb-2">Purchase Insurance</h2>
+        <p className="text-white/60 text-sm mb-6">Invest in insurance to stay exempt from taxes and fees for the next 3 rounds.</p>
+
+        <div className="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-4 mb-6 text-center">
+          <p className="text-amber-300 text-[10px] uppercase mb-1 tracking-widest font-bold">Insurance Premium</p>
+          <p className="text-4xl font-black text-amber-400">{price.toLocaleString('en')} €</p>
+        </div>
+
+        {!canAfford && (
+          <div className="bg-rose-500/20 border border-rose-400/30 rounded-xl p-3 mb-6">
+            <p className="text-rose-400 text-sm font-bold">⚠️ Insufficient Funds</p>
+            <p className="text-white/60 text-xs">You cannot afford this insurance right now.</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={onClose}
+            className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95"
+          >
+            ❌ Skip
+          </button>
+          <button
+            onClick={() => onBuy(price)}
+            disabled={!canAfford}
+            className={`font-bold py-4 rounded-2xl transition-all ${canAfford
+              ? "bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/20 scale-105"
+              : "bg-gray-700 text-white/30 cursor-not-allowed border border-white/5 opacity-50"
+              }`}
+          >
+            ✅ Buy
+          </button>
+        </div>
       </div>
     </Modal>
   );

@@ -14,6 +14,7 @@ export type GameState = {
   auction: {
     active: boolean;
     rolls: Record<string, number>;
+    turnIndex: number;
   };
   levels: Level[];
 };
@@ -32,7 +33,7 @@ export type Message =
   | { type: 'ACTION_AUCTION_START' }
   | { type: 'ACTION_AUCTION_ROLL'; roll: number }
   | { type: 'ACTION_JAIL_WAIT' }
-  | { type: 'ACTION_TAX_EXEMPT'; turns: number }
+  | { type: 'ACTION_TAX_EXEMPT'; turns: number; playerId?: string }
   | { type: 'ACTION_TAX_COLLECT_FROM_PLAYERS'; targets: string[]; amountPerPlayer: number };
 
 class MultiplayerManager {
@@ -48,7 +49,7 @@ class MultiplayerManager {
     status: 'waiting',
     turnTimeLeft: 60,
     mode: 'finance',
-    auction: { active: false, rolls: {} },
+    auction: { active: false, rolls: {}, turnIndex: 0 },
     levels: []
   };
 
@@ -218,16 +219,35 @@ class MultiplayerManager {
         this.state.mode = msg.mode;
         break;
       case 'ACTION_AUCTION_START':
-        this.state.auction = { active: true, rolls: {} };
+        this.state.auction = { active: true, rolls: {}, turnIndex: 0 };
         break;
       case 'ACTION_AUCTION_ROLL':
         this.state.auction.rolls[playerId] = msg.roll;
+        this.state.auction.turnIndex++;
+
+        // If everyone rolled, determine winner
+        if (this.state.auction.turnIndex >= this.state.players.length) {
+          const rolls = Object.entries(this.state.auction.rolls);
+          const maxRoll = Math.max(...rolls.map(([_, r]) => r));
+          const winner = rolls.find(([_, r]) => r === maxRoll);
+          if (winner) {
+            const winnerPlayer = this.state.players.find(p => p.id === winner[0]);
+            if (winnerPlayer) {
+              winnerPlayer.taxExemptTurns = 3;
+            }
+          }
+        }
         break;
       case 'ACTION_JAIL_WAIT':
         player.status = 'jail';
         break;
       case 'ACTION_TAX_EXEMPT':
-        player.taxExemptTurns = msg.turns;
+        if (msg.playerId) {
+          const target = this.state.players.find(p => p.id === msg.playerId);
+          if (target) target.taxExemptTurns = msg.turns;
+        } else {
+          player.taxExemptTurns = msg.turns;
+        }
         break;
       case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
         msg.targets.forEach(targetId => {

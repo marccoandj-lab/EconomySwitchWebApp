@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GameMap } from './components/GameMap';
 import GameModal from './components/GameModalContainer';
 import { StartScreen } from './components/StartScreen';
@@ -26,6 +26,19 @@ export const App: React.FC = () => {
   const [isMoving, setIsMoving] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [lastDiceRoll, setLastDiceRoll] = useState<number | null>(null);
+  const [showExpiry, setShowExpiry] = useState(false);
+
+  // Taxation track
+  const myExemption = isSinglePlayer ? 0 : (mpState?.players.find(p => p.id === multiplayer.getMyId())?.taxExemptTurns || 0);
+  const prevExemption = useRef(myExemption);
+
+  useEffect(() => {
+    if (prevExemption.current > 0 && myExemption === 0) {
+      setShowExpiry(true);
+      setTimeout(() => setShowExpiry(false), 5000);
+    }
+    prevExemption.current = myExemption;
+  }, [myExemption]);
 
   useEffect(() => {
     multiplayer.init((state) => {
@@ -254,6 +267,19 @@ export const App: React.FC = () => {
           }
         }}
       />
+
+      {/* Exemption Expiry Notification */}
+      {showExpiry && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] animate-bounce">
+          <div className="bg-rose-500 text-white px-6 py-3 rounded-2xl shadow-2xl border border-rose-400 flex items-center gap-3">
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <p className="font-black text-sm uppercase tracking-wider leading-none">Tax Exemption Expired!</p>
+              <p className="text-[10px] text-rose-100 font-bold opacity-80">You are now liable for taxes again.</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
