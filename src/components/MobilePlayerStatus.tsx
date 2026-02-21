@@ -15,7 +15,7 @@ export const MobilePlayerStatus: React.FC<MobilePlayerStatusProps> = ({ players,
     const others = players.filter(p => p.id !== myId);
 
     return (
-        <div className="fixed bottom-24 left-4 right-4 z-20 flex flex-col gap-2 lg:hidden pointer-events-none">
+        <div className="fixed bottom-52 left-4 right-4 z-20 flex flex-col gap-2 lg:hidden pointer-events-none">
             {others.map(player => {
                 const isAbove = player.position > me.position;
                 const currentField = levels[player.position % levels.length];

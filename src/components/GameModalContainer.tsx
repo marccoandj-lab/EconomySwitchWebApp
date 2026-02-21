@@ -45,15 +45,18 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
 
   // If Auction is active, prioritize it
   if (isAuctionActive) {
+    const activePlayerId = players[multiplayer.state.currentTurnIndex]?.id;
+    const canContinue = multiplayer.getMyId() === activePlayerId;
+
     return (
       <AuctionModal
         mode={mode}
         players={multiplayer.state.players}
         currentPlayerIndex={multiplayer.state.currentTurnIndex}
+        canContinue={canContinue}
         onResult={(won) => {
           if (won) onTaxExemption(3);
-          // Only host should close the auction state to avoid race conditions, 
-          // but for now we follow the existing pattern
+          multiplayer.sendAction({ type: 'ACTION_AUCTION_END' });
           onClose();
         }}
       />
@@ -125,7 +128,10 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
             onBalanceChange(-75000);
             onClose();
           }}
-          onSkip={onClose}
+          onSkip={() => {
+            multiplayer.sendAction({ type: 'ACTION_JAIL_WAIT' });
+            onClose();
+          }}
         />
       );
     case 'switch':

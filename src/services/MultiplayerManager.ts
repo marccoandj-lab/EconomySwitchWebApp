@@ -37,6 +37,7 @@ export type Message =
   | { type: 'ACTION_TAX_COLLECT_FROM_PLAYERS'; targets: string[]; amountPerPlayer: number }
   | { type: 'ACTION_INTERACTION_START' }
   | { type: 'ACTION_INTERACTION_END' }
+  | { type: 'ACTION_AUCTION_END' }
   | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
 class MultiplayerManager {
@@ -171,6 +172,7 @@ class MultiplayerManager {
         case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
         case 'ACTION_INTERACTION_START':
         case 'ACTION_INTERACTION_END':
+        case 'ACTION_AUCTION_END':
         case 'UPDATE_LEVELS':
           this.handleAction(senderId || this.myId, msg);
           break;
@@ -192,22 +194,23 @@ class MultiplayerManager {
         player.position += msg.steps;
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
 
-        // Turn management
+        // Calculate next turn
         let nextIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
 
-        while (this.state.players[nextIndex].status === 'jail' && nextIndex !== this.state.currentTurnIndex) {
-          // Skip their turn and set status back to playing for next time
+        // Turn skip logic for jailed players
+        while (this.state.players[nextIndex].status === 'jail') {
+          // If everyone is in jail, free everyone and break
+          if (this.state.players.every(p => p.status === 'jail')) {
+            this.state.players.forEach(p => p.status = 'playing');
+            break;
+          }
+
+          // release for the NEXT round, but they are skipped THIS turn
           this.state.players[nextIndex].status = 'playing';
           nextIndex = (nextIndex + 1) % this.state.players.length;
         }
 
         this.state.currentTurnIndex = nextIndex;
-
-        // Deadlock prevention: If everyone is in jail, free everyone
-        const allJailed = this.state.players.every(p => p.status === 'jail');
-        if (allJailed) {
-          this.state.players.forEach(p => p.status = 'playing');
-        }
 
         // AUTO TRIGGER AUCTION FOR EVERYONE
         const boardField = this.state.levels[player.position]?.type;
@@ -277,6 +280,9 @@ class MultiplayerManager {
         break;
       case 'ACTION_INTERACTION_END':
         player.isInteracting = false;
+        break;
+      case 'ACTION_AUCTION_END':
+        this.state.auction.active = false;
         break;
       case 'UPDATE_LEVELS':
         this.state.levels = msg.levels;

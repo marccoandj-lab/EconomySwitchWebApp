@@ -351,65 +351,7 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
   );
 }
 
-// Jail Modal
-interface JailModalProps {
-  title: string;
-  description: string;
-  icon: string;
-  jailFine: number;
-  balance: number;
-  mode: GameMode;
-  onPay: () => void;
-  onSkip: () => void;
-}
 
-export function JailModal({ title, description, icon, jailFine, balance, mode, onPay, onSkip }: JailModalProps) {
-  const canAfford = balance >= jailFine;
-
-  return (
-    <Modal onClose={onSkip} mode={mode}>
-      <div className="p-6 text-center">
-        <div className="text-6xl mb-4">{icon}</div>
-        <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
-        <p className="text-white/70 mb-6">{description}</p>
-        <div className="bg-gray-700/50 rounded-2xl p-4 mb-6 border border-gray-600/30">
-          <p className="text-gray-400 text-sm mb-2">Options:</p>
-          <p className="text-white/80 text-sm">🚫 Skip one turn</p>
-          <p className="text-white/80 text-sm">💰 Pay {jailFine.toLocaleString('en')} € and exit immediately</p>
-        </div>
-
-        {!canAfford && (
-          <div className="bg-rose-500/20 border border-rose-400/30 rounded-xl p-3 mb-6">
-            <p className="text-rose-400 text-sm font-bold">⚠️ Insufficient funds!</p>
-            <p className="text-white/60 text-xs">You need at least {jailFine.toLocaleString('en')} € to pay your way out.</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => {
-              multiplayer.sendAction({ type: 'ACTION_JAIL_WAIT' });
-              onSkip();
-            }}
-            className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-4 rounded-2xl transition-all active:scale-95"
-          >
-            🚫 Wait
-          </button>
-          <button
-            onClick={onPay}
-            disabled={!canAfford}
-            className={`font-bold py-4 rounded-2xl transition-all active:scale-95 ${canAfford
-              ? "bg-amber-500 hover:bg-amber-400 text-white shadow-lg shadow-amber-500/20"
-              : "bg-gray-700 text-white/30 cursor-not-allowed border border-white/5"
-              }`}
-          >
-            💰 Pay {jailFine.toLocaleString('en')} €
-          </button>
-        </div>
-      </div>
-    </Modal>
-  );
-}
 
 // Switch Modal
 interface SwitchModalProps {
@@ -751,9 +693,10 @@ interface AuctionModalProps {
   mode: GameMode;
   players: Player[];
   currentPlayerIndex: number;
+  canContinue?: boolean;
 }
 
-export function AuctionModal({ onResult, mode, players, currentPlayerIndex }: AuctionModalProps) {
+export function AuctionModal({ onResult, mode, players, currentPlayerIndex, canContinue = true }: AuctionModalProps) {
   const [hasRolled, setHasRolled] = useState(false);
   const myId = multiplayer.getMyId();
   const auctionState = multiplayer.state.auction;
@@ -855,9 +798,55 @@ export function AuctionModal({ onResult, mode, players, currentPlayerIndex }: Au
                 {winnerId === multiplayer.getMyId() ? '🎉 You Won Tax Exemption!' : `😢 ${players.find(p => p.id === winnerId)?.name} Won!`}
               </p>
             </div>
-            <button onClick={() => onResult(winnerId === players[currentPlayerIndex].id)} className="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-4 rounded-2xl transition-all">Continue ▶</button>
+            {canContinue ? (
+              <button onClick={() => onResult(winnerId === players[currentPlayerIndex].id)} className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-4 rounded-2xl transition-all shadow-lg active:scale-95 animate-pulse">
+                Continue ▶
+              </button>
+            ) : (
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/10 italic text-white/40 text-sm">
+                Waiting for {players[currentPlayerIndex]?.name} to continue...
+              </div>
+            )}
           </>
         )}
+      </div>
+    </Modal>
+  );
+}
+
+// ── JAIL MODAL ──
+export function JailModal({ title, description, icon, jailFine, balance, mode, onPay, onSkip }: { title: string, description: string, icon: string, jailFine: number, balance: number, mode: GameMode, onPay: () => void, onSkip: () => void }) {
+  const canAfford = balance >= jailFine;
+  return (
+    <Modal onClose={() => { }} mode={mode}>
+      <div className="p-6 text-center">
+        <div className="text-5xl mb-4">{icon}</div>
+        <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
+        <p className="text-white/60 text-sm mb-6">{description}</p>
+
+        <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 mb-6">
+          <p className="text-rose-400 text-[10px] uppercase font-bold tracking-widest mb-1">Get out fine</p>
+          <p className="text-3xl font-black text-white">{jailFine.toLocaleString('en')} €</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={onSkip}
+            className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95"
+          >
+            Preskoči krug
+          </button>
+          <button
+            onClick={onPay}
+            disabled={!canAfford}
+            className={`font-bold py-4 rounded-2xl transition-all ${canAfford
+              ? "bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/20"
+              : "bg-gray-800 text-white/20 cursor-not-allowed border border-white/5"
+              }`}
+          >
+            Plati i nastavi
+          </button>
+        </div>
       </div>
     </Modal>
   );
