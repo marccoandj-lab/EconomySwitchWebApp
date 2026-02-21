@@ -1,4 +1,4 @@
-import { GameMode } from '../data/gameData';
+import { GameMode, Level } from '../data/gameData';
 
 export type GameType = 'single' | 'multi';
 export type AvatarType = 'male' | 'female' | 'robot';
@@ -28,6 +28,7 @@ export interface GameState {
   taxPool: number;
   mode: GameMode;
   sessionState: SessionState;
+  levels?: Level[];
   auction?: {
     active: boolean;
     rolls: Record<string, number>;

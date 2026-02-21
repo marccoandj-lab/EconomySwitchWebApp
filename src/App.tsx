@@ -30,14 +30,14 @@ export const App: React.FC = () => {
   useEffect(() => {
     multiplayer.init((state) => {
       setMpState(state);
+      if (state.levels && state.levels.length > 0) {
+        setLevels(state.levels);
+      }
       if (state.status === 'playing' && gameState !== 'playing') {
         setGameState('playing');
-        if (levels.length === 0) {
-          setLevels(generateLevels(100, 'finance'));
-        }
       }
     });
-  }, [levels.length, gameState]);
+  }, [gameState]);
 
   const handleStart = (_name: string, _avatar: 'male' | 'female' | 'robot', isSingle: boolean) => {
     setIsSinglePlayer(isSingle);
@@ -203,6 +203,7 @@ export const App: React.FC = () => {
         }] : (mpState?.players || [])}
         currentTurnIndex={mpState?.currentTurnIndex || 0}
         myId={isSinglePlayer ? 'single' : multiplayer.getMyId()}
+        levels={levels}
       />
 
       {!isSinglePlayer && mpState && (

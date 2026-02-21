@@ -1,6 +1,8 @@
 import { Peer, DataConnection } from 'peerjs';
 import { nanoid } from 'nanoid';
 import { Player } from '../types/game';
+import { generateLevels } from '../data/levelGenerator';
+import { Level } from '../data/gameData';
 
 export type GameState = {
   roomId: string;
@@ -14,6 +16,7 @@ export type GameState = {
     active: boolean;
     rolls: Record<string, number>;
   };
+  levels: Level[];
 };
 
 export type Message =
@@ -46,7 +49,8 @@ class MultiplayerManager {
     status: 'waiting',
     turnTimeLeft: 60,
     mode: 'finance',
-    auction: { active: false, rolls: {} }
+    auction: { active: false, rolls: {} },
+    levels: []
   };
 
   private myId: string = nanoid(10);
@@ -61,6 +65,7 @@ class MultiplayerManager {
     this.peer = new Peer(roomId);
     this.state.roomId = roomId;
     this.state.status = 'waiting';
+    this.state.levels = generateLevels(100, 'finance');
 
     this.myProfile = {
       id: this.myId,

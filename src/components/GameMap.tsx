@@ -71,6 +71,13 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance }: {
         <span className="text-4xl select-none" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>
           {diceFaces[shownFace]}
         </span>
+
+        {disabled && !isRolling && (
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] rounded-2xl flex items-center justify-center animate-fade-in">
+            <span className="text-3xl filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">🔒</span>
+          </div>
+        )}
+
         {value && !isRolling && (
           <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-yellow-400 text-black font-black text-xs flex items-center justify-center border border-yellow-300 shadow-lg">
             {value}
@@ -87,8 +94,8 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance }: {
           ${disabled || isRolling
             ? 'bg-gray-600 cursor-not-allowed opacity-60'
             : isFinance
-            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 shadow-lg shadow-blue-500/30'
-            : 'bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-400 hover:to-teal-500 shadow-lg shadow-green-500/30'
+              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 shadow-lg shadow-blue-500/30'
+              : 'bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-400 hover:to-teal-500 shadow-lg shadow-green-500/30'
           }
         `}
       >
@@ -178,9 +185,8 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
     <div className={`h-screen bg-gradient-to-b ${bgClass} flex flex-col transition-colors duration-500`}>
       {/* ── HEADER ── */}
       <div
-        className={`flex-shrink-0 z-30 ${
-          isFinance ? 'bg-blue-950/95' : 'bg-green-950/95'
-        } backdrop-blur-md border-b border-white/10 px-4 py-2.5`}
+        className={`flex-shrink-0 z-30 ${isFinance ? 'bg-blue-950/95' : 'bg-green-950/95'
+          } backdrop-blur-md border-b border-white/10 px-4 py-2.5`}
       >
         <div className="max-w-sm mx-auto flex items-center justify-between">
           <div>
@@ -189,11 +195,10 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           </div>
           <div className="text-center">
             <div
-              className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
-                isFinance
+              className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${isFinance
                   ? 'bg-blue-500/30 text-blue-300 border border-blue-400/30'
                   : 'bg-green-500/30 text-green-300 border border-green-400/30'
-              }`}
+                }`}
             >
               {isFinance ? '💼 Finance' : '🌱 Sustainability'}
             </div>
@@ -233,11 +238,10 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           </div>
           <div className="w-full bg-white/10 rounded-full h-1.5">
             <div
-              className={`h-1.5 rounded-full transition-all duration-700 ${
-                isFinance
+              className={`h-1.5 rounded-full transition-all duration-700 ${isFinance
                   ? 'bg-gradient-to-r from-blue-400 to-indigo-400'
                   : 'bg-gradient-to-r from-green-400 to-teal-400'
-              }`}
+                }`}
               style={{ width: `${Math.min((balance / 1000000) * 100, 100)}%` }}
             />
           </div>
@@ -247,7 +251,7 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
       {/* ── MAP SCROLL AREA ── */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto overflow-x-hidden pb-32 pt-4"
+        className="flex-1 overflow-y-auto overflow-x-hidden pb-48 pt-4"
         style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
       >
         <div ref={mapContainerRef} className="max-w-xs mx-auto px-2 relative">
@@ -340,8 +344,8 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
                         ${isCurrent
                           ? 'scale-105 ring-[3px] ring-white/50 shadow-xl'
                           : isCompleted
-                          ? 'opacity-60 scale-[0.92]'
-                          : 'opacity-85'
+                            ? 'opacity-60 scale-[0.92]'
+                            : 'opacity-85'
                         }
                       `}
                       style={{
@@ -371,14 +375,12 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
                       {isCurrent && (
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
                           <span
-                            className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                              isFinance ? 'bg-blue-300' : 'bg-green-300'
-                            }`}
+                            className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isFinance ? 'bg-blue-300' : 'bg-green-300'
+                              }`}
                           />
                           <span
-                            className={`relative inline-flex rounded-full h-3 w-3 border-2 border-white ${
-                              isFinance ? 'bg-blue-400' : 'bg-green-400'
-                            }`}
+                            className={`relative inline-flex rounded-full h-3 w-3 border-2 border-white ${isFinance ? 'bg-blue-400' : 'bg-green-400'
+                              }`}
                           />
                         </span>
                       )}
@@ -399,12 +401,15 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
       </div>
 
       {/* ── BOTTOM PANEL with Dice ── */}
-      <div className="flex-shrink-0 z-30 p-3 pb-4">
+      <div className="flex-shrink-0 z-30 p-3 pb-8 sm:pb-4">
         <div
-          className={`max-w-sm mx-auto ${
-            isFinance ? 'bg-blue-950/95' : 'bg-green-950/95'
-          } rounded-2xl border border-white/10 p-3 backdrop-blur-md shadow-2xl`}
+          className={`max-w-sm mx-auto ${isFinance ? 'bg-blue-950/95' : 'bg-green-950/95'
+            } rounded-2xl border border-white/10 p-3 backdrop-blur-md shadow-2xl relative overflow-hidden`}
         >
+          {jailed && (
+            <div className="absolute inset-0 pointer-events-none bg-rose-500/5 animate-pulse" />
+          )}
+
           {/* Info row */}
           <div className="flex items-center justify-between mb-2 px-1">
             <span className="text-white/40 text-[10px]">Field: {levels[currentLevel]?.icon} {levels[currentLevel]?.label}</span>
