@@ -228,18 +228,7 @@ class MultiplayerManager {
         player.position += msg.steps;
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
 
-        // Calculate next turn
-        let nextIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
-
-        // If the NEXT player is currently in jail and already skipped their turn, release them now
-        // so they can play when it's their turn
-        const nextPlayer = this.state.players[nextIndex];
-        if (nextPlayer.status === 'jail' && nextPlayer.jailSkipped) {
-          nextPlayer.status = 'playing';
-          nextPlayer.jailSkipped = false;
-        }
-
-        this.state.currentTurnIndex = nextIndex;
+        // Turn increment moved to ACTION_INTERACTION_END to wait for modal closure
 
         // AUTO TRIGGER AUCTION FOR EVERYONE
         const boardField = this.state.levels[player.position]?.type;
@@ -356,10 +345,31 @@ class MultiplayerManager {
         break;
       case 'ACTION_INTERACTION_END':
         player.isInteracting = false;
+
+        // Pass the turn only after interaction ends
+        const nextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        const nextP = this.state.players[nextIdx];
+
+        // Release from jail if they skipped previously
+        if (nextP.status === 'jail' && nextP.jailSkipped) {
+          nextP.status = 'playing';
+          nextP.jailSkipped = false;
+        }
+
+        this.state.currentTurnIndex = nextIdx;
         break;
       case 'ACTION_AUCTION_END':
         this.state.auction.active = false;
         player.isInteracting = false;
+
+        // Also increment turn after auction
+        const auctionNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        const auctionNextP = this.state.players[auctionNextIdx];
+        if (auctionNextP.status === 'jail' && auctionNextP.jailSkipped) {
+          auctionNextP.status = 'playing';
+          auctionNextP.jailSkipped = false;
+        }
+        this.state.currentTurnIndex = auctionNextIdx;
         break;
       case 'UPDATE_LEVELS':
         this.state.levels = msg.levels;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GameMap } from './components/GameMap';
 import GameModal from './components/GameModalContainer';
 import { StartScreen } from './components/StartScreen';
@@ -29,6 +29,10 @@ export const App: React.FC = () => {
   const [showExpiry, setShowExpiry] = useState(false);
   const [showTurnModal, setShowTurnModal] = useState(false);
 
+  const handleCloseTurnModal = useCallback(() => {
+    setShowTurnModal(false);
+  }, []);
+
   // Taxation track
   const myExemption = isSinglePlayer ? 0 : (mpState?.players.find(p => p.id === multiplayer.getMyId())?.taxExemptTurns || 0);
   const prevExemption = useRef(myExemption);
@@ -45,15 +49,21 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     multiplayer.init((state) => {
-      // Turn Announcement Logic
       if (!isSinglePlayer && state.status === 'playing') {
         const myId = multiplayer.getMyId();
         const myIndex = state.players.findIndex(p => p.id === myId);
+        const anyoneInteracting = state.players.some(p => p.isInteracting);
 
-        if (prevTurnIndex.current !== state.currentTurnIndex && state.currentTurnIndex === myIndex) {
-          setShowTurnModal(true);
+        if (state.currentTurnIndex === myIndex) {
+          // Trigger announcement only when interaction ends and it's our turn
+          if (prevTurnIndex.current !== myIndex && !anyoneInteracting) {
+            setShowTurnModal(true);
+            prevTurnIndex.current = myIndex;
+          }
+        } else {
+          // Track current turn index to detect changes
+          prevTurnIndex.current = state.currentTurnIndex;
         }
-        prevTurnIndex.current = state.currentTurnIndex;
       }
 
       setMpState(state);
@@ -335,7 +345,7 @@ export const App: React.FC = () => {
       {showTurnModal && (
         <GameModal
           activeField="turn_announcement"
-          onClose={() => setShowTurnModal(false)}
+          onClose={handleCloseTurnModal}
           balance={0}
           levelIndex={0}
           mode={gameMode}
