@@ -17,6 +17,7 @@ interface GameMapProps {
   taxPool: number;
   isTaxpayer: boolean;
   taxExemptionTurns: number;
+  isMyTurn: boolean;
 }
 
 // Zigzag column positions
@@ -93,20 +94,20 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance, isJailed }:
         className={`
           flex-1 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95
           ${disabled || isRolling
-            ? 'bg-gray-600 cursor-not-allowed opacity-60'
+            ? 'bg-slate-700/50 text-slate-400 cursor-not-allowed border border-white/5 saturate-[0.2]'
             : isFinance
               ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 shadow-lg shadow-blue-500/30'
               : 'bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-400 hover:to-teal-500 shadow-lg shadow-green-500/30'
           }
         `}
       >
-        {isRolling ? '🎲 Rolling...' : isJailed ? '🚔 In Jail' : '🎲 Roll Dice!'}
+        {isRolling ? '🎲 Rolling...' : isJailed ? '🚔 In Jail' : disabled ? '⏳ Waiting...' : '🎲 Your Turn!'}
       </button>
     </div>
   );
 }
 
-export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, onRollDice, jailed, diceValue, isRolling, isMoving, animatingLevel, taxPool, isTaxpayer, taxExemptionTurns }: GameMapProps) {
+export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, onRollDice, jailed, diceValue, isRolling, isMoving, animatingLevel, taxPool, isTaxpayer, taxExemptionTurns, isMyTurn }: GameMapProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const fieldRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -424,7 +425,7 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
             value={diceValue}
             isRolling={isRolling}
             onRoll={onRollDice}
-            disabled={jailed || isMoving}
+            disabled={jailed || isMoving || !isMyTurn}
             isFinance={isFinance}
             isJailed={jailed}
           />

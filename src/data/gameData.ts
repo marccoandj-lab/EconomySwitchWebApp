@@ -29,6 +29,7 @@ export interface ListingChallenge {
   mode: GameMode;
   reward: number;
   penalty: number;
+  hint?: string;
 }
 
 export interface IncomeEvent {
@@ -46,12 +47,12 @@ export interface ExpenseEvent {
 }
 
 export const investmentOutcomes: { diceRange: [number, number]; result: 'lose' | 'even' | 'win'; multiplier: number; message: string }[] = [
-  { diceRange: [1, 1], result: 'lose', multiplier: 0,    message: '📉 Total Loss. The market crashed!' },
-  { diceRange: [2, 2], result: 'lose', multiplier: 0,    message: '📉 Total Loss. High-risk failure.' },
-  { diceRange: [3, 3], result: 'lose', multiplier: 0.5,  message: '📉 Significant Loss. Market downturn.' },
-  { diceRange: [4, 4], result: 'even', multiplier: 1.0,  message: '⚖️ Sideways Trend. You broke even.' },
-  { diceRange: [5, 5], result: 'win',  multiplier: 2.0,  message: '🚀 Bull Market! You doubled your money.' },
-  { diceRange: [6, 6], result: 'win',  multiplier: 4.0,  message: '✨ Jackpot! You quadrupled your money!' },
+  { diceRange: [1, 1], result: 'lose', multiplier: 0, message: '📉 Total Loss. The market crashed!' },
+  { diceRange: [2, 2], result: 'lose', multiplier: 0, message: '📉 Total Loss. High-risk failure.' },
+  { diceRange: [3, 3], result: 'lose', multiplier: 0.5, message: '📉 Significant Loss. Market downturn.' },
+  { diceRange: [4, 4], result: 'even', multiplier: 1.0, message: '⚖️ Sideways Trend. You broke even.' },
+  { diceRange: [5, 5], result: 'win', multiplier: 2.0, message: '🚀 Bull Market! You doubled your money.' },
+  { diceRange: [6, 6], result: 'win', multiplier: 4.0, message: '✨ Jackpot! You quadrupled your money!' },
 ];
 
 export function getInvestmentResult(dice: number): { multiplier: number; message: string; result: 'lose' | 'even' | 'win' } {
@@ -67,9 +68,9 @@ export const financeQuizzes: QuizQuestion[] = [
     question: "What is 'passive income'?",
     options: [
       "A) Money earned with little or no active effort (rent, dividends)",
-      "B) Income from a full-time job",
-      "C) Government welfare payments",
-      "D) Money borrowed from a bank",
+      "B) Regular income from working a full-time or part-time job",
+      "C) Monthly government welfare payments for certain citizens",
+      "D) Money borrowed from a local bank that must be repaid with interest",
     ],
     correct: 0,
     explanation: "Passive income is money earned without direct time investment – e.g., rent, dividends, royalties.",
@@ -78,10 +79,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What does ETF stand for?",
     options: [
-      "A) Extra Tax Fund",
-      "B) Equity Transfer Fee",
-      "C) Exchange-Traded Fund",
-      "D) Extended Treasury Finance",
+      "A) Extra Tax Fund for high-income earners",
+      "B) Equity Transfer Fee for stock trades",
+      "C) Exchange-Traded Fund tracking index",
+      "D) Extended Treasury Finance globally",
     ],
     correct: 2,
     explanation: "An ETF (Exchange-Traded Fund) tracks an index like the S&P 500 and trades on the exchange like a stock.",
@@ -90,10 +91,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "In the 50/30/20 budgeting rule, what does the 20% represent?",
     options: [
-      "A) Entertainment and dining",
-      "B) Housing and rent",
-      "C) Food and groceries",
-      "D) Savings and debt repayment",
+      "A) Entertainment, dining, and hobbies",
+      "B) Housing, rent, and utility bills",
+      "C) Food, groceries, and basic needs",
+      "D) Savings, investments, and debt pay",
     ],
     correct: 3,
     explanation: "The 50/30/20 rule: 50% needs, 30% wants, 20% savings and debt repayment.",
@@ -102,10 +103,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is inflation?",
     options: [
-      "A) A rise in interest rates set by the government",
+      "A) A rise in interest rates set by the local government",
       "B) A general increase in prices reducing purchasing power",
-      "C) The growth rate of a country's GDP",
-      "D) A type of investment bond",
+      "C) The growth rate of a country's total economic output",
+      "D) A type of investment bond for long-term savings",
     ],
     correct: 1,
     explanation: "Inflation is a general rise in prices, meaning the same money buys fewer goods and services over time.",
@@ -114,10 +115,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is compound interest?",
     options: [
-      "A) Interest paid only on the original principal",
-      "B) A fixed government tax on savings",
-      "C) Interest earned on both principal and previously earned interest",
-      "D) A penalty fee for early loan repayment",
+      "A) Interest on the original principal only",
+      "B) A fixed annual tax on personal savings",
+      "C) Interest earned on principal and interest",
+      "D) A penalty fee for early bank withdrawals",
     ],
     correct: 2,
     explanation: "Compound interest is 'interest on interest'. Einstein called it the 8th wonder of the world!",
@@ -126,10 +127,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What does ROI stand for?",
     options: [
-      "A) Rate of Inflation",
-      "B) Return on Investment",
-      "C) Risk of Insolvency Index",
-      "D) Revenue Over Income",
+      "A) Initial Rate of Inflation",
+      "B) Total Return on Investment",
+      "C) Potential Risk of Insolvency",
+      "D) Annual Revenue Over Income",
     ],
     correct: 1,
     explanation: "ROI (Return on Investment) measures the gain or loss from an investment relative to its cost.",
@@ -139,9 +140,9 @@ export const financeQuizzes: QuizQuestion[] = [
     question: "What is a 'bear market'?",
     options: [
       "A) A market with rising prices and investor optimism",
-      "B) A market focused on commodities like timber",
-      "C) A stock market index for large companies",
-      "D) A market where prices fall 20% or more from recent highs",
+      "B) A market focused on commodities like raw timber",
+      "C) A stock market index for the largest companies",
+      "D) A market where prices fall 20% or more recently",
     ],
     correct: 3,
     explanation: "A bear market is when prices fall 20%+ from recent highs, often with widespread pessimism.",
@@ -150,10 +151,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is portfolio diversification?",
     options: [
-      "A) Putting all money into the highest-performing stock",
-      "B) Spreading investments across different asset types to reduce risk",
+      "A) Putting all money into one top stock",
+      "B) Spreading funds across various assets",
       "C) Investing only in government bonds",
-      "D) Withdrawing all funds from the stock market",
+      "D) Withdrawing all funds from markets",
     ],
     correct: 1,
     explanation: "Diversification reduces risk by spreading investments across different asset classes and sectors.",
@@ -162,10 +163,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "How is net worth calculated?",
     options: [
-      "A) Total assets + Total liabilities",
-      "B) Annual income – Annual expenses",
-      "C) Total assets – Total liabilities",
-      "D) Monthly salary × 12",
+      "A) Total assets plus total liabilities",
+      "B) Annual income minus annual spent",
+      "C) Total assets minus total liabilities",
+      "D) Total monthly salary times twelve",
     ],
     correct: 2,
     explanation: "Net worth = Total assets (what you own) minus total liabilities (what you owe).",
@@ -174,10 +175,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is Dollar-Cost Averaging (DCA)?",
     options: [
-      "A) Converting dollars to foreign currency at fixed rates",
-      "B) Investing a fixed amount at regular intervals regardless of price",
-      "C) Buying stocks only when prices hit a low",
-      "D) Averaging the cost of daily expenses",
+      "A) Converting currency at fixed rates",
+      "B) Investing fixed sums at set intervals",
+      "C) Buying stocks only at yearly lows",
+      "D) Averaging the cost of daily habits",
     ],
     correct: 1,
     explanation: "DCA means investing a fixed amount regularly, reducing the impact of market volatility.",
@@ -259,9 +260,9 @@ export const financeQuizzes: QuizQuestion[] = [
     question: "What is a 'bull market'?",
     options: [
       "A) A commodity market trading livestock",
-      "B) A market where prices are falling sharply",
-      "C) A market where prices rise 20%+ with investor confidence",
-      "D) A government-controlled stock exchange",
+      "B) A market where prices fall sharply now",
+      "C) A market where prices rise 20%+ fast",
+      "D) A government-run stock exchange zone",
     ],
     correct: 2,
     explanation: "A bull market is characterized by rising prices, investor confidence, and economic growth.",
@@ -270,10 +271,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is opportunity cost?",
     options: [
-      "A) The fee charged for missed investment opportunities",
-      "B) The cost of purchasing a business opportunity",
-      "C) The value of the next best alternative you give up when making a decision",
-      "D) A penalty tax on unused capital",
+      "A) The fee charged for missed investment",
+      "B) The cost of buying a new business now",
+      "C) The value of the alternative given up",
+      "D) A penalty tax on all unused capitals",
     ],
     correct: 2,
     explanation: "Opportunity cost is what you sacrifice when choosing one option over another.",
@@ -498,10 +499,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is the 'Rule of 100' in investing?",
     options: [
-      "A) Saving 100% of your income for one month",
-      "B) Subtracting your age from 100 to determine the % of your portfolio in stocks",
-      "C) Investing only in the top 100 companies",
-      "D) Paying off all debts before you reach 100 years old",
+      "A) Total saving of all monthly income",
+      "B) 100 minus your age equals stock %",
+      "C) Investing only in top 100 firms",
+      "D) Paying off debts by age hundred",
     ],
     correct: 1,
     explanation: "The Rule of 100 (or 110/120) is a simple guide for balancing stocks and bonds as you age.",
@@ -510,10 +511,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is 'phishing' in financial security?",
     options: [
-      "A) A hobby for retired investors",
-      "B) Buying stocks in the fishing and seafood industry",
-      "C) Fraudulent attempts to obtain sensitive info by disguising as a trustworthy entity",
-      "D) A method for analyzing market 'currents'",
+      "A) A hobby for retired bond traders",
+      "B) Buying stocks in the seafood sector",
+      "C) Fraudulent attempts to obtain info",
+      "D) Method for analyzing market flows",
     ],
     correct: 2,
     explanation: "Phishing is a scam where attackers try to steal your login or bank details via fake emails/texts.",
@@ -523,9 +524,9 @@ export const financeQuizzes: QuizQuestion[] = [
     question: "What is a 'vesting period'?",
     options: [
       "A) The time it takes for a check to clear",
-      "B) The time an employee must wait before owning employer-provided assets (like stock options)",
+      "B) The wait time for owning granted assets",
       "C) The duration of a fixed-term bank deposit",
-      "D) The period during which a tax return is audited",
+      "D) The period during which a tax is audited",
     ],
     correct: 1,
     explanation: "Vesting periods are often used to encourage employees to stay with a company longer.",
@@ -534,8 +535,8 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is an index fund?",
     options: [
-      "A) A fund that tries to 'beat' the market using expert picks",
-      "B) A fund that tracks a specific market index (like the S&P 500) for broad market exposure",
+      "A) A fund that tries to 'beat' the total market",
+      "B) A fund that tracks a specific market index",
       "C) A fund that only invests in the gold index",
       "D) A list of all your personal bank accounts",
     ],
@@ -552,10 +553,10 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
   {
     question: "What is a 'carbon footprint'?",
     options: [
-      "A) The total greenhouse gas emissions caused by a person or organization",
-      "B) The amount of carbon stored in a forest",
-      "C) A government tax on fossil fuel companies",
-      "D) The physical land area damaged by carbon dioxide",
+      "A) Total emissions by a person or entity",
+      "B) Total carbon amount stored in forests",
+      "C) State tax on large industrial factories",
+      "D) The land area damaged by fossil gases",
     ],
     correct: 0,
     explanation: "A carbon footprint measures the total greenhouse gas emissions from all activities of a person or entity.",
@@ -565,9 +566,9 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     question: "What does ESG stand for in sustainable investing?",
     options: [
       "A) Economic, Social, and Governance",
-      "B) Energy Savings and Governance",
+      "B) Energy Savings and Global Groups",
       "C) Environmental, Social, and Governance",
-      "D) Ethical Spending Guidelines",
+      "D) Ethical Spending and Growth Goals",
     ],
     correct: 2,
     explanation: "ESG investing considers Environmental, Social, and Governance factors alongside financial returns.",
@@ -576,10 +577,10 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
   {
     question: "What is a 'circular economy'?",
     options: [
-      "A) An economy where money circulates only within one country",
-      "B) A financial model based on round-the-clock trading",
-      "C) An economy model eliminating waste by keeping resources in use through reuse and recycling",
-      "D) A system where all goods are produced locally",
+      "A) Economy of money within one country",
+      "B) Financial model of round-clock trade",
+      "C) Model based on reuse and recycling",
+      "D) System where all goods are local made",
     ],
     correct: 2,
     explanation: "A circular economy is a regenerative system that minimizes waste by keeping resources in use.",
@@ -588,10 +589,10 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
   {
     question: "What was the Paris Agreement of 2015?",
     options: [
-      "A) A trade deal between the EU and the US",
-      "B) An international agreement to limit global warming to 1.5–2°C above pre-industrial levels",
-      "C) A French law banning single-use plastics",
-      "D) A UN resolution on ocean pollution",
+      "A) A trade deal between the major powers",
+      "B) Treaty to limit global warming levels",
+      "C) French law banning single-use plastic",
+      "D) UN resolution on total ocean pollution",
     ],
     correct: 1,
     explanation: "The Paris Agreement (2015) is a global treaty where 196 countries pledged to limit warming.",
@@ -1021,9 +1022,9 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     question: "What is a 'LEED' certification?",
     options: [
       "A) A license to drive electric vehicles",
-      "B) A global rating system for green building design and construction",
-      "C) A tax for companies that use too much water",
-      "D) A certification for sustainable clothing brands",
+      "B) A rating system for green buildings",
+      "C) A tax for companies that waste water",
+      "D) A certification for sustainable shops",
     ],
     correct: 1,
     explanation: "LEED (Leadership in Energy and Environmental Design) is the most widely used green building rating system.",
@@ -1039,31 +1040,37 @@ export const financeListings: ListingChallenge[] = [
     prompt: "List 3 types of passive income",
     answers: ["Rental income", "Stock dividends", "Copyright royalties", "Savings interest", "Affiliate marketing"],
     required: 3, mode: 'finance', reward: 50000, penalty: 40000,
+    hint: "E.g., Rental income, Dividends..."
   },
   {
     prompt: "List 3 ways to save money",
     answers: ["Automated savings", "Cutting non-essential expenses", "Energy efficiency", "Meal prepping", "Using discounts"],
     required: 3, mode: 'finance', reward: 140000, penalty: 110000,
+    hint: "E.g., Meal prepping, Discounts..."
   },
   {
     prompt: "List 3 types of financial risks",
     answers: ["Market volatility", "Credit default risk", "Inflation risk", "Liquidity risk", "Operational risk"],
     required: 3, mode: 'finance', reward: 145000, penalty: 120000,
+    hint: "E.g., Inflation risk, Volatility..."
   },
   {
     prompt: "List 3 types of investment assets",
     answers: ["Common stocks", "Government bonds", "Physical gold", "Real estate", "ETFs", "Cryptocurrencies"],
     required: 3, mode: 'finance', reward: 145000, penalty: 120000,
+    hint: "E.g., Stocks, Gold, Real Estate..."
   },
   {
     prompt: "List 3 types of bank accounts",
     answers: ["Savings account", "Checking/Current account", "Fixed Deposit", "Money Market account"],
     required: 3, mode: 'finance', reward: 135000, penalty: 110000,
+    hint: "E.g., Savings, Checking..."
   },
   {
     prompt: "List 3 ways to increase your income",
     answers: ["Skill upskilling", "Starting a side hustle", "Investing in assets", "Negotiating a raise"],
     required: 3, mode: 'finance', reward: 150000, penalty: 125000,
+    hint: "E.g., Side hustle, Raise..."
   },
 ];
 
@@ -1072,31 +1079,37 @@ export const sustainabilityListings: ListingChallenge[] = [
     prompt: "List 3 renewable energy sources",
     answers: ["Solar power", "Wind energy", "Hydroelectric power", "Geothermal heat", "Biomass energy"],
     required: 3, mode: 'sustainability', reward: 150000, penalty: 125000,
+    hint: "E.g., Solar, Wind, Geothermal..."
   },
   {
     prompt: "List 3 ways to reduce your carbon footprint",
     answers: ["Reducing meat consumption", "Using public transport", "Installing solar panels", "Minimizing air travel"],
     required: 3, mode: 'sustainability', reward: 145000, penalty: 120000,
+    hint: "E.g., Public transport, Solar panels..."
   },
   {
     prompt: "List 3 examples of a circular economy",
     answers: ["Product repair", "Textile recycling", "Upcycling furniture", "Shared tool libraries"],
     required: 3, mode: 'sustainability', reward: 140000, penalty: 115000,
+    hint: "E.g., Recycling, Repair, Reuse..."
   },
   {
     prompt: "List 3 types of pollution",
     answers: ["Air pollution", "Ocean plastic pollution", "Soil contamination", "Noise pollution", "Light pollution"],
     required: 3, mode: 'sustainability', reward: 140000, penalty: 115000,
+    hint: "E.g., Air, Water, Noise..."
   },
   {
     prompt: "List 3 endangered animal species",
     answers: ["Bengal Tiger", "Mountain Gorilla", "Giant Panda", "Black Rhino", "African Elephant"],
     required: 3, mode: 'sustainability', reward: 145000, penalty: 120000,
+    hint: "E.g., Panda, Tiger, Rhino..."
   },
   {
     prompt: "List 3 eco-friendly transport methods",
     answers: ["Cycling", "Electric vehicles (EVs)", "High-speed rail", "Walking", "Public transit"],
     required: 3, mode: 'sustainability', reward: 145000, penalty: 120000,
+    hint: "E.g., Cycling, EVs, Train..."
   },
 ];
 
@@ -1105,38 +1118,38 @@ export const sustainabilityListings: ListingChallenge[] = [
 // ─────────────────────────────────────────────
 // Income: Fixed range [50k, 175k]
 export const incomeEvents: IncomeEvent[] = [
-  { title: "Salary",           description: "You received your monthly salary!",                     amount: 65000,  icon: "💼" },
-  { title: "Freelance Gig",    description: "You completed a project for a client!",                 amount: 50000,  icon: "💻" },
-  { title: "Dividends",        description: "Your stocks paid out a dividend!",                      amount: 85000,  icon: "📈" },
-  { title: "Bonus",            description: "Your excellent performance was rewarded with a bonus!", amount: 120000, icon: "🎁" },
-  { title: "Rent Income",      description: "Income from your rented apartment!",                    amount: 75000,  icon: "🏠" },
-  { title: "Asset Sale",       description: "You sold a high-value asset at a profit!",              amount: 175000, icon: "🚗" },
-  { title: "Savings Interest", description: "High-yield interest on your savings account!",          amount: 55000,  icon: "🏦" },
-  { title: "Tax Refund",       description: "The tax office returned your overpaid taxes!",          amount: 90000,  icon: "📋" },
-  { title: "Investment Gain",  description: "Your tech investments have grown!",                      amount: 140000, icon: "💰" },
-  { title: "Online Income",    description: "Income from your digital business!",                    amount: 110000, icon: "🌐" },
+  { title: "Salary", description: "You received your monthly salary!", amount: 65000, icon: "💼" },
+  { title: "Freelance Gig", description: "You completed a project for a client!", amount: 50000, icon: "💻" },
+  { title: "Dividends", description: "Your stocks paid out a dividend!", amount: 85000, icon: "📈" },
+  { title: "Bonus", description: "Your excellent performance was rewarded with a bonus!", amount: 120000, icon: "🎁" },
+  { title: "Rent Income", description: "Income from your rented apartment!", amount: 75000, icon: "🏠" },
+  { title: "Asset Sale", description: "You sold a high-value asset at a profit!", amount: 175000, icon: "🚗" },
+  { title: "Savings Interest", description: "High-yield interest on your savings account!", amount: 55000, icon: "🏦" },
+  { title: "Tax Refund", description: "The tax office returned your overpaid taxes!", amount: 90000, icon: "📋" },
+  { title: "Investment Gain", description: "Your tech investments have grown!", amount: 140000, icon: "💰" },
+  { title: "Online Income", description: "Income from your digital business!", amount: 110000, icon: "🌐" },
 ];
 
 // Expenses: Fixed range [50k, 75k]
 export const expenseEvents: ExpenseEvent[] = [
-  { title: "Luxury Car Repair",  description: "Expensive vehicle maintenance.",                      amount: 55000, icon: "🔧" },
-  { title: "Medical Surgery",    description: "Unexpected medical procedure.",                       amount: 60000, icon: "🏥" },
-  { title: "Legal Settlement",   description: "Cost of settling a legal dispute.",                   amount: 75000, icon: "⚖️" },
-  { title: "Business Tax Audit", description: "Large tax settlement after audit.",                  amount: 70000, icon: "📋" },
-  { title: "Home Renovation",    description: "Emergency structural repairs to your house.",          amount: 65000, icon: "🏠" },
-  { title: "Tech Upgrade",       description: "Replacing all professional equipment.",                amount: 50000, icon: "💻" },
-  { title: "Vacation Spree",     description: "You went overboard on a luxury holiday.",             amount: 55000, icon: "✈️" },
-  { title: "Stock Crash",        description: "Lost money in a localized market crash.",              amount: 60000, icon: "📉" },
+  { title: "Luxury Car Repair", description: "Expensive vehicle maintenance.", amount: 55000, icon: "🔧" },
+  { title: "Medical Surgery", description: "Unexpected medical procedure.", amount: 60000, icon: "🏥" },
+  { title: "Legal Settlement", description: "Cost of settling a legal dispute.", amount: 75000, icon: "⚖️" },
+  { title: "Business Tax Audit", description: "Large tax settlement after audit.", amount: 70000, icon: "📋" },
+  { title: "Home Renovation", description: "Emergency structural repairs to your house.", amount: 65000, icon: "🏠" },
+  { title: "Tech Upgrade", description: "Replacing all professional equipment.", amount: 50000, icon: "💻" },
+  { title: "Vacation Spree", description: "You went overboard on a luxury holiday.", amount: 55000, icon: "✈️" },
+  { title: "Stock Crash", description: "Lost money in a localized market crash.", amount: 60000, icon: "📉" },
 ];
 
 export const jailMessages = [
-  { title: "Bad Investment!",  description: "You invested without research. Wait one turn to recover.", icon: "📉" },
-  { title: "Tax Audit!",       description: "A tax inspection. Stay in place or pay a fine to leave.", icon: "🔍" },
-  { title: "Fund Bankruptcy",  description: "The fund you invested in collapsed. Skip a turn.",        icon: "💔" },
-  { title: "Poor Decisions!",  description: "A series of bad financial choices has stopped you.",      icon: "⛔" },
+  { title: "Bad Investment!", description: "You invested without research. Wait one turn to recover.", icon: "📉" },
+  { title: "Tax Audit!", description: "A tax inspection. Stay in place or pay a fine to leave.", icon: "🔍" },
+  { title: "Fund Bankruptcy", description: "The fund you invested in collapsed. Skip a turn.", icon: "💔" },
+  { title: "Poor Decisions!", description: "A series of bad financial choices has stopped you.", icon: "⛔" },
 ];
 
 export const switchMessages = [
-  { from: 'finance',        to: 'sustainability', message: "🌱 Switching to Sustainability! Your decisions affect the planet!", icon: "🔄" },
-  { from: 'sustainability', to: 'finance',        message: "💼 Back to Financial Literacy! Use smart investing to fund a green future!", icon: "🔄" },
+  { from: 'finance', to: 'sustainability', message: "🌱 Switching to Sustainability! Your decisions affect the planet!", icon: "🔄" },
+  { from: 'sustainability', to: 'finance', message: "💼 Back to Financial Literacy! Use smart investing to fund a green future!", icon: "🔄" },
 ];

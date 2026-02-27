@@ -15,9 +15,9 @@ export function Modal({ onClose, children, mode }: ModalProps) {
     : 'from-green-900/90 to-teal-900/90';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="absolute inset-0 bg-black/70 animate-backdrop-fade" onClick={onClose} />
-      <div className={`relative w-full sm:max-w-lg bg-gradient-to-br ${bgClass} rounded-t-3xl sm:rounded-3xl border border-white/20 shadow-2xl max-h-[92vh] overflow-y-auto animate-modal-pop`}>
+      <div className={`relative w-full sm:max-w-lg bg-gradient-to-br ${bgClass} rounded-[2rem] border border-white/20 shadow-2xl max-h-[95vh] overflow-y-auto animate-modal-pop`}>
         {children}
       </div>
     </div>
@@ -287,7 +287,10 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
         </div>
         <div className="bg-white/10 rounded-2xl p-4 mb-4">
           <p className="text-white font-semibold">{challenge.prompt}</p>
-          <p className="text-white/60 text-sm mt-1">Required: {challenge.required} of {challenge.answers.length}+</p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-white/60 text-sm">Required: {challenge.required} of {challenge.answers.length}+</p>
+            {challenge.hint && <p className="text-[10px] text-blue-400 font-bold uppercase tracking-wider italic">Hint: {challenge.hint}</p>}
+          </div>
         </div>
         <div className="flex gap-2 mb-4">
           <input
@@ -815,7 +818,7 @@ export function JailModal({ title, description, icon, jailFine, balance, mode, o
             onClick={onSkip}
             className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95"
           >
-            Preskoči krug
+            Skip Turn
           </button>
           <button
             onClick={onPay}
@@ -825,7 +828,7 @@ export function JailModal({ title, description, icon, jailFine, balance, mode, o
               : "bg-gray-800 text-white/20 cursor-not-allowed border border-white/5"
               }`}
           >
-            Plati i nastavi
+            Pay and Continue
           </button>
         </div>
       </div>
@@ -895,8 +898,8 @@ export function VictoryModal({ players }: VictoryModalProps) {
 
         <div className="relative z-10 text-center">
           <div className="text-5xl sm:text-7xl mb-2 sm:mb-4 animate-bounce">🏆</div>
-          <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2 uppercase tracking-tighter">Partija je Završena!</h1>
-          <p className="text-white/50 text-[10px] sm:text-base mb-4 sm:mb-8 italic leading-tight">Prvi igrač koji je stigao do 1,000,000 € je krunisan!</p>
+          <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2 uppercase tracking-tighter">Game Over!</h1>
+          <p className="text-white/50 text-[10px] sm:text-base mb-4 sm:mb-8 italic leading-tight">The first player to reach 1,000,000 € has been crowned!</p>
 
           {/* Winner Stats */}
           <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-8 text-left">
@@ -905,22 +908,22 @@ export function VictoryModal({ players }: VictoryModalProps) {
                 {winner.avatar === 'male' ? '👨' : winner.avatar === 'female' ? '👩' : '🤖'}
               </div>
               <div className="min-w-0">
-                <div className="text-[8px] sm:text-[10px] text-blue-400 font-bold uppercase tracking-widest">Pobednik</div>
+                <div className="text-[8px] sm:text-[10px] text-blue-400 font-bold uppercase tracking-widest">Winner</div>
                 <div className="text-lg sm:text-2xl font-black text-white truncate">{winner.name}</div>
               </div>
               <div className="ml-auto text-right shrink-0">
-                <div className="text-[8px] sm:text-[10px] text-white/40 uppercase font-bold tracking-widest">Konačan Kapital</div>
+                <div className="text-[8px] sm:text-[10px] text-white/40 uppercase font-bold tracking-widest">Final Capital</div>
                 <div className="text-lg sm:text-2xl font-black text-green-400">{winner.capital.toLocaleString()} €</div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-              <StatItem label="Kviz Tačno" value={winner.stats.correctQuizzes} icon="✅" />
-              <StatItem label="Kviz Netočno" value={winner.stats.wrongQuizzes} icon="❌" />
-              <StatItem label="Aukcije Pobjeda" value={winner.stats.auctionWins} icon="⚖️" />
+              <StatItem label="Quiz Correct" value={winner.stats.correctQuizzes} icon="✅" />
+              <StatItem label="Quiz Wrong" value={winner.stats.wrongQuizzes} icon="❌" />
+              <StatItem label="Auction Wins" value={winner.stats.auctionWins} icon="⚖️" />
               <StatItem label="Invest. Profit" value={`${winner.stats.investmentGains.toLocaleString()} €`} icon="📈" />
-              <StatItem label="Invest. Gubitak" value={`${winner.stats.investmentLosses.toLocaleString()} €`} icon="📉" />
-              <StatItem label="Boravak u Zatvoru" value={winner.stats.jailVisits} icon="🔒" />
+              <StatItem label="Invest. Loss" value={`${winner.stats.investmentLosses.toLocaleString()} €`} icon="📉" />
+              <StatItem label="Jail Visits" value={winner.stats.jailVisits} icon="🔒" />
             </div>
           </div>
 
@@ -937,7 +940,7 @@ export function VictoryModal({ players }: VictoryModalProps) {
           </div>
 
           <button onClick={() => window.location.reload()} className="mt-4 sm:mt-8 w-full sm:w-auto px-8 py-3 sm:py-4 bg-white text-slate-900 font-black rounded-xl sm:rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs sm:text-sm uppercase tracking-widest">
-            Igraj Ponovo
+            Play Again
           </button>
         </div>
       </div>
@@ -971,17 +974,35 @@ export function JailSkipModal({ onSkip, mode }: JailSkipModalProps) {
           🔒
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-rose-500/20 blur-2xl -z-10" />
         </div>
-        <h2 className="text-3xl font-black text-white mb-2">U Zatvoru Ste!</h2>
-        <p className="text-white/50 text-base mb-8">Vaš krug je preskočen jer ste u zatvoru. Morate sačekati sledeći red da biste ponovo igrali.</p>
+        <h2 className="text-3xl font-black text-white mb-2">You Are In Jail!</h2>
+        <p className="text-white/50 text-base mb-8">Your turn has been skipped because you are in jail. You must wait for your next turn to play again.</p>
 
         <button
           onClick={onSkip}
           className="w-full py-5 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white font-black rounded-[1.5rem] transition-all shadow-xl shadow-black/40 border border-white/10 active:scale-95 flex items-center justify-center gap-3 group"
         >
           <span className="text-xl group-hover:rotate-12 transition-transform">➡️</span>
-          PRESKOČI POTEZ
+          SKIP TURN
         </button>
       </div>
     </Modal>
+  );
+}
+
+// ── TURN ANNOUNCEMENT MODAL ──
+export function TurnAnnouncementModal({ onComplete }: { onComplete: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 2000);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-12 py-8 rounded-[2rem] shadow-2xl border-4 border-white/20 animate-modal-pop">
+        <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic scale-110">
+          It's Your Turn! 🎲
+        </h2>
+      </div>
+    </div>
   );
 }

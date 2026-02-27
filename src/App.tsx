@@ -27,6 +27,7 @@ export const App: React.FC = () => {
   const [isRolling, setIsRolling] = useState(false);
   const [lastDiceRoll, setLastDiceRoll] = useState<number | null>(null);
   const [showExpiry, setShowExpiry] = useState(false);
+  const [showTurnModal, setShowTurnModal] = useState(false);
 
   // Taxation track
   const myExemption = isSinglePlayer ? 0 : (mpState?.players.find(p => p.id === multiplayer.getMyId())?.taxExemptTurns || 0);
@@ -40,8 +41,21 @@ export const App: React.FC = () => {
     prevExemption.current = myExemption;
   }, [myExemption]);
 
+  const prevTurnIndex = useRef<number | null>(null);
+
   useEffect(() => {
     multiplayer.init((state) => {
+      // Turn Announcement Logic
+      if (!isSinglePlayer && state.status === 'playing') {
+        const myId = multiplayer.getMyId();
+        const myIndex = state.players.findIndex(p => p.id === myId);
+
+        if (prevTurnIndex.current !== state.currentTurnIndex && state.currentTurnIndex === myIndex) {
+          setShowTurnModal(true);
+        }
+        prevTurnIndex.current = state.currentTurnIndex;
+      }
+
       setMpState(state);
       if (state.levels && state.levels.length > 0) {
         setLevels(state.levels);
@@ -50,7 +64,7 @@ export const App: React.FC = () => {
         setGameState('playing');
       }
     });
-  }, [gameState]);
+  }, [gameState, isSinglePlayer]);
 
   const handleStart = (_name: string, _avatar: 'male' | 'female' | 'robot', isSingle: boolean) => {
     setIsSinglePlayer(isSingle);
@@ -260,6 +274,7 @@ export const App: React.FC = () => {
         taxPool={0}
         isTaxpayer={isSinglePlayer ? false : (myProfile?.hasPaidTax || false)}
         taxExemptionTurns={isSinglePlayer ? 0 : (myProfile?.taxExemptTurns || 0)}
+        isMyTurn={isSinglePlayer ? true : (mpState?.currentTurnIndex === mpState?.players.findIndex(p => p.id === multiplayer.getMyId()))}
       />
 
       <GameModal
@@ -315,6 +330,23 @@ export const App: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {showTurnModal && (
+        <GameModal
+          activeField="turn_announcement"
+          onClose={() => setShowTurnModal(false)}
+          balance={0}
+          levelIndex={0}
+          mode={gameMode}
+          levels={[]}
+          players={[]}
+          isSinglePlayer={false}
+          onBalanceChange={() => { }}
+          onListingResult={() => { }}
+          onModeChange={() => { }}
+          onTaxExemption={() => { }}
+        />
       )}
     </div>
   );

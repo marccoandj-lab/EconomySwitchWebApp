@@ -1,5 +1,5 @@
 import { GameMode, financeQuizzes, sustainabilityQuizzes, financeListings, sustainabilityListings, incomeEvents, expenseEvents, jailMessages, Level } from '../data/gameData';
-import { IncomeModal, ExpenseModal, QuizModal, ListingModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal, VictoryModal, JailSkipModal } from './GameModal';
+import { IncomeModal, ExpenseModal, QuizModal, ListingModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal, VictoryModal, JailSkipModal, TurnAnnouncementModal } from './GameModal';
 import { multiplayer } from '../services/MultiplayerManager';
 import { Player } from '../types/game';
 
@@ -247,6 +247,8 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         );
       }
       return null;
+    case 'turn_announcement':
+      return <TurnAnnouncementModal onComplete={onClose} />;
     default:
       return null;
   }
