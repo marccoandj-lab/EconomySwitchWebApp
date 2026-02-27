@@ -254,6 +254,8 @@ class MultiplayerManager {
         }
         break;
       case 'ACTION_TAX_PAY':
+        player.capital -= msg.amount;
+        this.state.taxPool += msg.amount;
         player.stats.taxesPaid++;
         break;
       case 'ACTION_TAX_COLLECT':

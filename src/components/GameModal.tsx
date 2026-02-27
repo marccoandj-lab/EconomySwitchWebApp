@@ -345,6 +345,12 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
             </span>
           ))}
         </div>
+        {finished && found.length >= challenge.required && (
+          <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4 mb-4 text-center animate-bounce">
+            <p className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">Challenge Completed!</p>
+            <p className="text-2xl font-black text-white">+ {challenge.reward.toLocaleString('en')} €</p>
+          </div>
+        )}
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4">
             <div className="flex flex-col">
@@ -612,16 +618,18 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
 
 
 // ── TAX SMALL MODAL ──
-export function TaxSmallModal({ taxExemptionTurns, onClose, mode }: { taxExemptionTurns: number, onClose: () => void, mode: GameMode }) {
+export function TaxSmallModal({ taxExemptionTurns, onClose, mode, amount }: { taxExemptionTurns: number, onClose: () => void, mode: GameMode, amount: number }) {
   const isExempt = taxExemptionTurns > 0;
 
   useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
+    if (isExempt) {
+      const timer = setTimeout(onClose, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [onClose, isExempt]);
 
   return (
-    <Modal onClose={onClose} mode={mode}>
+    <Modal onClose={() => { }} mode={mode}>
       <div className="p-6 text-center">
         <div className="text-6xl mb-4">⚠️</div>
         <h2 className="text-2xl font-bold text-white mb-2">Caution!</h2>
@@ -631,14 +639,25 @@ export function TaxSmallModal({ taxExemptionTurns, onClose, mode }: { taxExempti
             <p className="text-white/40 text-[10px] mt-2">You are safe from collection for {taxExemptionTurns} more turns.</p>
           </div>
         ) : (
-          <div className="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-6 mb-4">
-            <p className="text-amber-400 font-bold text-lg mb-2">Vulnerable Zone</p>
-            <p className="text-white/70 text-sm leading-relaxed">
-              You are standing on a small tax field. If anyone lands on the Tax Collection (🏦) field, they can take money from you!
-            </p>
-          </div>
+          <>
+            <div className="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-6 mb-4">
+              <p className="text-amber-400 font-bold text-lg mb-2">Vulnerable Zone</p>
+              <p className="text-white/70 text-sm leading-relaxed mb-4">
+                You are standing on a small tax field. This incurs a fee and makes you vulnerable to large tax collections!
+              </p>
+              <div className="bg-rose-500/20 border border-rose-500/30 rounded-xl p-3 inline-block">
+                <p className="text-rose-400 font-black text-xl">Tax Fee: {amount.toLocaleString('en')} €</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-full bg-rose-500 hover:bg-rose-400 text-white font-black py-4 rounded-2xl transition-all shadow-lg active:scale-95"
+            >
+              PAY TAX & CONTINUE
+            </button>
+          </>
         )}
-        <p className="text-white/30 text-[10px] animate-pulse">Closing in 3s...</p>
+        {isExempt && <p className="text-white/30 text-[10px] animate-pulse">Closing in 3s...</p>}
       </div>
     </Modal>
   );

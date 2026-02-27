@@ -1045,115 +1045,115 @@ export const financeListings: ListingChallenge[] = [
   {
     prompt: "List 3 ways to save money",
     answers: ["Automated savings", "Cutting non-essential expenses", "Energy efficiency", "Meal prepping", "Using discounts", "Budget tracking", "Loyalty programs", "Comparing prices", "Buying generic brands", "Reducing dine-outs"],
-    required: 3, mode: 'finance', reward: 140000, penalty: 110000,
+    required: 3, mode: 'finance', reward: 85000, penalty: 65000,
     hint: "E.g., Meal prepping, Discounts..."
   },
   {
     prompt: "List 3 types of financial risks",
     answers: ["Market volatility", "Credit default risk", "Inflation risk", "Liquidity risk", "Operational risk", "Interest rate risk", "Currency risk", "Systemic risk", "Concentration risk", "Reinvestment risk"],
-    required: 3, mode: 'finance', reward: 145000, penalty: 120000,
+    required: 3, mode: 'finance', reward: 90000, penalty: 70000,
     hint: "E.g., Inflation risk, Volatility..."
   },
   {
     prompt: "List 3 types of investment assets",
     answers: ["Common stocks", "Government bonds", "Physical gold", "Real estate", "ETFs", "Cryptocurrencies", "Corporate bonds", "Mutual funds", "Commodities", "Collectibles"],
-    required: 3, mode: 'finance', reward: 145000, penalty: 120000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 75000,
     hint: "E.g., Stocks, Gold, Real Estate..."
   },
   {
     prompt: "List 3 types of bank accounts",
     answers: ["Savings account", "Checking account", "Fixed Deposit", "Money Market account", "Certificate of Deposit", "Current account", "Joint account", "Business account"],
-    required: 3, mode: 'finance', reward: 135000, penalty: 110000,
+    required: 3, mode: 'finance', reward: 80000, penalty: 60000,
     hint: "E.g., Savings, Checking..."
   },
   {
     prompt: "List 3 ways to increase your income",
     answers: ["Skill upskilling", "Starting a side hustle", "Investing in assets", "Negotiating a raise", "Freelancing", "Online teaching", "Investing in stocks", "Real estate rental", "Network marketing", "Promotion"],
-    required: 3, mode: 'finance', reward: 150000, penalty: 125000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 75000,
     hint: "E.g., Side hustle, Raise..."
   },
   {
     prompt: "List 3 stock market indices",
     answers: ["S&P 500", "Dow Jones", "Nasdaq", "DAX", "FTSE 100", "Nikkei 225", "CAC 40", "Hang Seng"],
-    required: 3, mode: 'finance', reward: 160000, penalty: 130000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 80000,
     hint: "E.g., S&P 500, Nasdaq..."
   },
   {
     prompt: "List 3 types of long-term debt",
     answers: ["Mortgages", "Student loans", "Auto loans", "Personal loans", "Corporate bonds", "Government bonds"],
-    required: 3, mode: 'finance', reward: 120000, penalty: 100000,
+    required: 3, mode: 'finance', reward: 85000, penalty: 65000,
     hint: "E.g., Mortgages, Bonds..."
   },
   {
     prompt: "List 3 characteristics of a smart goal",
     answers: ["Specific", "Measurable", "Achievable", "Relevant", "Time-bound"],
-    required: 3, mode: 'finance', reward: 80000, penalty: 60000,
+    required: 3, mode: 'finance', reward: 60000, penalty: 45000,
     hint: "S.M.A.R.T. acronym..."
   },
   {
     prompt: "List 3 sources of retirement income",
     answers: ["Social Security", "Pension plan", "Personal savings", "401k", "IRA", "Rental income", "Dividend stocks"],
-    required: 3, mode: 'finance', reward: 140000, penalty: 110000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 75000,
     hint: "E.g., Pension, Savings..."
   },
   {
     prompt: "List 3 types of business structures",
     answers: ["Sole proprietorship", "Partnership", "Corporation", "LLC", "Cooperative"],
-    required: 3, mode: 'finance', reward: 110000, penalty: 90000,
+    required: 3, mode: 'finance', reward: 85000, penalty: 65000,
     hint: "E.g., LLC, Corporation..."
   },
   {
     prompt: "List 3 terms related to taxation",
     answers: ["Deduction", "Income tax", "VAT", "Capital gains tax", "Corporate tax", "Tax refund", "Audit", "Exemption"],
-    required: 3, mode: 'finance', reward: 130000, penalty: 105000,
+    required: 3, mode: 'finance', reward: 90000, penalty: 70000,
     hint: "E.g., Deduction, VAT..."
   },
   {
     prompt: "List 3 major world currencies",
     answers: ["US Dollar", "Euro", "British Pound", "Japanese Yen", "Swiss Franc", "Australian Dollar", "Canadian Dollar", "Chinese Yuan"],
-    required: 3, mode: 'finance', reward: 90000, penalty: 70000,
+    required: 3, mode: 'finance', reward: 70000, penalty: 50000,
     hint: "E.g., USD, Euro..."
   },
   {
     prompt: "List 3 precious metals used for investing",
     answers: ["Gold", "Silver", "Platinum", "Palladium"],
-    required: 3, mode: 'finance', reward: 150000, penalty: 120000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 75000,
     hint: "E.g., Gold, Silver..."
   },
   {
     prompt: "List 3 benefits of life insurance",
     answers: ["Family protection", "Debt coverage", "Estate planning", "Peace of mind", "Cash value", "Tax advantages"],
-    required: 3, mode: 'finance', reward: 140000, penalty: 115000,
+    required: 3, mode: 'finance', reward: 90000, penalty: 70000,
     hint: "E.g., Protection, Savings..."
   },
   {
     prompt: "List 3 components of a monthly budget",
     answers: ["Housing", "Food", "Transportation", "Utilities", "Savings", "Insurance", "Entertainment", "Debt payments"],
-    required: 3, mode: 'finance', reward: 100000, penalty: 80000,
+    required: 3, mode: 'finance', reward: 80000, penalty: 60000,
     hint: "E.g., Housing, Food, Savings..."
   },
   {
     prompt: "List 3 roles in a financial institution",
     answers: ["Bank teller", "Loan officer", "Branch manager", "Financial advisor", "Investment banker", "Trader", "Auditor"],
-    required: 3, mode: 'finance', reward: 125000, penalty: 100000,
+    required: 3, mode: 'finance', reward: 85000, penalty: 65000,
     hint: "E.g., Advisor, Teller..."
   },
   {
     prompt: "List 3 methods of payment",
     answers: ["Cash", "Credit card", "Debit card", "Wire transfer", "Cryptocurrency", "Check", "Mobile pay", "Contactless"],
-    required: 3, mode: 'finance', reward: 70000, penalty: 50000,
+    required: 3, mode: 'finance', reward: 60000, penalty: 40000,
     hint: "E.g., Cash, Card..."
   },
   {
     prompt: "List 3 stages of the economic cycle",
     answers: ["Expansion", "Peak", "Contraction", "Trough", "Recession", "Recovery"],
-    required: 3, mode: 'finance', reward: 160000, penalty: 130000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 80000,
     hint: "E.g., Recession, Recovery..."
   },
   {
     prompt: "List 3 popular trading strategies",
     answers: ["Day trading", "Swing trading", "Scalping", "Position trading", "Value investing", "Growth investing"],
-    required: 3, mode: 'finance', reward: 200000, penalty: 165000,
+    required: 3, mode: 'finance', reward: 95000, penalty: 85000,
     hint: "E.g., Day trading, Value..."
   },
 ];
@@ -1162,121 +1162,121 @@ export const sustainabilityListings: ListingChallenge[] = [
   {
     prompt: "List 3 renewable energy sources",
     answers: ["Solar power", "Wind energy", "Hydroelectric power", "Geothermal heat", "Biomass energy", "Ocean thermal", "Tidal power"],
-    required: 3, mode: 'sustainability', reward: 150000, penalty: 125000,
+    required: 3, mode: 'sustainability', reward: 95000, penalty: 75000,
     hint: "E.g., Solar, Wind, Geothermal..."
   },
   {
     prompt: "List 3 ways to reduce your carbon footprint",
     answers: ["Reducing meat consumption", "Using public transport", "Installing solar panels", "Minimizing air travel", "LED lighting", "Smart thermostat", "Home insulation", "Choosing EVs", "Buying local", "Composting"],
-    required: 3, mode: 'sustainability', reward: 145000, penalty: 120000,
+    required: 3, mode: 'sustainability', reward: 90000, penalty: 70000,
     hint: "E.g., Public transport, Solar panels..."
   },
   {
     prompt: "List 3 examples of a circular economy",
     answers: ["Product repair", "Textile recycling", "Upcycling furniture", "Shared tool libraries", "Refill shops", "Leasing products", "Regenerative design", "Cradle to cradle", "Industrial symbiosis"],
-    required: 3, mode: 'sustainability', reward: 140000, penalty: 115000,
+    required: 3, mode: 'sustainability', reward: 90000, penalty: 70000,
     hint: "E.g., Recycling, Repair, Reuse..."
   },
   {
     prompt: "List 3 types of pollution",
     answers: ["Air pollution", "Plastic pollution", "Soil contamination", "Noise pollution", "Light pollution", "Water pollution", "Thermal pollution", "Radioactive pollution"],
-    required: 3, mode: 'sustainability', reward: 140000, penalty: 115000,
+    required: 3, mode: 'sustainability', reward: 85000, penalty: 65000,
     hint: "E.g., Air, Water, Noise..."
   },
   {
     prompt: "List 3 endangered animal species",
     answers: ["Bengal Tiger", "Mountain Gorilla", "Giant Panda", "Black Rhino", "African Elephant", "Snow Leopard", "Vaquita", "Blue Whale", "Orangutan"],
-    required: 3, mode: 'sustainability', reward: 145000, penalty: 120000,
+    required: 3, mode: 'sustainability', reward: 95000, penalty: 75000,
     hint: "E.g., Panda, Tiger, Rhino..."
   },
   {
     prompt: "List 3 eco-friendly transport methods",
     answers: ["Cycling", "Electric vehicles", "High-speed rail", "Walking", "Public transit", "Electric scooters", "Carpooling", "Sailing"],
-    required: 3, mode: 'sustainability', reward: 145000, penalty: 120000,
+    required: 3, mode: 'sustainability', reward: 85000, penalty: 65000,
     hint: "E.g., Cycling, EVs, Train..."
   },
   {
     prompt: "List 3 benefits of trees",
     answers: ["Oxygen production", "Carbon sequestration", "Providing shade", "Wildlife habitat", "Preventing erosion", "Water filtration", "Cooling cities"],
-    required: 3, mode: 'sustainability', reward: 110000, penalty: 90000,
+    required: 3, mode: 'sustainability', reward: 75000, penalty: 55000,
     hint: "E.g., Oxygen, Habitat..."
   },
   {
     prompt: "List 3 greenhouse gases",
     answers: ["Carbon dioxide", "Methane", "Nitrous oxide", "Water vapor", "Ozone", "Fluorinated gases"],
-    required: 3, mode: 'sustainability', reward: 130000, penalty: 105000,
+    required: 3, mode: 'sustainability', reward: 90000, penalty: 70000,
     hint: "E.g., CO2, Methane..."
   },
   {
     prompt: "List 3 sustainable materials",
     answers: ["Bamboo", "Cork", "Hemp", "Recycled plastic", "Organic cotton", "Mushroom leather", "Reclaimed wood"],
-    required: 3, mode: 'sustainability', reward: 120000, penalty: 95000,
+    required: 3, mode: 'sustainability', reward: 85000, penalty: 65000,
     hint: "E.g., Bamboo, Cork..."
   },
   {
     prompt: "List 3 types of natural disasters",
     answers: ["Hurricanes", "Droughts", "Floods", "Wildfires", "Earthquakes", "Tsunamis", "Landslides"],
-    required: 3, mode: 'sustainability', reward: 95000, penalty: 75000,
+    required: 3, mode: 'sustainability', reward: 70000, penalty: 50000,
     hint: "E.g., Flood, Wildfire..."
   },
   {
     prompt: "List 3 ways to conserve water",
     answers: ["Short showers", "Fixing leaks", "Rainwater harvesting", "Using a dishwasher", "Greywater recycling", "Xeriscaping", "Low-flow toilets"],
-    required: 3, mode: 'sustainability', reward: 125000, penalty: 100000,
+    required: 3, mode: 'sustainability', reward: 80000, penalty: 60000,
     hint: "E.g., Rainwater, Fix leaks..."
   },
   {
     prompt: "List 3 sustainable agricultural practices",
     answers: ["Crop rotation", "Organic farming", "Permaculture", "No-till farming", "Agroforestry", "Cover cropping", "Drip irrigation"],
-    required: 3, mode: 'sustainability', reward: 155000, penalty: 130000,
+    required: 3, mode: 'sustainability', reward: 95000, penalty: 75000,
     hint: "E.g., Organic, Rotation..."
   },
   {
     prompt: "List 3 ways businesses can be green",
     answers: ["Zero waste offices", "Green supply chains", "ESG reporting", "Carbon offsetting", "Reducing packaging", "Switching to renewables"],
-    required: 3, mode: 'sustainability', reward: 165000, penalty: 140000,
+    required: 3, mode: 'sustainability', reward: 95000, penalty: 80000,
     hint: "E.g., Carbon offset, Less packaging..."
   },
   {
     prompt: "List 3 elements of biodiversity",
     answers: ["Genetic diversity", "Species diversity", "Ecosystem diversity"],
-    required: 3, mode: 'sustainability', reward: 100000, penalty: 80000,
+    required: 3, mode: 'sustainability', reward: 75000, penalty: 55000,
     hint: "Acourse of life..."
   },
   {
     prompt: "List 3 causes of deforestation",
     answers: ["Agriculture expansion", "Logging", "Infrastructure growth", "Mining", "Forest fires"],
-    required: 3, mode: 'sustainability', reward: 140000, penalty: 115000,
+    required: 3, mode: 'sustainability', reward: 90000, penalty: 70000,
     hint: "E.g., Logging, Agriculture..."
   },
   {
     prompt: "List 3 international environmental agreements",
     answers: ["Paris Agreement", "Kyoto Protocol", "Montreal Protocol", "European Green Deal", "Convention on Biological Diversity"],
-    required: 3, mode: 'sustainability', reward: 180000, penalty: 150000,
+    required: 3, mode: 'sustainability', reward: 95000, penalty: 85000,
     hint: "E.g., Paris Agreement..."
   },
   {
     prompt: "List 3 single-use plastic items to avoid",
     answers: ["Straws", "Plastic bags", "Water bottles", "Cutlery", "Coffee cups", "Takeout containers", "Balloons"],
-    required: 3, mode: 'sustainability', reward: 85000, penalty: 65000,
+    required: 3, mode: 'sustainability', reward: 55000, penalty: 40000,
     hint: "E.g., Straws, Bags..."
   },
   {
     prompt: "List 3 cities known for sustainability",
     answers: ["Copenhagen", "Amsterdam", "Stockholm", "Vancouver", "Singapore", "Berlin", "Oslo", "Zurich"],
-    required: 3, mode: 'sustainability', reward: 115000, penalty: 90000,
+    required: 3, mode: 'sustainability', reward: 85000, penalty: 65000,
     hint: "E.g., Copenhagen, Oslo..."
   },
   {
     prompt: "List 3 oceans of the world",
     answers: ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Southern Ocean", "Arctic Ocean"],
-    required: 3, mode: 'sustainability', reward: 60000, penalty: 40000,
+    required: 3, mode: 'sustainability', reward: 50000, penalty: 35000,
     hint: "E.g., Pacific, Arctic..."
   },
   {
     prompt: "List 3 sources of marine litter",
     answers: ["Fishing gear", "Plastic bottles", "Microplastics", "Industrial waste", "Urban runoff"],
-    required: 3, mode: 'sustainability', reward: 135000, penalty: 110000,
+    required: 3, mode: 'sustainability', reward: 90000, penalty: 70000,
     hint: "E.g., Fishing nets, Bottles..."
   },
 ];

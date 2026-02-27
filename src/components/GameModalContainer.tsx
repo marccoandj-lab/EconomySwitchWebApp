@@ -202,12 +202,24 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         />
       );
     case 'tax_small':
-      const myTaxExemption = multiplayer.state.players.find(p => p.id === multiplayer.getMyId())?.taxExemptTurns || 0;
+      const myTaxProfile = multiplayer.state.players.find(p => p.id === multiplayer.getMyId());
+      const myTaxExemption = myTaxProfile?.taxExemptTurns || 0;
+      const smallTaxAmount = 12500;
       return (
         <TaxSmallModal
           taxExemptionTurns={myTaxExemption}
           mode={mode}
-          onClose={onClose}
+          amount={smallTaxAmount}
+          onClose={() => {
+            if (!myTaxExemption) {
+              if (isSinglePlayer) {
+                onBalanceChange(-smallTaxAmount);
+              } else {
+                multiplayer.sendAction({ type: 'ACTION_TAX_PAY', amount: smallTaxAmount });
+              }
+            }
+            onClose();
+          }}
         />
       );
     case 'tax_large':
