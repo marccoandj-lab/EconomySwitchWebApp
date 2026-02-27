@@ -26,9 +26,11 @@ export const MobilePlayerStatus: React.FC<MobilePlayerStatusProps> = ({ players,
                         className="bg-slate-900/80 backdrop-blur-md border border-white/10 p-2 rounded-xl flex items-center justify-between pointer-events-auto shadow-lg animate-fade-in"
                     >
                         <div className="flex items-center gap-3">
-                            <span className="text-xl">
-                                {player.avatar === 'male' ? '👨' : player.avatar === 'female' ? '👩' : '🤖'}
-                            </span>
+                            <img
+                                src={`/assets/${player.avatar}.png`}
+                                alt={player.name}
+                                className="w-10 h-10 object-contain rounded-lg bg-white/5 p-1"
+                            />
                             <div>
                                 <div className="text-[10px] text-white/50 font-bold uppercase truncate max-w-[80px]">
                                     {player.name}

@@ -30,9 +30,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ players, currentTurnIndex, myI
             >
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <span className="text-2xl">
-                    {player.avatar === 'male' ? '👨' : player.avatar === 'female' ? '👩' : '🤖'}
-                  </span>
+                  <img
+                    src={`/assets/${player.avatar}.png`}
+                    alt={player.name}
+                    className="w-10 h-10 object-contain rounded-lg bg-white/5 p-1"
+                  />
                   {isTurn && (
                     <span className="absolute -top-1 -right-1 flex h-3 w-3">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>

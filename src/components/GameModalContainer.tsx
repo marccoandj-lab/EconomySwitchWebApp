@@ -66,6 +66,9 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   const currentListings = mode === 'finance' ? financeListings : sustainabilityListings;
 
   // Pick random content
+  // Use a hash of levelIndex and potentially game session to get more variety,
+  // but for "no repeat within session", we can use a randomized offset generated at start.
+  // For now, let's just use levelIndex but we could add a session seed.
   const quiz = currentQuizzes[levelIndex % currentQuizzes.length];
   const listing = currentListings[levelIndex % currentListings.length];
   const income = incomeEvents[levelIndex % incomeEvents.length];

@@ -200,9 +200,9 @@ export const financeQuizzes: QuizQuestion[] = [
     question: "What does the P/E ratio measure?",
     options: [
       "A) Profit vs. Expenses",
-      "B) A stock's price relative to its earnings per share",
+      "B) Price of a stock relative to earnings per share",
       "C) Public vs. Equity market size",
-      "D) Portfolio Efficiency rating",
+      "D) Private vs. Estate valuation",
     ],
     correct: 1,
     explanation: "The P/E ratio compares a stock's price to its earnings per share – a key valuation metric.",
@@ -213,7 +213,7 @@ export const financeQuizzes: QuizQuestion[] = [
     options: [
       "A) Income earned from investments only",
       "B) Your take-home pay after all deductions",
-      "C) Your total earnings before any taxes or deductions",
+      "C) Your total earnings before any deductions",
       "D) Profits from selling a business",
     ],
     correct: 2,
@@ -236,9 +236,9 @@ export const financeQuizzes: QuizQuestion[] = [
     question: "What is the Rule of 72?",
     options: [
       "A) A tax rule limiting deductions to 72% of income",
-      "B) A law requiring 72-hour notice before withdrawing funds",
-      "C) A budgeting principle saving 72% of every paycheck",
-      "D) Divide 72 by the annual interest rate to estimate how long it takes to double your money",
+      "B) A law requiring a notice for withdrawing funds",
+      "C) A budgeting principle for saving your paycheck",
+      "D) A formula to estimate when your money doubles",
     ],
     correct: 3,
     explanation: "Divide 72 by your annual interest rate to estimate the years needed to double your investment.",
@@ -247,10 +247,10 @@ export const financeQuizzes: QuizQuestion[] = [
   {
     question: "What is amortization?",
     options: [
-      "A) Gradually paying off a loan through regular installments",
-      "B) The process of converting assets to cash instantly",
-      "C) A tax deduction for business losses",
-      "D) An increase in asset value over time",
+      "A) Gradually paying off a loan via installments",
+      "B) Selling an asset to cover a short-term loss",
+      "C) The process of calculating annual dividends",
+      "D) A legal term for declaring personal bankruptcy",
     ],
     correct: 0,
     explanation: "Amortization is paying off a loan through regular installments of principal and interest.",

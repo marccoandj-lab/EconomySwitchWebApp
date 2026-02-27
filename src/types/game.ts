@@ -1,7 +1,7 @@
 import { GameMode, Level } from '../data/gameData';
 
 export type GameType = 'single' | 'multi';
-export type AvatarType = 'male' | 'female' | 'robot';
+export type AvatarType = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
 export type SessionState = 'WAITING_FOR_PLAYERS' | 'READY_TO_START' | 'IN_GAME' | 'PAUSED' | 'ENDED';
 

@@ -2,26 +2,26 @@ import React, { useState } from 'react';
 import { multiplayer } from '../services/MultiplayerManager';
 
 interface StartScreenProps {
-  onStart: (name: string, avatar: 'male' | 'female' | 'robot', isSingle: boolean) => void;
+  onStart: (name: string, avatar: string, isSingle: boolean) => void;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState<'male' | 'female' | 'robot'>('male');
+  const [avatar, setAvatar] = useState<string>('1');
   const [mode, setMode] = useState<'initial' | 'create' | 'join' | 'single'>('initial');
   const [roomCode, setRoomCode] = useState('');
 
   const handleAction = () => {
     if (!name) return alert('Enter your name!');
-    
+
     if (mode === 'single') {
       onStart(name, avatar, true);
     } else if (mode === 'create') {
-      multiplayer.createRoom(name, avatar);
+      multiplayer.createRoom(name, avatar as any);
       onStart(name, avatar, false);
     } else if (mode === 'join') {
       if (!roomCode) return alert('Enter room code!');
-      multiplayer.joinRoom(roomCode, name, avatar);
+      multiplayer.joinRoom(roomCode, name, avatar as any);
       onStart(name, avatar, false);
     }
   };
@@ -46,7 +46,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
           </div>
 
           <div className="grid gap-4">
-            <button 
+            <button
               onClick={() => setMode('single')}
               className="group relative p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all"
             >
@@ -61,7 +61,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               </div>
             </button>
 
-            <button 
+            <button
               onClick={() => setMode('create')}
               className="group relative p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all"
             >
@@ -76,7 +76,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               </div>
             </button>
 
-            <button 
+            <button
               onClick={() => setMode('join')}
               className="group relative p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all"
             >
@@ -99,7 +99,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   return (
     <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center p-6 z-50 overflow-hidden">
       <div className="max-w-sm w-full space-y-8 bg-white/5 p-8 rounded-[32px] border border-white/10 backdrop-blur-xl">
-        <button 
+        <button
           onClick={() => setMode('initial')}
           className="text-slate-500 hover:text-white transition-colors text-sm flex items-center gap-2"
         >
@@ -118,8 +118,8 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               <label className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2 block">
                 Player Name
               </label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name..."
@@ -132,8 +132,8 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                 <label className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2 block">
                   Room Code
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={roomCode}
                   onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                   placeholder="CODE123"
@@ -144,24 +144,25 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
 
             <div>
               <label className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2 block text-center">
-                Select Avatar
+                Select Character
               </label>
-              <div className="flex justify-between gap-2">
-                {(['male', 'female', 'robot'] as const).map((a) => (
+              <div className="grid grid-cols-3 gap-2">
+                {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((a) => (
                   <button
                     key={a}
                     onClick={() => setAvatar(a)}
-                    className={`flex-1 p-3 rounded-xl border transition-all ${
-                      avatar === a 
-                        ? 'bg-blue-600/20 border-blue-500 scale-105' 
-                        : 'bg-white/5 border-white/10 opacity-50'
-                    }`}
+                    className={`p-2 rounded-xl border transition-all flex flex-col items-center justify-center gap-1 ${avatar === a
+                      ? 'bg-blue-600/20 border-blue-500 scale-105 ring-2 ring-blue-500/50'
+                      : 'bg-white/5 border-white/10 opacity-60 hover:opacity-100 hover:bg-white/10'
+                      }`}
                   >
-                    <span className="text-3xl block mb-1">
-                      {a === 'male' ? '👨' : a === 'female' ? '👩' : '🤖'}
-                    </span>
-                    <span className="text-[10px] text-white uppercase font-bold">
-                      {a}
+                    <img
+                      src={`/assets/${a}.png`}
+                      alt={`Character ${a}`}
+                      className="w-12 h-12 object-contain"
+                    />
+                    <span className="text-[10px] text-white/50 uppercase font-black">
+                      #{a}
                     </span>
                   </button>
                 ))}

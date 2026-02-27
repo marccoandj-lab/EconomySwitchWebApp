@@ -1,6 +1,6 @@
 import { Peer, DataConnection } from 'peerjs';
 import { nanoid } from 'nanoid';
-import { Player } from '../types/game';
+import { Player, AvatarType } from '../types/game';
 import { generateLevels } from '../data/levelGenerator';
 import { Level } from '../data/gameData';
 
@@ -84,7 +84,7 @@ class MultiplayerManager {
     this.onStateUpdate = onUpdate;
   }
 
-  createRoom(name: string, avatar: 'male' | 'female' | 'robot'): string {
+  createRoom(name: string, avatar: AvatarType): string {
     const roomId = nanoid(6).toUpperCase();
     this.peer = new Peer(roomId);
     this.state.roomId = roomId;
@@ -130,7 +130,7 @@ class MultiplayerManager {
     return roomId;
   }
 
-  joinRoom(roomId: string, name: string, avatar: 'male' | 'female' | 'robot') {
+  joinRoom(roomId: string, name: string, avatar: AvatarType) {
     this.peer = new Peer();
     this.state.roomId = roomId;
 

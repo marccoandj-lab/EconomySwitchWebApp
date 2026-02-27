@@ -223,6 +223,7 @@ interface ListingModalProps {
 export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
   const [input, setInput] = useState('');
   const [found, setFound] = useState<string[]>([]);
+  const [wrongCount, setWrongCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(35);
   const [finished, setFinished] = useState(false);
   const [message, setMessage] = useState('');
@@ -248,13 +249,15 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
   const handleSubmit = () => {
     if (!input.trim() || finished) return;
     const normalized = input.trim().toLowerCase();
-    const isValid = challenge.answers.some(a => normalized.includes(a.toLowerCase()) || a.toLowerCase().includes(normalized));
+
+    // Exact matching logic - check if the word is in the dictionary list
+    const isValid = challenge.answers.some(a => a.toLowerCase() === normalized);
     const alreadyFound = found.some(f => f.toLowerCase() === normalized);
 
     if (isValid && !alreadyFound) {
       const newFound = [...found, input.trim()];
       setFound(newFound);
-      setMessage('✅ Correct!');
+      setMessage('✅ Match Found!');
       setInput('');
       if (newFound.length >= challenge.required) {
         setFinished(true);
@@ -262,8 +265,11 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
       }
     } else if (alreadyFound) {
       setMessage('⚠️ Already listed!');
+      setInput('');
     } else {
-      setMessage('❌ Not on the list!');
+      setWrongCount(prev => prev + 1);
+      setMessage('❌ Not in dictionary!');
+      setInput('');
     }
     setTimeout(() => setMessage(''), 1500);
   };
@@ -299,7 +305,7 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            placeholder="Type answer..."
+            placeholder={`e.g. ${challenge.answers[0]}`}
             disabled={finished}
             className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 outline-none focus:border-white/40"
           />
@@ -320,9 +326,18 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
           ))}
         </div>
         <div className="flex justify-between items-center mb-4">
-          <div className="text-white/60 text-sm">{found.length}/{challenge.required} found</div>
+          <div className="flex gap-4">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-white/40 uppercase font-black">Correct</span>
+              <span className="text-emerald-400 font-black">{found.length}/{challenge.required}</span>
+            </div>
+            <div className="flex flex-col border-l border-white/10 pl-4">
+              <span className="text-[10px] text-white/40 uppercase font-black">Invalid</span>
+              <span className="text-rose-400 font-black">{wrongCount}</span>
+            </div>
+          </div>
           {finished && (
-            <div className={`font-bold ${found.length >= challenge.required ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <div className={`font-bold text-lg ${found.length >= challenge.required ? 'text-emerald-400' : 'text-rose-400'}`}>
               {found.length >= challenge.required ? `+${challenge.reward.toLocaleString('en')} €` : `-${challenge.penalty.toLocaleString('en')} €`}
             </div>
           )}
@@ -636,7 +651,11 @@ export function TaxLargeModal({ targets, onCollect, onClose, mode }: TaxLargeMod
                 {targets.map(p => (
                   <div key={p.id} className="flex items-center justify-between bg-white/5 p-2 rounded-xl">
                     <div className="flex items-center gap-2">
-                      <span>{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
+                      <img
+                        src={`/assets/${p.avatar}.png`}
+                        alt=""
+                        className="w-8 h-8 object-contain rounded-lg bg-white/5 p-1"
+                      />
                       <span className="text-xs font-medium text-white">{p.name}</span>
                     </div>
                     <span className="text-rose-400 text-xs font-bold">{p.taxExemptTurns > 0 ? '🛡️ EXEMPT' : `-${amountPerPlayer.toLocaleString()} €`}</span>
@@ -726,7 +745,11 @@ export function AuctionModal({ onResult, mode, players, currentPlayerIndex, canC
             <div className="bg-white/5 rounded-2xl p-4 border border-white/10 mb-4 text-center">
               <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-1">Upcoming Roller:</p>
               <div className="flex items-center justify-center gap-2">
-                <span className="text-lg">{activeRoller.avatar === 'male' ? '👨' : activeRoller.avatar === 'female' ? '👩' : '🤖'}</span>
+                <img
+                  src={`/assets/${activeRoller.avatar}.png`}
+                  alt=""
+                  className="w-8 h-8 object-contain"
+                />
                 <span className="text-white font-bold">{activeRoller.name} {activeRoller.id === myId && '(You)'}</span>
               </div>
             </div>
@@ -770,7 +793,11 @@ export function AuctionModal({ onResult, mode, players, currentPlayerIndex, canC
               {players.map(p => (
                 <div key={p.id} className={`flex items-center justify-between p-3 rounded-xl border ${p.id === winnerId ? 'bg-emerald-500/20 border-emerald-400/40' : 'bg-white/5 border-white/5'}`}>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
+                    <img
+                      src={`/assets/${p.avatar}.png`}
+                      alt=""
+                      className="w-6 h-6 object-contain"
+                    />
                     <span className={`text-xs font-bold ${p.id === winnerId ? 'text-emerald-300' : 'text-white/60'}`}>{p.name}</span>
                   </div>
                   <span className={`font-black text-xl ${p.id === winnerId ? 'text-emerald-400' : 'text-white/40'}`}>{rolls[p.id]}</span>
@@ -904,8 +931,12 @@ export function VictoryModal({ players }: VictoryModalProps) {
           {/* Winner Stats */}
           <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-8 text-left">
             <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-blue-500/20 flex items-center justify-center text-3xl sm:text-4xl border border-blue-500/30 shrink-0">
-                {winner.avatar === 'male' ? '👨' : winner.avatar === 'female' ? '👩' : '🤖'}
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 shrink-0">
+                <img
+                  src={`/assets/${winner.avatar}.png`}
+                  alt=""
+                  className="w-10 h-10 sm:w-14 sm:h-14 object-contain"
+                />
               </div>
               <div className="min-w-0">
                 <div className="text-[8px] sm:text-[10px] text-blue-400 font-bold uppercase tracking-widest">Winner</div>
@@ -932,7 +963,11 @@ export function VictoryModal({ players }: VictoryModalProps) {
             {sortedPlayers.map((p, idx) => (
               <div key={p.id} className={`flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl sm:rounded-2xl border ${idx === 0 ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}>
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-white/5 flex items-center justify-center font-bold text-white/50 text-xs sm:text-sm">{idx + 1}.</div>
-                <span className="text-lg sm:text-xl shrink-0">{p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}</span>
+                <img
+                  src={`/assets/${p.avatar}.png`}
+                  alt=""
+                  className="w-6 h-6 sm:w-8 sm:h-8 object-contain shrink-0"
+                />
                 <span className="font-bold text-white text-[11px] sm:text-sm truncate">{p.name}</span>
                 <span className="ml-auto font-black text-white/80 text-[11px] sm:text-sm shrink-0">{p.capital.toLocaleString()} €</span>
               </div>

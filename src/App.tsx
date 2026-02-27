@@ -76,7 +76,7 @@ export const App: React.FC = () => {
     });
   }, [gameState, isSinglePlayer]);
 
-  const handleStart = (_name: string, _avatar: 'male' | 'female' | 'robot', isSingle: boolean) => {
+  const handleStart = (_name: string, _avatar: string, isSingle: boolean) => {
     setIsSinglePlayer(isSingle);
     if (isSingle) {
       setLevels(generateLevels(100, 'finance'));
@@ -176,9 +176,11 @@ export const App: React.FC = () => {
               {mpState.players.map((p) => (
                 <div key={p.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 animate-fade-in">
                   <div className="flex items-center gap-4">
-                    <span className="text-2xl">
-                      {p.avatar === 'male' ? '👨' : p.avatar === 'female' ? '👩' : '🤖'}
-                    </span>
+                    <img
+                      src={`/assets/${p.avatar}.png`}
+                      alt=""
+                      className="w-10 h-10 object-contain rounded-lg bg-white/5 p-1"
+                    />
                     <span className="text-white font-medium">{p.name} {p.id === multiplayer.getMyId() && '(You)'}</span>
                   </div>
                   {p.isHost && <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Host</span>}
@@ -246,7 +248,7 @@ export const App: React.FC = () => {
 
       <Sidebar
         players={isSinglePlayer ? [{
-          id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
+          id: 'single', name: 'You', avatar: '1', capital: balance, position: currentLevelIndex,
           isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
           jailSkipped: false,
           stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
@@ -268,7 +270,7 @@ export const App: React.FC = () => {
         levels={levels}
         currentLevel={currentLevelIndex}
         currentPlayer={myProfile || {
-          id: 'single', name: 'You', avatar: 'male', capital: balance, position: currentLevelIndex,
+          id: 'single', name: 'You', avatar: '1', capital: balance, position: currentLevelIndex,
           isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
           jailSkipped: false,
           stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }

@@ -300,9 +300,11 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
                     : 'drop-shadow(0 0 18px rgba(16,185,129,0.9))',
                 }}
               >
-                <span className="text-3xl" aria-label="Player" role="img">
-                  {currentPlayer.avatar === 'male' ? '👨' : currentPlayer.avatar === 'female' ? '👩' : '🤖'}
-                </span>
+                <img
+                  src={`/assets/${currentPlayer.avatar}.png`}
+                  alt={currentPlayer.name}
+                  className="w-12 h-12 object-contain"
+                />
                 <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-bold tracking-wide text-white/90 drop-shadow-md whitespace-nowrap bg-black/40 px-2 py-0.5 rounded-full">
                   {currentPlayer.name.toUpperCase()}
                 </span>
