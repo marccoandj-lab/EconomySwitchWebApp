@@ -236,8 +236,9 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
         if (t <= 1) {
           clearInterval(timer);
           setFinished(true);
-          const success = found.length >= challenge.required;
-          setTimeout(() => onResult(success, challenge.reward, challenge.penalty, found.length), 1500);
+          const rewardPerItem = Math.floor(challenge.reward / challenge.required);
+          const totalReward = found.length * rewardPerItem;
+          setTimeout(() => onResult(found.length > 0, totalReward, 0, found.length), 1500);
           return 0;
         }
         return t - 1;
@@ -282,16 +283,20 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
       setFound(newFound);
       setMessage('✅ Match Found!');
       setInput('');
-      if (newFound.length >= challenge.required) {
-        setFinished(true);
-        setTimeout(() => onResult(true, challenge.reward, challenge.penalty, newFound.length), 1200);
-      }
     } else {
       setWrongCount(prev => prev + 1);
       setMessage('❌ Not in dictionary!');
       setInput('');
     }
     setTimeout(() => setMessage(''), 1500);
+  };
+
+  const handleFinalSubmit = () => {
+    if (finished) return;
+    setFinished(true);
+    const rewardPerItem = Math.floor(challenge.reward / challenge.required);
+    const totalReward = found.length * rewardPerItem;
+    onResult(found.length > 0, totalReward, 0, found.length);
   };
 
   const handleSkip = () => {
@@ -345,17 +350,17 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
             </span>
           ))}
         </div>
-        {finished && found.length >= challenge.required && (
+        {finished && found.length > 0 && (
           <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4 mb-4 text-center animate-bounce">
             <p className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">Challenge Completed!</p>
-            <p className="text-2xl font-black text-white">+ {challenge.reward.toLocaleString('en')} €</p>
+            <p className="text-2xl font-black text-white">+ {(found.length * Math.floor(challenge.reward / challenge.required)).toLocaleString('en')} €</p>
           </div>
         )}
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4">
             <div className="flex flex-col">
               <span className="text-[10px] text-white/40 uppercase font-black">Correct</span>
-              <span className="text-emerald-400 font-black">{found.length}/{challenge.required}</span>
+              <span className="text-emerald-400 font-black">{found.length}</span>
             </div>
             <div className="flex flex-col border-l border-white/10 pl-4">
               <span className="text-[10px] text-white/40 uppercase font-black">Invalid</span>
@@ -363,8 +368,8 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
             </div>
           </div>
           {finished && (
-            <div className={`font-bold text-lg ${found.length >= challenge.required ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {found.length >= challenge.required ? `+${challenge.reward.toLocaleString('en')} €` : `-${challenge.penalty.toLocaleString('en')} €`}
+            <div className={`font-bold text-lg ${found.length > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {found.length > 0 ? `+${(found.length * Math.floor(challenge.reward / challenge.required)).toLocaleString('en')} €` : `0 €`}
             </div>
           )}
         </div>
@@ -377,25 +382,35 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
         )}
 
         {!finished && (
-          <button
-            onClick={handleSkip}
-            className="w-full bg-white/10 hover:bg-white/20 text-white/70 font-bold py-3 rounded-xl transition-all active:scale-95 text-sm mb-3 border border-white/10"
-          >
-            Skip Challenge (No Reward) ▶
-          </button>
+          <div className="grid grid-cols-1 gap-2 mb-4">
+            <button
+              onClick={handleFinalSubmit}
+              disabled={found.length === 0}
+              className={`w-full py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 ${found.length === 0
+                ? 'bg-slate-800 text-white/20 cursor-not-allowed border border-white/5'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:scale-[1.02] shadow-emerald-900/20'
+                }`}
+            >
+              Submit & Finish 🏁
+            </button>
+            <button
+              onClick={handleSkip}
+              className="w-full bg-white/5 hover:bg-white/10 text-white/50 font-bold py-3 rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest"
+            >
+              Skip Challenge
+            </button>
+          </div>
         )}
         <div className="w-full bg-white/10 rounded-full h-2">
           <div
             className="bg-emerald-400 h-2 rounded-full transition-all"
-            style={{ width: `${(found.length / challenge.required) * 100}%` }}
+            style={{ width: `${Math.min((found.length / challenge.required) * 100, 100)}%` }}
           />
         </div>
       </div>
     </Modal>
   );
 }
-
-
 
 // Switch Modal
 interface SwitchModalProps {
@@ -614,8 +629,6 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
     </Modal>
   );
 }
-
-
 
 // ── TAX SMALL MODAL ──
 export function TaxSmallModal({ taxExemptionTurns, onClose, mode, amount }: { taxExemptionTurns: number, onClose: () => void, mode: GameMode, amount: number }) {
