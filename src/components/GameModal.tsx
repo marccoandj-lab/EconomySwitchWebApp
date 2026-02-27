@@ -282,16 +282,19 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
       setFound(newFound);
       setMessage('✅ Match Found!');
       setInput('');
-      if (newFound.length >= challenge.required) {
-        setFinished(true);
-        setTimeout(() => onResult(true, challenge.reward, challenge.penalty, newFound.length), 1200);
-      }
     } else {
       setWrongCount(prev => prev + 1);
       setMessage('❌ Not in dictionary!');
       setInput('');
     }
     setTimeout(() => setMessage(''), 1500);
+  };
+
+  const handleManualFinish = () => {
+    if (finished) return;
+    setFinished(true);
+    const success = found.length >= challenge.required;
+    onResult(success, challenge.reward, challenge.penalty, found.length);
   };
 
   const handleSkip = () => {
@@ -345,6 +348,19 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
             </span>
           ))}
         </div>
+        <div className="flex gap-2 max-w-sm mx-auto mb-4">
+          <button
+            onClick={handleManualFinish}
+            disabled={finished || found.length === 0}
+            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 ${found.length >= challenge.required
+              ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/20'
+              : 'bg-white/5 border border-white/10 text-white/40 cursor-not-allowed'
+              }`}
+          >
+            <span>🏁</span> SUBMIT & FINISH
+          </button>
+        </div>
+
         {finished && found.length >= challenge.required && (
           <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4 mb-4 text-center animate-bounce">
             <p className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">Challenge Completed!</p>
