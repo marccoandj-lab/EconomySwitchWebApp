@@ -1,0 +1,17 @@
+{
+    "name": "EconomySwitch",
+    "short_name": "EconomySwitch",
+    "description": "Financial Literacy & Sustainability Game",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#1e1b4b",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
