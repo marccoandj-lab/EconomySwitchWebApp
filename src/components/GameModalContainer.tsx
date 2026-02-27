@@ -10,7 +10,7 @@ interface GameModalContainerProps {
   levelIndex: number;
   mode: GameMode;
   onBalanceChange: (change: number) => void;
-  onListingResult: (count: number, reward: number, penalty: number) => void;
+  onListingResult: (success: boolean, reward: number, penalty: number, itemsCount?: number) => void;
   onModeChange: (mode: GameMode) => void;
   onTaxExemption: (turns: number) => void;
   levels: Level[];
@@ -174,8 +174,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
           challenge={listing}
           mode={mode}
           onResult={(success, reward, penalty, itemsCount) => {
-            if (success) onListingResult(itemsCount || 0, reward, penalty);
-            else onListingResult(0, reward, penalty);
+            onListingResult(success, reward, penalty, itemsCount);
             onClose();
           }}
         />

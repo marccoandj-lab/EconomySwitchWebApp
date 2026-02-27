@@ -364,14 +364,14 @@ export const App: React.FC = () => {
             multiplayer.sendAction({ type: 'ACTION_QUIZ_RESULT', reward: change > 0 ? change : 0, penalty: change < 0 ? -change : 0, success: change > 0 });
           }
         }}
-        onListingResult={(count, reward, penalty) => {
+        onListingResult={(success, reward, penalty, itemsCount) => {
           if (isSinglePlayer) {
-            setBalance(prev => prev + (count > 0 ? reward : -penalty));
-            if (count > 0) {
-              setSinglePlayerStats(prev => ({ ...prev, listedItems: prev.listedItems + count }));
+            setBalance(prev => prev + (success ? reward : -penalty));
+            if (success && itemsCount) {
+              setSinglePlayerStats(prev => ({ ...prev, listedItems: prev.listedItems + itemsCount }));
             }
           } else {
-            multiplayer.sendAction({ type: 'ACTION_LISTING_RESULT', success: count > 0, reward, penalty, count });
+            multiplayer.sendAction({ type: 'ACTION_LISTING_RESULT', success, reward, penalty, count: itemsCount || 0 });
           }
         }}
         onModeChange={(newMode) => {

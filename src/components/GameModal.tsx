@@ -238,7 +238,8 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
           setFinished(true);
           const rewardPerItem = Math.floor(challenge.reward / challenge.required);
           const totalReward = found.length * rewardPerItem;
-          setTimeout(() => onResult(found.length > 0, totalReward, 0, found.length), 1500);
+          // Standardized delay for timeout feedback
+          setTimeout(() => onResult(found.length > 0, totalReward, 0, found.length), 2500);
           return 0;
         }
         return t - 1;
@@ -250,7 +251,6 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
   const handleSubmit = () => {
     if (!input.trim() || finished) return;
 
-    // Improved normalization: Lowercase, remove punctuation, remove extra spaces
     const normalize = (str: string) =>
       str.toLowerCase()
         .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
@@ -267,10 +267,6 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
       return;
     }
 
-    // Flexible matching:
-    // 1. Direct match
-    // 2. Input is part of a valid answer (e.g. "solar" matches "Solar power")
-    // 3. Valid answer is part of input (for slightly longer descriptions)
     const match = challenge.answers.find(answer => {
       const normalizedAnswer = normalize(answer);
       return normalizedAnswer === normalizedInput ||
@@ -292,19 +288,22 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
   };
 
   const handleFinalSubmit = () => {
-    if (finished) return;
+    if (finished || found.length === 0) return;
     setFinished(true);
     const rewardPerItem = Math.floor(challenge.reward / challenge.required);
     const totalReward = found.length * rewardPerItem;
-    onResult(found.length > 0, totalReward, 0, found.length);
+    // Delay onResult to show success feedback
+    setTimeout(() => onResult(true, totalReward, 0, found.length), 2500);
   };
 
   const handleSkip = () => {
+    if (finished) return;
     setFinished(true);
     onResult(false, 0, 0, found.length);
   };
 
   const timerColor = timeLeft > 15 ? 'text-emerald-400' : timeLeft > 8 ? 'text-amber-400' : 'text-rose-400';
+  const rewardPerItem = Math.floor(challenge.reward / challenge.required);
 
   return (
     <Modal onClose={() => { }} mode={mode}>
@@ -316,94 +315,103 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
           </div>
           <div className={`text-3xl font-black ${timerColor}`}>{timeLeft}s</div>
         </div>
-        <div className="bg-white/10 rounded-2xl p-4 mb-4">
-          <p className="text-white font-semibold">{challenge.prompt}</p>
-          <div className="flex items-center justify-between mt-1">
-            <p className="text-white/60 text-sm">Required: {challenge.required} of {challenge.answers.length}+</p>
-            {challenge.hint && <p className="text-[10px] text-blue-400 font-bold uppercase tracking-wider italic">Hint: {challenge.hint}</p>}
+        <div className="bg-white/10 rounded-2xl p-4 mb-4 border border-white/10">
+          <p className="text-white font-semibold mb-1">{challenge.prompt}</p>
+          <div className="flex items-center justify-between text-xs">
+            <p className="text-white/60">Required: {challenge.required} items</p>
+            <p className="text-emerald-400 font-bold">+{rewardPerItem.toLocaleString()} € / item</p>
           </div>
+          {challenge.hint && <p className="text-[10px] text-blue-400 font-bold uppercase tracking-wider italic mt-2">Hint: {challenge.hint}</p>}
         </div>
-        <div className="flex gap-2 mb-4">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            placeholder={`e.g. ${challenge.answers[0]}`}
-            disabled={finished}
-            className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 outline-none focus:border-white/40"
-          />
-          <button
-            onClick={handleSubmit}
-            disabled={finished}
-            className="bg-blue-500 hover:bg-blue-400 text-white font-bold px-5 rounded-xl transition-all active:scale-95"
-          >
-            ✓
-          </button>
-        </div>
-        {message && <p className="text-center text-white font-semibold mb-3 animate-pulse">{message}</p>}
-        <div className="flex flex-wrap gap-2 min-h-12 mb-4">
+
+        {!finished && (
+          <div className="flex gap-2 mb-4">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              placeholder={`e.g. ${challenge.answers[0]}`}
+              className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 outline-none focus:border-emerald-500/50 transition-colors"
+            />
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-black px-6 rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-900/20"
+            >
+              ✓
+            </button>
+          </div>
+        )}
+
+        {message && <p className="text-center text-white font-semibold mb-3 animate-pulse text-sm">{message}</p>}
+
+        <div className="flex flex-wrap gap-2 min-h-12 mb-6">
           {found.map((f, i) => (
-            <span key={i} className="bg-emerald-500/30 border border-emerald-400/40 text-emerald-300 px-3 py-1 rounded-full text-sm font-medium">
+            <span key={i} className="bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 px-3 py-1.5 rounded-full text-xs font-bold animate-modal-pop">
               ✓ {f}
             </span>
           ))}
+          {found.length === 0 && !finished && <p className="text-white/20 text-xs italic place-self-center w-full text-center">Start typing to find matches...</p>}
         </div>
-        {finished && found.length > 0 && (
-          <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4 mb-4 text-center animate-bounce">
-            <p className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">Challenge Completed!</p>
-            <p className="text-2xl font-black text-white">+ {(found.length * Math.floor(challenge.reward / challenge.required)).toLocaleString('en')} €</p>
+
+        {finished && (
+          <div className={`rounded-2xl p-5 mb-6 text-center animate-bounce border-2 ${found.length > 0 ? 'bg-emerald-500/20 border-emerald-400/50' : 'bg-rose-500/20 border-rose-400/50'}`}>
+            <p className={`font-black uppercase tracking-widest text-xs mb-2 ${found.length > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {timeLeft === 0 ? 'TIME EXPIRED!' : 'CHALLENGE COMPLETED!'}
+            </p>
+            <p className="text-4xl font-black text-white">
+              +{(found.length * rewardPerItem).toLocaleString('en')} €
+            </p>
+            <p className="text-white/40 text-[10px] mt-2 font-bold uppercase tracking-tighter">
+              Closing automatically in 2.5s...
+            </p>
           </div>
         )}
-        <div className="flex justify-between items-center mb-4">
+
+        <div className="flex justify-between items-end mb-6">
           <div className="flex gap-4">
             <div className="flex flex-col">
-              <span className="text-[10px] text-white/40 uppercase font-black">Correct</span>
-              <span className="text-emerald-400 font-black">{found.length}</span>
+              <span className="text-[10px] text-white/40 uppercase font-black tracking-widest">Correct</span>
+              <span className="text-xl font-black text-emerald-400">{found.length}</span>
             </div>
             <div className="flex flex-col border-l border-white/10 pl-4">
-              <span className="text-[10px] text-white/40 uppercase font-black">Invalid</span>
-              <span className="text-rose-400 font-black">{wrongCount}</span>
+              <span className="text-[10px] text-white/40 uppercase font-black tracking-widest">Mistakes</span>
+              <span className="text-xl font-black text-rose-400">{wrongCount}</span>
             </div>
           </div>
-          {finished && (
-            <div className={`font-bold text-lg ${found.length > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {found.length > 0 ? `+${(found.length * Math.floor(challenge.reward / challenge.required)).toLocaleString('en')} €` : `0 €`}
+          {!finished && found.length > 0 && (
+            <div className="text-right">
+              <span className="text-[10px] text-white/40 uppercase font-black tracking-widest block">Current Gain</span>
+              <span className="text-xl font-black text-white">{(found.length * rewardPerItem).toLocaleString()} €</span>
             </div>
           )}
         </div>
 
-        {finished && (
-          <div className="bg-white/5 rounded-xl p-3 mb-4 border border-white/10 animate-fade-in text-center">
-            <p className="text-white/50 text-[10px] uppercase tracking-wider mb-1">Recommended Answer</p>
-            <p className="text-white font-bold italic">"{challenge.answers[0]}"</p>
-          </div>
-        )}
-
         {!finished && (
-          <div className="grid grid-cols-1 gap-2 mb-4">
+          <div className="flex flex-col gap-3 mb-4">
             <button
               onClick={handleFinalSubmit}
               disabled={found.length === 0}
-              className={`w-full py-4 rounded-xl font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 ${found.length === 0
-                ? 'bg-slate-800 text-white/20 cursor-not-allowed border border-white/5'
-                : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:scale-[1.02] shadow-emerald-900/20'
+              className={`w-full py-5 rounded-[1.5rem] font-black uppercase tracking-widest transition-all shadow-xl active:scale-95 border-2 ${found.length === 0
+                ? 'bg-slate-800/50 text-white/10 cursor-not-allowed border-white/5'
+                : 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-400/50 hover:scale-[1.02] shadow-emerald-500/20 animate-pulse'
                 }`}
             >
-              Submit & Finish 🏁
+              Finish & Collect 💰
             </button>
             <button
               onClick={handleSkip}
-              className="w-full bg-white/5 hover:bg-white/10 text-white/50 font-bold py-3 rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest"
+              className="w-full bg-white/5 hover:bg-white/10 text-white/40 font-bold py-3 rounded-xl transition-all active:scale-95 text-[10px] uppercase tracking-[0.2em]"
             >
-              Skip Challenge
+              Discard Progress
             </button>
           </div>
         )}
-        <div className="w-full bg-white/10 rounded-full h-2">
+
+        <div className="w-full bg-white/5 rounded-full h-2.5 border border-white/10 p-0.5">
           <div
-            className="bg-emerald-400 h-2 rounded-full transition-all"
+            className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(52,211,153,0.3)]"
             style={{ width: `${Math.min((found.length / challenge.required) * 100, 100)}%` }}
           />
         </div>
@@ -411,6 +419,7 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
     </Modal>
   );
 }
+
 
 // Switch Modal
 interface SwitchModalProps {
