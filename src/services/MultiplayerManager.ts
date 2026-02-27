@@ -62,7 +62,7 @@ class MultiplayerManager {
     taxPool: 0
   };
 
-  private myId: string = nanoid(10);
+  public myId: string = nanoid(10);
   private myProfile: Player | null = null;
 
   private createInitialStats() {

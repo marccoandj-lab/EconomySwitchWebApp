@@ -997,21 +997,23 @@ export function VictoryModal({ players }: VictoryModalProps) {
             </div>
           </div>
 
-          {/* Rankings */}
-          <div className="space-y-1.5 sm:space-y-2 max-h-32 sm:max-h-48 overflow-y-auto pr-1 custom-scrollbar">
-            {sortedPlayers.map((p, idx) => (
-              <div key={p.id} className={`flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl sm:rounded-2xl border ${idx === 0 ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}>
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-white/5 flex items-center justify-center font-bold text-white/50 text-xs sm:text-sm">{idx + 1}.</div>
-                <img
-                  src={`/assets/${p.avatar}.png`}
-                  alt=""
-                  className="w-6 h-6 sm:w-8 sm:h-8 object-contain shrink-0"
-                />
-                <span className="font-bold text-white text-[11px] sm:text-sm truncate">{p.name}</span>
-                <span className="ml-auto font-black text-white/80 text-[11px] sm:text-sm shrink-0">{p.capital.toLocaleString()} €</span>
-              </div>
-            ))}
-          </div>
+          {/* Rankings - Hide in Singleplayer */}
+          {sortedPlayers.length > 1 && (
+            <div className="space-y-1.5 sm:space-y-2 max-h-32 sm:max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+              {sortedPlayers.map((p, idx) => (
+                <div key={p.id} className={`flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl sm:rounded-2xl border ${idx === 0 ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/5'}`}>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-white/5 flex items-center justify-center font-bold text-white/50 text-xs sm:text-sm">{idx + 1}.</div>
+                  <img
+                    src={`/assets/${p.avatar}.png`}
+                    alt=""
+                    className="w-6 h-6 sm:w-8 sm:h-8 object-contain shrink-0"
+                  />
+                  <span className="font-bold text-white text-[11px] sm:text-sm truncate">{p.name}</span>
+                  <span className="ml-auto font-black text-white/80 text-[11px] sm:text-sm shrink-0">{p.capital.toLocaleString()} €</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           <button onClick={() => window.location.reload()} className="mt-4 sm:mt-8 w-full sm:w-auto px-8 py-3 sm:py-4 bg-white text-slate-900 font-black rounded-xl sm:rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs sm:text-sm uppercase tracking-widest">
             Play Again

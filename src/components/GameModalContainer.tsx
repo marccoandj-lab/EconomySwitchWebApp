@@ -46,7 +46,35 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
 
   // Prioritize VictoryModal
   if (isGameOver) {
-    return <VictoryModal players={players} />;
+    let displayPlayers = players;
+    if (isSinglePlayer) {
+      // In single player, construct a dummy player for victory screen with current stats
+      displayPlayers = [{
+        id: 'single',
+        name: multiplayer.getMyProfile()?.name || 'You',
+        avatar: multiplayer.getMyProfile()?.avatar || '1',
+        capital: balance,
+        position: levelIndex,
+        isHost: true,
+        status: 'playing',
+        taxExemptTurns: 0,
+        hasPaidTax: false,
+        isInteracting: false,
+        jailSkipped: false,
+        stats: multiplayer.getMyProfile()?.stats || {
+          correctQuizzes: 0,
+          wrongQuizzes: 0,
+          listedItems: 0,
+          investmentGains: 0,
+          investmentLosses: 0,
+          jailVisits: 0,
+          jailSkips: 0,
+          auctionWins: 0,
+          taxesPaid: 0
+        }
+      }];
+    }
+    return <VictoryModal players={displayPlayers} />;
   }
 
   // Prioritize JailSkipModal

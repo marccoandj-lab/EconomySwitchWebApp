@@ -7,6 +7,7 @@ import { MobilePlayerStatus } from './components/MobilePlayerStatus';
 import { generateLevels } from './data/levelGenerator';
 import { Level, GameMode } from './data/gameData';
 import { multiplayer, GameState as MPState } from './services/MultiplayerManager';
+import { AvatarType, Player } from './types/game';
 
 const WINNING_BALANCE = 1000000;
 
@@ -28,6 +29,22 @@ export const App: React.FC = () => {
   const [lastDiceRoll, setLastDiceRoll] = useState<number | null>(null);
   const [showExpiry, setShowExpiry] = useState(false);
   const [showTurnModal, setShowTurnModal] = useState(false);
+
+  // Singleplayer Stats
+  const [singlePlayerStats, setSinglePlayerStats] = useState({
+    correctQuizzes: 0,
+    wrongQuizzes: 0,
+    listedItems: 0,
+    investmentGains: 0,
+    investmentLosses: 0,
+    jailVisits: 0,
+    jailSkips: 0,
+    auctionWins: 0, // Not used in SP but for structural compatibility
+    taxesPaid: 0
+  });
+
+  const [userName, setUserName] = useState("Player 1");
+  const [userAvatar, setUserAvatar] = useState<AvatarType>("1");
 
   const handleCloseTurnModal = useCallback(() => {
     setShowTurnModal(false);
@@ -82,11 +99,29 @@ export const App: React.FC = () => {
     });
   }, [gameState, isSinglePlayer]);
 
-  const handleStart = (_name: string, _avatar: string, isSingle: boolean) => {
+  const handleStart = (name: string, avatar: string, isSingle: boolean) => {
     setIsSinglePlayer(isSingle);
+    setUserName(name);
+    setUserAvatar(avatar as AvatarType);
+
     if (isSingle) {
       setLevels(generateLevels(100, 'finance'));
       setGameState('playing');
+      // Update multiplayer mock profile for structural consistency
+      multiplayer.state.players = [{
+        id: 'single',
+        name,
+        avatar: avatar as AvatarType,
+        capital: balance,
+        position: 0,
+        isHost: true,
+        status: 'playing',
+        taxExemptTurns: 0,
+        hasPaidTax: false,
+        isInteracting: false,
+        jailSkipped: false,
+        stats: singlePlayerStats
+      }];
     } else {
       setGameState('lobby');
     }
@@ -142,6 +177,12 @@ export const App: React.FC = () => {
 
     if (!isSinglePlayer) {
       multiplayer.sendAction({ type: 'ACTION_DICE_ROLL', steps });
+    } else {
+      // Landing triggers in SP
+      const landingField = levels[currentPos].type;
+      if (landingField === 'jail') {
+        setSinglePlayerStats(prev => ({ ...prev, jailVisits: prev.jailVisits + 1 }));
+      }
     }
 
     const landingField = levels[currentPos].type;
@@ -151,14 +192,38 @@ export const App: React.FC = () => {
     }
   };
 
-  const myProfile = isSinglePlayer ? null : mpState?.players.find(p => p.id === multiplayer.getMyId());
+  const myProfile = isSinglePlayer ? {
+    id: 'single',
+    name: userName,
+    avatar: userAvatar,
+    capital: balance,
+    position: currentLevelIndex,
+    isHost: true,
+    status: 'playing' as const,
+    taxExemptTurns: 0,
+    hasPaidTax: false,
+    isInteracting: false,
+    jailSkipped: false,
+    stats: singlePlayerStats
+  } : mpState?.players.find(p => p.id === multiplayer.getMyId());
   const currentBalance = isSinglePlayer ? balance : (myProfile?.capital || 0);
+
+  // Sync singleplayer profile into multiplayer instance for modals
+  useEffect(() => {
+    if (isSinglePlayer && myProfile) {
+      multiplayer.state.players = [myProfile];
+      multiplayer.myId = 'single';
+    }
+  }, [isSinglePlayer, myProfile, singlePlayerStats]);
 
   useEffect(() => {
     if (currentBalance >= WINNING_BALANCE) {
+      if (isSinglePlayer) {
+        multiplayer.state.status = 'finished';
+      }
       setGameState('victory');
     }
-  }, [currentBalance]);
+  }, [currentBalance, isSinglePlayer]);
 
   if (gameState === 'start') {
     return <StartScreen onStart={handleStart} />;
@@ -253,12 +318,7 @@ export const App: React.FC = () => {
       </div>
 
       <Sidebar
-        players={isSinglePlayer ? [{
-          id: 'single', name: 'You', avatar: '1', capital: balance, position: currentLevelIndex,
-          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
-          jailSkipped: false,
-          stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
-        }] : (mpState?.players || [])}
+        players={isSinglePlayer ? [myProfile as Player] : (mpState?.players || [])}
         currentTurnIndex={mpState?.currentTurnIndex || 0}
         myId={isSinglePlayer ? 'single' : multiplayer.getMyId()}
         levels={levels}
@@ -275,12 +335,7 @@ export const App: React.FC = () => {
       <GameMap
         levels={levels}
         currentLevel={currentLevelIndex}
-        currentPlayer={myProfile || {
-          id: 'single', name: 'You', avatar: '1', capital: balance, position: currentLevelIndex,
-          isHost: true, status: 'playing', taxExemptTurns: 0, hasPaidTax: false, isInteracting: false,
-          jailSkipped: false,
-          stats: { correctQuizzes: 0, wrongQuizzes: 0, listedItems: 0, investmentGains: 0, investmentLosses: 0, jailVisits: 0, jailSkips: 0, auctionWins: 0, taxesPaid: 0 }
-        }}
+        currentPlayer={myProfile as Player}
         mode={gameMode}
         balance={currentBalance}
         onRollDice={handleRollDice}
@@ -307,11 +362,20 @@ export const App: React.FC = () => {
         levelIndex={currentLevelIndex}
         mode={gameMode}
         levels={levels}
-        players={isSinglePlayer ? [] : (mpState?.players || [])}
+        players={isSinglePlayer ? [myProfile as Player] : (mpState?.players || [])}
         isSinglePlayer={isSinglePlayer}
         onBalanceChange={(change) => {
           if (isSinglePlayer) {
             setBalance(prev => prev + change);
+            if (activeModal === 'quiz') {
+              if (change > 0) setSinglePlayerStats(prev => ({ ...prev, correctQuizzes: prev.correctQuizzes + 1 }));
+              else setSinglePlayerStats(prev => ({ ...prev, wrongQuizzes: prev.wrongQuizzes + 1 }));
+            } else if (activeModal === 'investment') {
+              if (change > 0) setSinglePlayerStats(prev => ({ ...prev, investmentGains: prev.investmentGains + change }));
+              else setSinglePlayerStats(prev => ({ ...prev, investmentLosses: prev.investmentLosses + Math.abs(change) }));
+            } else if (activeModal === 'tax_small') {
+              setSinglePlayerStats(prev => ({ ...prev, taxesPaid: prev.taxesPaid + 1 }));
+            }
           } else {
             multiplayer.sendAction({ type: 'ACTION_QUIZ_RESULT', reward: change > 0 ? change : 0, penalty: change < 0 ? -change : 0, success: change > 0 });
           }
@@ -319,6 +383,9 @@ export const App: React.FC = () => {
         onListingResult={(count, reward, penalty) => {
           if (isSinglePlayer) {
             setBalance(prev => prev + (count > 0 ? reward : -penalty));
+            if (count > 0) {
+              setSinglePlayerStats(prev => ({ ...prev, listedItems: prev.listedItems + count }));
+            }
           } else {
             multiplayer.sendAction({ type: 'ACTION_LISTING_RESULT', success: count > 0, reward, penalty, count });
           }
