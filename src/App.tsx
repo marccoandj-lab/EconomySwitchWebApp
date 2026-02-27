@@ -29,7 +29,6 @@ export const App: React.FC = () => {
   const [lastDiceRoll, setLastDiceRoll] = useState<number | null>(null);
   const [showExpiry, setShowExpiry] = useState(false);
   const [showTurnModal, setShowTurnModal] = useState(false);
-  const [singlePlayerTurnTime, setSinglePlayerTurnTime] = useState(60);
 
   // Singleplayer Stats
   const [singlePlayerStats, setSinglePlayerStats] = useState({
@@ -98,30 +97,7 @@ export const App: React.FC = () => {
         setGameState('playing');
       }
     });
-
-    // Singleplayer Timer Logic
-    let spTimer: NodeJS.Timeout;
-    if (isSinglePlayer && gameState === 'playing' && !activeModal) {
-      spTimer = setInterval(() => {
-        setSinglePlayerTurnTime(prev => {
-          if (prev <= 1) {
-            // Force end turn by moving 0 or something? 
-            // Actually just reset and pass turn if we can.
-            // But in SP there is only one player... so maybe just reset or penalize?
-            // "Every player has 1min to play" implies it should pass to next.
-            // Since there are no other players in SP, we just reset it for now
-            // or we could skip the player's roll.
-            return 60;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-
-    return () => {
-      if (spTimer) clearInterval(spTimer);
-    };
-  }, [gameState, isSinglePlayer, activeModal]);
+  }, [gameState, isSinglePlayer]);
 
   const handleStart = (name: string, avatar: string, isSingle: boolean) => {
     setIsSinglePlayer(isSingle);
@@ -198,7 +174,6 @@ export const App: React.FC = () => {
     }
 
     setIsMoving(false);
-    if (isSinglePlayer) setSinglePlayerTurnTime(60);
 
     if (!isSinglePlayer) {
       multiplayer.sendAction({ type: 'ACTION_DICE_ROLL', steps });
@@ -335,19 +310,6 @@ export const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          {/* Turn Timer Display */}
-          <div className="bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 flex items-center gap-3 shadow-xl pointer-events-auto">
-            <div className={`w-2 h-2 rounded-full animate-pulse ${(isSinglePlayer ? singlePlayerTurnTime : (mpState?.turnTimeLeft || 60)) > 15 ? 'bg-emerald-500' : 'bg-rose-500'
-              }`} />
-            <div className="flex flex-col items-end">
-              <span className="text-[8px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-0.5">Time Left</span>
-              <span className={`text-sm font-black font-mono leading-none ${(isSinglePlayer ? singlePlayerTurnTime : (mpState?.turnTimeLeft || 60)) <= 15 ? 'text-rose-400' : 'text-white'
-                }`}>
-                {isSinglePlayer ? singlePlayerTurnTime : (mpState?.turnTimeLeft || 60)}s
-              </span>
-            </div>
-          </div>
-
           <div className={`px-4 py-2 rounded-xl backdrop-blur-md border text-white font-bold text-xs uppercase tracking-widest pointer-events-auto shadow-xl ${gameMode === 'finance' ? 'bg-blue-600/80 border-blue-400/30' : 'bg-green-600/80 border-green-400/30'
             }`}>
             {gameMode} mode
@@ -392,7 +354,6 @@ export const App: React.FC = () => {
         activeField={activeModal}
         onClose={() => {
           setActiveModal(null);
-          if (isSinglePlayer) setSinglePlayerTurnTime(60);
           if (!isSinglePlayer) {
             multiplayer.sendAction({ type: 'ACTION_INTERACTION_END' });
           }

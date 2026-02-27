@@ -64,27 +64,6 @@ class MultiplayerManager {
 
   public myId: string = nanoid(10);
   private myProfile: Player | null = null;
-  private timerInterval: NodeJS.Timeout | null = null;
-
-  private startTurnTimer() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
-
-    this.timerInterval = setInterval(() => {
-      if (this.state.status !== 'playing') return;
-      if (this.state.auction.active) return; // Pause during auction if needed, or keep running? Let's pause for auction simplicity.
-
-      if (this.state.turnTimeLeft > 0) {
-        this.state.turnTimeLeft--;
-        this.broadcastState();
-      } else {
-        // Time out! Force end turn of current player
-        const currentPlayer = this.state.players[this.state.currentTurnIndex];
-        if (currentPlayer) {
-          this.handleAction(currentPlayer.id, { type: 'ACTION_INTERACTION_END' });
-        }
-      }
-    }, 1000);
-  }
 
   private createInitialStats() {
     return {
@@ -371,30 +350,25 @@ class MultiplayerManager {
         break;
       case 'ACTION_INTERACTION_END':
         player.isInteracting = false;
+
+        // Pass the turn only after interaction ends
         const nextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
         const nextP = this.state.players[nextIdx];
+
+        // Release from jail if they skipped previously
         if (nextP.status === 'jail' && nextP.jailSkipped) {
           nextP.status = 'playing';
           nextP.jailSkipped = false;
         }
+
         this.state.currentTurnIndex = nextIdx;
-        this.state.turnTimeLeft = 60;
-        break;
-      case 'ACTION_JAIL_SKIP':
-        player.isInteracting = false;
-        player.jailSkipped = true;
-        const jailNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        const jailNextP = this.state.players[jailNextIdx];
-        if (jailNextP.status === 'jail' && jailNextP.jailSkipped) {
-          jailNextP.status = 'playing';
-          jailNextP.jailSkipped = false;
-        }
-        this.state.currentTurnIndex = jailNextIdx;
-        this.state.turnTimeLeft = 60;
         break;
       case 'ACTION_AUCTION_END':
         this.state.auction.active = false;
+        // Explicitly clear interacting for ALL players in the auction
         this.state.players.forEach(p => p.isInteracting = false);
+
+        // Also increment turn after auction
         const auctionNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
         const auctionNextP = this.state.players[auctionNextIdx];
         if (auctionNextP.status === 'jail' && auctionNextP.jailSkipped) {
@@ -402,7 +376,6 @@ class MultiplayerManager {
           auctionNextP.jailSkipped = false;
         }
         this.state.currentTurnIndex = auctionNextIdx;
-        this.state.turnTimeLeft = 60;
         break;
       case 'UPDATE_LEVELS':
         this.state.levels = msg.levels;
@@ -426,8 +399,6 @@ class MultiplayerManager {
   startGame() {
     if (this.myProfile?.isHost && this.state.players.length >= 2) {
       this.state.status = 'playing';
-      this.state.turnTimeLeft = 60;
-      this.startTurnTimer();
       this.broadcastState();
     }
   }
