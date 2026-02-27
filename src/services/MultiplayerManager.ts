@@ -220,15 +220,30 @@ class MultiplayerManager {
   }
 
   private handleAction(playerId: string, msg: Message) {
-    const player = this.state.players.find(p => p.id === playerId);
+    const playerIndex = this.state.players.findIndex(p => p.id === playerId);
+    const player = this.state.players[playerIndex];
     if (!player) return;
+
+    // Turn enforcement (Host side)
+    const isMyTurn = this.state.currentTurnIndex === playerIndex;
+    const allowedActionsWhileNotTurn: Message['type'][] = [
+      'ACTION_AUCTION_ROLL',
+      'ACTION_INTERACTION_START',
+      'ACTION_INTERACTION_END',
+      'JOIN_REQUEST',
+      'UPDATE_LEVELS',
+      'ACTION_AUCTION_END'
+    ];
+
+    if (!isMyTurn && !allowedActionsWhileNotTurn.includes(msg.type)) {
+      console.warn(`Action ${msg.type} ignored: not player ${playerId}'s turn.`);
+      return;
+    }
 
     switch (msg.type) {
       case 'ACTION_DICE_ROLL':
         player.position += msg.steps;
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
-
-        // Turn increment moved to ACTION_INTERACTION_END to wait for modal closure
 
         // AUTO TRIGGER AUCTION FOR EVERYONE
         const boardField = this.state.levels[player.position]?.type;
@@ -281,6 +296,15 @@ class MultiplayerManager {
         this.state.auction = { active: true, rolls: {}, turnIndex: 0 };
         break;
       case 'ACTION_AUCTION_ROLL':
+        // Auction turn enforcement
+        const auctionPlayerIds = this.state.players.map(p => p.id);
+        const expectedAuctionPlayerId = auctionPlayerIds[this.state.auction.turnIndex % auctionPlayerIds.length];
+
+        if (playerId !== expectedAuctionPlayerId) {
+          console.warn(`Auction roll ignored: expected ${expectedAuctionPlayerId}, got ${playerId}`);
+          return;
+        }
+
         this.state.auction.rolls[playerId] = msg.roll;
         this.state.auction.turnIndex++;
 

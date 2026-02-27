@@ -107,21 +107,6 @@ export const App: React.FC = () => {
     if (isSingle) {
       setLevels(generateLevels(100, 'finance'));
       setGameState('playing');
-      // Update multiplayer mock profile for structural consistency
-      multiplayer.state.players = [{
-        id: 'single',
-        name,
-        avatar: avatar as AvatarType,
-        capital: balance,
-        position: 0,
-        isHost: true,
-        status: 'playing',
-        taxExemptTurns: 0,
-        hasPaidTax: false,
-        isInteracting: false,
-        jailSkipped: false,
-        stats: singlePlayerStats
-      }];
     } else {
       setGameState('lobby');
     }
@@ -193,7 +178,7 @@ export const App: React.FC = () => {
   };
 
   const myProfile = isSinglePlayer ? {
-    id: 'single',
+    id: multiplayer.getMyId(),
     name: userName,
     avatar: userAvatar,
     capital: balance,
@@ -208,11 +193,10 @@ export const App: React.FC = () => {
   } : mpState?.players.find(p => p.id === multiplayer.getMyId());
   const currentBalance = isSinglePlayer ? balance : (myProfile?.capital || 0);
 
-  // Sync singleplayer profile into multiplayer instance for modals
+  // Sync singleplayer profile into multiplayer state (ONLY UI MOCK) for modals
   useEffect(() => {
     if (isSinglePlayer && myProfile) {
       multiplayer.state.players = [myProfile];
-      multiplayer.myId = 'single';
     }
   }, [isSinglePlayer, myProfile, singlePlayerStats]);
 
