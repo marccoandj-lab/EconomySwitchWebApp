@@ -56,7 +56,9 @@ export const App: React.FC = () => {
 
         if (state.currentTurnIndex === myIndex) {
           // Trigger announcement only when index CHANGED to us AND no one is interacting
-          if (prevTurnIndex.current !== myIndex && !anyoneInteracting) {
+          // AND we are not in jail (jailed players don't roll, so don't show turn popup)
+          const myProfile = state.players[myIndex];
+          if (prevTurnIndex.current !== myIndex && !anyoneInteracting && myProfile.status !== 'jail') {
             setShowTurnModal(true);
             prevTurnIndex.current = myIndex;
           }

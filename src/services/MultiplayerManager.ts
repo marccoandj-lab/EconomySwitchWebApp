@@ -305,12 +305,15 @@ class MultiplayerManager {
         // DON'T set status to playing immediately.
         // Keep status as 'jail' so lock icon persists.
         player.jailSkipped = true;
+        player.isInteracting = false; // Clear interaction state when skipping
         player.stats.jailSkips++;
-        // Manually move to next turn since they skipped
-        this.state.currentTurnIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
 
-        // If the NEXT player is also in jail and skipped, release them
-        const skipNextPlayer = this.state.players[this.state.currentTurnIndex];
+        // Pass the turn
+        const jailSkipNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        this.state.currentTurnIndex = jailSkipNextIdx;
+
+        // If the NEXT player is also in jail and skipped previously, release them
+        const skipNextPlayer = this.state.players[jailSkipNextIdx];
         if (skipNextPlayer.status === 'jail' && skipNextPlayer.jailSkipped) {
           skipNextPlayer.status = 'playing';
           skipNextPlayer.jailSkipped = false;

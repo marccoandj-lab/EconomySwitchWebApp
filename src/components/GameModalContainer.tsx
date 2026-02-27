@@ -56,7 +56,10 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         mode={mode}
         onSkip={() => {
           multiplayer.sendAction({ type: 'ACTION_JAIL_SKIP' });
-          onClose();
+          // DO NOT call onClose() here. 
+          // ACTION_JAIL_SKIP already increments the turn index,
+          // which will cause showJailSkip to become false and the modal to hide.
+          // Calling onClose() triggers ACTION_INTERACTION_END, incrementing turn AGAIN.
         }}
       />
     );
