@@ -248,13 +248,36 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
 
   const handleSubmit = () => {
     if (!input.trim() || finished) return;
-    const normalized = input.trim().toLowerCase();
 
-    // Exact matching logic - check if the word is in the dictionary list
-    const isValid = challenge.answers.some(a => a.toLowerCase() === normalized);
-    const alreadyFound = found.some(f => f.toLowerCase() === normalized);
+    // Improved normalization: Lowercase, remove punctuation, remove extra spaces
+    const normalize = (str: string) =>
+      str.toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
 
-    if (isValid && !alreadyFound) {
+    const normalizedInput = normalize(input);
+    const alreadyFound = found.some(f => normalize(f) === normalizedInput);
+
+    if (alreadyFound) {
+      setMessage('⚠️ Already listed!');
+      setInput('');
+      setTimeout(() => setMessage(''), 1500);
+      return;
+    }
+
+    // Flexible matching:
+    // 1. Direct match
+    // 2. Input is part of a valid answer (e.g. "solar" matches "Solar power")
+    // 3. Valid answer is part of input (for slightly longer descriptions)
+    const match = challenge.answers.find(answer => {
+      const normalizedAnswer = normalize(answer);
+      return normalizedAnswer === normalizedInput ||
+        (normalizedInput.length > 3 && normalizedAnswer.includes(normalizedInput)) ||
+        (normalizedAnswer.length > 3 && normalizedInput.includes(normalizedAnswer));
+    });
+
+    if (match) {
       const newFound = [...found, input.trim()];
       setFound(newFound);
       setMessage('✅ Match Found!');
@@ -263,9 +286,6 @@ export function ListingModal({ challenge, mode, onResult }: ListingModalProps) {
         setFinished(true);
         setTimeout(() => onResult(true, challenge.reward, challenge.penalty, newFound.length), 1200);
       }
-    } else if (alreadyFound) {
-      setMessage('⚠️ Already listed!');
-      setInput('');
     } else {
       setWrongCount(prev => prev + 1);
       setMessage('❌ Not in dictionary!');

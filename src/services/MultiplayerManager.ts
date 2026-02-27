@@ -360,7 +360,8 @@ class MultiplayerManager {
         break;
       case 'ACTION_AUCTION_END':
         this.state.auction.active = false;
-        player.isInteracting = false;
+        // Explicitly clear interacting for ALL players in the auction
+        this.state.players.forEach(p => p.isInteracting = false);
 
         // Also increment turn after auction
         const auctionNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;

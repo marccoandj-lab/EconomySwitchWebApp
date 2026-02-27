@@ -55,14 +55,18 @@ export const App: React.FC = () => {
         const anyoneInteracting = state.players.some(p => p.isInteracting);
 
         if (state.currentTurnIndex === myIndex) {
-          // Trigger announcement only when interaction ends and it's our turn
+          // Trigger announcement only when index CHANGED to us AND no one is interacting
           if (prevTurnIndex.current !== myIndex && !anyoneInteracting) {
             setShowTurnModal(true);
             prevTurnIndex.current = myIndex;
           }
         } else {
-          // Track current turn index to detect changes
-          prevTurnIndex.current = state.currentTurnIndex;
+          // If it's not our turn, keep track of the current global turn index
+          if (prevTurnIndex.current !== state.currentTurnIndex) {
+            prevTurnIndex.current = state.currentTurnIndex;
+            // Ensure modal is hidden if turn passed away from us
+            setShowTurnModal(false);
+          }
         }
       }
 
