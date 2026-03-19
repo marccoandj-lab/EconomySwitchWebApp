@@ -79,6 +79,8 @@ class MultiplayerManager {
 
   init(onUpdate: (state: GameState) => void) {
     this.onStateUpdate = onUpdate;
+    // Notify immediate state on init to sync UI
+    onUpdate({ ...this.state });
   }
 
   // Common ICE servers for better NAT traversal on phones/mobiles
@@ -88,24 +90,25 @@ class MultiplayerManager {
         { 'urls': 'stun:stun.l.google.com:19302' },
         { 'urls': 'stun:stun1.l.google.com:19302' },
         { 'urls': 'stun:stun2.l.google.com:19302' },
+        { 'urls': 'stun:stun3.l.google.com:19302' },
+        { 'urls': 'stun:stun4.l.google.com:19302' },
       ]
     }
   };
 
   private getPeerConfig() {
-    const isProd = window.location.hostname !== 'localhost';
     const isRender = window.location.hostname.includes('onrender.com');
+    const RENDER_HOST = 'economyswitchwebapp.onrender.com';
 
-    if (isProd) {
-      return {
-        ...this.config,
-        host: isRender ? window.location.hostname : 'economyswitchwebapp.onrender.com', // Match your Render app name
-        port: 443,
-        secure: true,
-        path: '/peerjs'
-      };
-    }
-    return this.config; // Use public PeerJS for localhost
+    // ALWAYS use the Render server in production OR if we want to test cross-device from localhost
+    // This ensures phone and PC are on the same signaling plane
+    return {
+      ...this.config,
+      host: isRender ? window.location.hostname : RENDER_HOST,
+      port: 443,
+      secure: true,
+      path: '/peerjs'
+    };
   }
 
   createRoom(name: string, avatar: AvatarType): string {
@@ -201,9 +204,17 @@ class MultiplayerManager {
       switch (msg.type) {
         case 'JOIN_REQUEST':
           if (this.state.players.length < 6) {
+            // Already connected?
+            if (this.state.players.find(p => p.id === msg.profile.id)) return;
+            
             this.connections.set(msg.profile.id, conn);
             this.state.players.push(msg.profile);
-            this.broadcastState();
+            
+            // Give the connection a fraction of a second to be fully ready before large state sync
+            setTimeout(() => {
+              this.broadcastState();
+              console.log("Player joined and state broadcasted:", msg.profile.name);
+            }, 300);
           }
           break;
         default:
@@ -212,8 +223,11 @@ class MultiplayerManager {
       }
     } else {
       if (msg.type === 'STATE_UPDATE') {
-        this.state = msg.state;
-        this.onStateUpdate(this.state);
+        // Only accept state if it's reasonably populated
+        if (msg.state && msg.state.players && msg.state.players.length > 0) {
+          this.state = { ...this.state, ...msg.state };
+          this.onStateUpdate(this.state);
+        }
       }
     }
   }
@@ -375,10 +389,11 @@ class MultiplayerManager {
   }
 
   private broadcastState() {
+    const fullState = { ...this.state };
     this.connections.forEach(conn => {
-      this.sendMessage(conn, { type: 'STATE_UPDATE', state: this.state });
+      this.sendMessage(conn, { type: 'STATE_UPDATE', state: fullState });
     });
-    this.onStateUpdate({ ...this.state });
+    this.onStateUpdate(fullState);
   }
 
   private sendMessage(conn: DataConnection, msg: Message) {

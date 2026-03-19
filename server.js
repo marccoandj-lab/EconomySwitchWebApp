@@ -20,7 +20,8 @@ const server = app.listen(port, () => {
 
 const peerServer = ExpressPeerServer(server, {
   debug: true,
-  path: '/'
+  path: '/',
+  proxied: true // Important for Render/Vercel reverse proxies
 });
 
 app.use('/peerjs', peerServer);
