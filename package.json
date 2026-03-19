@@ -13,10 +13,10 @@
     "clsx": "2.1.1",
     "express": "^4.22.1",
     "nanoid": "^5.1.6",
+    "peer": "^1.0.2",
+    "peerjs": "^1.5.5",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "socket.io": "^4.8.3",
-    "socket.io-client": "^4.8.3",
     "tailwind-merge": "3.4.0"
   },
   "devDependencies": {

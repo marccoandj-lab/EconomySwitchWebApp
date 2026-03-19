@@ -1,4 +1,4 @@
-import { io, Socket } from 'socket.io-client';
+import { Peer, DataConnection } from 'peerjs';
 import { nanoid } from 'nanoid';
 import { Player, AvatarType } from '../types/game';
 import { generateLevels } from '../data/levelGenerator';
@@ -44,7 +44,9 @@ export type Message =
   | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
 class MultiplayerManager {
-  private socket: Socket | null = null;
+  private peer: Peer | null = null;
+  private connections: Map<string, DataConnection> = new Map();
+  private hostConnection: DataConnection | null = null;
   private onStateUpdate: (state: GameState) => void = () => { };
 
   public state: GameState = {
@@ -77,32 +79,22 @@ class MultiplayerManager {
 
   init(onUpdate: (state: GameState) => void) {
     this.onStateUpdate = onUpdate;
-    if (this.socket) {
-      this.socket.off('message');
-      this.socket.on('message', (data: { senderId: string, msg: Message }) => {
-        this.handleMessageFromServer(data.senderId, data.msg);
-      });
-      return;
-    }
-    const isProd = window.location.hostname !== 'localhost';
-    // Prioritizing VITE_MULTIPLAYER_SERVER_URL if provided (ideal for Vercel + Render setup)
-    const envUrl = import.meta.env.VITE_MULTIPLAYER_SERVER_URL;
-    const serverUrl = envUrl || (isProd ? window.location.origin : 'http://localhost:9000');
-    
-    console.log(`Initialising Socket.io on: ${serverUrl}`);
-    this.socket = io(serverUrl);
-    
-    this.socket.on('message', (data: { senderId: string, msg: Message }) => {
-      this.handleMessageFromServer(data.senderId, data.msg);
-    });
-
-    this.socket.on('disconnect', () => {
-      console.log('Socket disconnected');
-    });
   }
+
+  // Common ICE servers for better NAT traversal on phones/mobiles
+  private readonly config = {
+    config: {
+      'iceServers': [
+        { 'urls': 'stun:stun.l.google.com:19302' },
+        { 'urls': 'stun:stun1.l.google.com:19302' },
+        { 'urls': 'stun:stun2.l.google.com:19302' },
+      ]
+    }
+  };
 
   createRoom(name: string, avatar: AvatarType): string {
     const roomId = nanoid(6).toUpperCase();
+    this.peer = new Peer(roomId, this.config);
     this.state.roomId = roomId;
     this.state.status = 'waiting';
     this.state.levels = generateLevels(100, 'finance');
@@ -123,14 +115,33 @@ class MultiplayerManager {
     };
 
     this.state.players = [this.myProfile];
-    this.socket?.emit('create-room', roomId);
-    this.onStateUpdate({ ...this.state });
-    
+
+    this.peer.on('open', () => {
+      this.onStateUpdate({ ...this.state });
+    });
+
+    this.peer.on('connection', (conn) => {
+      conn.on('data', (data: any) => {
+        this.handleMessage(conn, data as Message);
+      });
+
+      conn.on('close', () => {
+        const pid = Array.from(this.connections.entries()).find(([_, c]) => c === conn)?.[0];
+        if (pid) {
+          this.state.players = this.state.players.filter(p => p.id !== pid);
+          this.connections.delete(pid);
+          this.broadcastState();
+        }
+      });
+    });
+
     return roomId;
   }
 
   joinRoom(roomId: string, name: string, avatar: AvatarType) {
+    this.peer = new Peer(this.config);
     this.state.roomId = roomId;
+
     this.myProfile = {
       id: this.myId,
       name,
@@ -146,23 +157,41 @@ class MultiplayerManager {
       stats: this.createInitialStats()
     };
 
-    this.socket?.emit('join-room', roomId);
-    this.sendMessage({ type: 'JOIN_REQUEST', profile: this.myProfile! });
+    this.peer.on('open', () => {
+      const conn = this.peer!.connect(roomId, {
+        metadata: { playerId: this.myId }
+      });
+
+      this.hostConnection = conn;
+
+      conn.on('open', () => {
+        this.sendMessage(conn, { type: 'JOIN_REQUEST', profile: this.myProfile! });
+      });
+
+      conn.on('data', (data: any) => {
+        this.handleMessage(conn, data as Message);
+      });
+
+      conn.on('close', () => {
+        alert('Disconnected from Host');
+        window.location.reload();
+      });
+    });
   }
 
-  private handleMessageFromServer(senderId: string, msg: Message) {
+  private handleMessage(conn: DataConnection, msg: Message) {
     if (this.myProfile?.isHost) {
+      const senderId = conn.metadata?.playerId;
       switch (msg.type) {
         case 'JOIN_REQUEST':
-          if (this.state.players.length < 6 && !this.state.players.find(p => p.id === msg.profile.id)) {
+          if (this.state.players.length < 6) {
+            this.connections.set(msg.profile.id, conn);
             this.state.players.push(msg.profile);
             this.broadcastState();
           }
           break;
         default:
-          if (msg.type !== 'STATE_UPDATE') {
-            this.handleAction(senderId, msg);
-          }
+          this.handleAction(senderId || this.myId, msg);
           break;
       }
     } else {
@@ -186,19 +215,12 @@ class MultiplayerManager {
     if (!player) return;
 
     const isMyTurn = this.state.currentTurnIndex === playerIndex;
-    const allowedActionsWhileNotTurn: Message['type'][] = [
-      'ACTION_AUCTION_ROLL',
-      'ACTION_INTERACTION_START',
-      'ACTION_INTERACTION_END',
-      'JOIN_REQUEST',
-      'UPDATE_LEVELS',
-      'ACTION_AUCTION_END'
+    const allowedActions: Message['type'][] = [
+      'ACTION_AUCTION_ROLL', 'ACTION_INTERACTION_START', 'ACTION_INTERACTION_END', 
+      'JOIN_REQUEST', 'UPDATE_LEVELS', 'ACTION_AUCTION_END'
     ];
 
-    if (!isMyTurn && !allowedActionsWhileNotTurn.includes(msg.type)) {
-      console.warn(`Action ${msg.type} ignored: not player ${playerId}'s turn.`);
-      return;
-    }
+    if (!isMyTurn && !allowedActions.includes(msg.type)) return;
 
     switch (msg.type) {
       case 'ACTION_DICE_ROLL':
@@ -247,18 +269,18 @@ class MultiplayerManager {
         break;
       case 'ACTION_AUCTION_ROLL':
         const auctionPlayerIds = this.state.players.map(p => p.id);
-        const expectedAuctionPlayerId = auctionPlayerIds[this.state.auction.turnIndex % auctionPlayerIds.length];
-        if (playerId !== expectedAuctionPlayerId) return;
+        const expectedId = auctionPlayerIds[this.state.auction.turnIndex % auctionPlayerIds.length];
+        if (playerId !== expectedId) return;
         this.state.auction.rolls[playerId] = msg.roll;
         this.state.auction.turnIndex++;
         if (this.state.auction.turnIndex >= this.state.players.length) {
-          const auctionRolls = Object.entries(this.state.auction.rolls);
-          const maxAuctionRoll = Math.max(...auctionRolls.map(([_, r]) => r));
-          auctionRolls.filter(([_, r]) => r === maxAuctionRoll).forEach(([winId]) => {
-            const winnerPlayer = this.state.players.find(p => p.id === winId);
-            if (winnerPlayer) {
-              winnerPlayer.taxExemptTurns = 3;
-              winnerPlayer.stats.auctionWins++;
+          const rolls = Object.entries(this.state.auction.rolls);
+          const maxRoll = Math.max(...rolls.map(([_, r]) => r));
+          rolls.filter(([_, r]) => r === maxRoll).forEach(([winId]) => {
+            const winner = this.state.players.find(p => p.id === winId);
+            if (winner) {
+              winner.taxExemptTurns = 3;
+              winner.stats.auctionWins++;
             }
           });
         }
@@ -272,12 +294,12 @@ class MultiplayerManager {
         player.jailSkipped = true;
         player.isInteracting = false;
         player.stats.jailSkips++;
-        const jNext = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        this.state.currentTurnIndex = jNext;
-        const snp = this.state.players[jNext];
-        if (snp.status === 'jail' && snp.jailSkipped) {
-          snp.status = 'playing';
-          snp.jailSkipped = false;
+        const nextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        this.state.currentTurnIndex = nextIdx;
+        const nextP = this.state.players[nextIdx];
+        if (nextP.status === 'jail' && nextP.jailSkipped) {
+          nextP.status = 'playing';
+          nextP.jailSkipped = false;
         }
         break;
       case 'ACTION_JAIL_PAY':
@@ -309,24 +331,24 @@ class MultiplayerManager {
         break;
       case 'ACTION_INTERACTION_END':
         player.isInteracting = false;
-        const nIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        const nNextP = this.state.players[nIndex];
-        if (nNextP.status === 'jail' && nNextP.jailSkipped) {
-          nNextP.status = 'playing';
-          nNextP.jailSkipped = false;
+        const nextI = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        const nextIP = this.state.players[nextI];
+        if (nextIP.status === 'jail' && nextIP.jailSkipped) {
+          nextIP.status = 'playing';
+          nextIP.jailSkipped = false;
         }
-        this.state.currentTurnIndex = nIndex;
+        this.state.currentTurnIndex = nextI;
         break;
       case 'ACTION_AUCTION_END':
         this.state.auction.active = false;
         this.state.players.forEach(p => p.isInteracting = false);
-        const aNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        const aNextP = this.state.players[aNextIdx];
-        if (aNextP.status === 'jail' && aNextP.jailSkipped) {
-          aNextP.status = 'playing';
-          aNextP.jailSkipped = false;
+        const aNex = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        const aNexP = this.state.players[aNex];
+        if (aNexP.status === 'jail' && aNexP.jailSkipped) {
+          aNexP.status = 'playing';
+          aNexP.jailSkipped = false;
         }
-        this.state.currentTurnIndex = aNextIdx;
+        this.state.currentTurnIndex = aNex;
         break;
       case 'UPDATE_LEVELS':
         this.state.levels = msg.levels;
@@ -337,12 +359,14 @@ class MultiplayerManager {
   }
 
   private broadcastState() {
-    this.sendMessage({ type: 'STATE_UPDATE', state: this.state });
+    this.connections.forEach(conn => {
+      this.sendMessage(conn, { type: 'STATE_UPDATE', state: this.state });
+    });
     this.onStateUpdate({ ...this.state });
   }
 
-  private sendMessage(msg: Message) {
-    this.socket?.emit('message', { roomId: this.state.roomId, msg });
+  private sendMessage(conn: DataConnection, msg: Message) {
+    conn.send(msg);
   }
 
   startGame() {
@@ -355,8 +379,8 @@ class MultiplayerManager {
   sendAction(msg: Message) {
     if (this.myProfile?.isHost) {
       this.handleAction(this.myId, msg);
-    } else {
-      this.sendMessage(msg);
+    } else if (this.hostConnection) {
+      this.sendMessage(this.hostConnection, msg);
     }
   }
 
