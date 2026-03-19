@@ -85,8 +85,11 @@ class MultiplayerManager {
       return;
     }
     const isProd = window.location.hostname !== 'localhost';
-    const serverUrl = isProd ? window.location.origin : 'http://localhost:9000';
+    // Prioritizing VITE_MULTIPLAYER_SERVER_URL if provided (ideal for Vercel + Render setup)
+    const envUrl = import.meta.env.VITE_MULTIPLAYER_SERVER_URL;
+    const serverUrl = envUrl || (isProd ? window.location.origin : 'http://localhost:9000');
     
+    console.log(`Initialising Socket.io on: ${serverUrl}`);
     this.socket = io(serverUrl);
     
     this.socket.on('message', (data: { senderId: string, msg: Message }) => {
