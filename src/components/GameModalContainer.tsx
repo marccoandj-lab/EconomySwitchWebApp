@@ -1,5 +1,5 @@
-import { GameMode, financeQuizzes, sustainabilityQuizzes, financeListings, sustainabilityListings, incomeEvents, expenseEvents, jailMessages, Level } from '../data/gameData';
-import { IncomeModal, ExpenseModal, QuizModal, ListingModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal, VictoryModal, JailSkipModal, TurnAnnouncementModal } from './GameModal';
+import { GameMode, financeQuizzes, sustainabilityQuizzes, incomeEvents, expenseEvents, jailMessages, Level } from '../data/gameData';
+import { IncomeModal, ExpenseModal, QuizModal, JailModal, SwitchModal, InvestmentModal, TaxSmallModal, TaxLargeModal, AuctionModal, InsuranceModal, VictoryModal, JailSkipModal, TurnAnnouncementModal } from './GameModal';
 import { multiplayer } from '../services/MultiplayerManager';
 import { Player } from '../types/game';
 
@@ -10,7 +10,7 @@ interface GameModalContainerProps {
   levelIndex: number;
   mode: GameMode;
   onBalanceChange: (change: number) => void;
-  onListingResult: (success: boolean, reward: number, penalty: number, itemsCount?: number) => void;
+
   onModeChange: (mode: GameMode) => void;
   onTaxExemption: (turns: number) => void;
   levels: Level[];
@@ -25,7 +25,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   levelIndex,
   mode,
   onBalanceChange,
-  onListingResult,
+
   onModeChange,
   onTaxExemption,
   levels,
@@ -64,7 +64,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         stats: multiplayer.getMyProfile()?.stats || {
           correctQuizzes: 0,
           wrongQuizzes: 0,
-          listedItems: 0,
+
           investmentGains: 0,
           investmentLosses: 0,
           jailVisits: 0,
@@ -94,14 +94,14 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
   }
 
   const currentQuizzes = mode === 'finance' ? financeQuizzes : sustainabilityQuizzes;
-  const currentListings = mode === 'finance' ? financeListings : sustainabilityListings;
+
 
   // Pick random content
   // Use a hash of levelIndex and potentially game session to get more variety,
   // but for "no repeat within session", we can use a randomized offset generated at start.
   // For now, let's just use levelIndex but we could add a session seed.
   const quiz = currentQuizzes[levelIndex % currentQuizzes.length];
-  const listing = currentListings[levelIndex % currentListings.length];
+
   const income = incomeEvents[levelIndex % incomeEvents.length];
   const expense = expenseEvents[levelIndex % expenseEvents.length];
   const jail = jailMessages[levelIndex % jailMessages.length];
@@ -168,17 +168,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
           }}
         />
       );
-    case 'listing':
-      return (
-        <ListingModal
-          challenge={listing}
-          mode={mode}
-          onResult={(success, reward, penalty, itemsCount) => {
-            onListingResult(success, reward, penalty, itemsCount);
-            onClose();
-          }}
-        />
-      );
+
     case 'jail':
       return (
         <JailModal

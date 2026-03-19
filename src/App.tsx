@@ -34,7 +34,7 @@ export const App: React.FC = () => {
   const [singlePlayerStats, setSinglePlayerStats] = useState({
     correctQuizzes: 0,
     wrongQuizzes: 0,
-    listedItems: 0,
+
     investmentGains: 0,
     investmentLosses: 0,
     jailVisits: 0,
@@ -364,16 +364,7 @@ export const App: React.FC = () => {
             multiplayer.sendAction({ type: 'ACTION_QUIZ_RESULT', reward: change > 0 ? change : 0, penalty: change < 0 ? -change : 0, success: change > 0 });
           }
         }}
-        onListingResult={(success, reward, penalty, itemsCount) => {
-          if (isSinglePlayer) {
-            setBalance(prev => prev + (success ? reward : -penalty));
-            if (success && itemsCount) {
-              setSinglePlayerStats(prev => ({ ...prev, listedItems: prev.listedItems + itemsCount }));
-            }
-          } else {
-            multiplayer.sendAction({ type: 'ACTION_LISTING_RESULT', success, reward, penalty, count: itemsCount || 0 });
-          }
-        }}
+
         onModeChange={(newMode) => {
           if (isSinglePlayer) {
             setMode(newMode);
@@ -412,7 +403,7 @@ export const App: React.FC = () => {
           players={[]}
           isSinglePlayer={false}
           onBalanceChange={() => { }}
-          onListingResult={() => { }}
+
           onModeChange={() => { }}
           onTaxExemption={() => { }}
         />

@@ -41,7 +41,7 @@ export type Message =
   | { type: 'ACTION_AUCTION_END' }
   | { type: 'ACTION_JAIL_SKIP' }
   | { type: 'ACTION_JAIL_PAY'; fine: number }
-  | { type: 'ACTION_LISTING_RESULT'; success: boolean; reward: number; penalty: number; count: number }
+
   | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
 class MultiplayerManager {
@@ -69,7 +69,7 @@ class MultiplayerManager {
     return {
       correctQuizzes: 0,
       wrongQuizzes: 0,
-      listedItems: 0,
+
       investmentGains: 0,
       investmentLosses: 0,
       jailVisits: 0,
@@ -86,7 +86,15 @@ class MultiplayerManager {
 
   createRoom(name: string, avatar: AvatarType): string {
     const roomId = nanoid(6).toUpperCase();
-    this.peer = new Peer(roomId);
+    const isProd = window.location.hostname !== 'localhost';
+    const peerOptions = isProd ? {
+      host: window.location.hostname,
+      port: 443,
+      path: '/peerjs',
+      secure: true
+    } : {};
+    
+    this.peer = new Peer(roomId, peerOptions);
     this.state.roomId = roomId;
     this.state.status = 'waiting';
     this.state.levels = generateLevels(100, 'finance');
@@ -131,7 +139,15 @@ class MultiplayerManager {
   }
 
   joinRoom(roomId: string, name: string, avatar: AvatarType) {
-    this.peer = new Peer();
+    const isProd = window.location.hostname !== 'localhost';
+    const peerOptions = isProd ? {
+      host: window.location.hostname,
+      port: 443,
+      path: '/peerjs',
+      secure: true
+    } : {};
+
+    this.peer = new Peer(peerOptions);
     this.state.roomId = roomId;
 
     this.myProfile = {
@@ -194,7 +210,7 @@ class MultiplayerManager {
         case 'ACTION_JAIL_WAIT':
         case 'ACTION_JAIL_SKIP':
         case 'ACTION_JAIL_PAY':
-        case 'ACTION_LISTING_RESULT':
+
         case 'ACTION_TAX_EXEMPT':
         case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
         case 'ACTION_INTERACTION_START':
@@ -260,14 +276,7 @@ class MultiplayerManager {
           player.stats.wrongQuizzes++;
         }
         break;
-      case 'ACTION_LISTING_RESULT':
-        if (msg.success) {
-          player.capital += msg.reward;
-          player.stats.listedItems += msg.count;
-        } else {
-          player.capital -= msg.penalty;
-        }
-        break;
+
       case 'ACTION_TAX_PAY':
         player.capital -= msg.amount;
         this.state.taxPool += msg.amount;

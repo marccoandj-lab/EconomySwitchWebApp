@@ -20,7 +20,7 @@ export interface Player {
   stats: {
     correctQuizzes: number;
     wrongQuizzes: number;
-    listedItems: number;
+
     investmentGains: number;
     investmentLosses: number;
     jailVisits: number;

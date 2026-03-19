@@ -42,16 +42,7 @@ const getFieldMeta = (type: FieldType, _mode: GameMode): Omit<Level, 'id'> => {
         borderColor: 'border-yellow-200',
         glowColor: 'shadow-yellow-400/50',
       };
-    case 'listing':
-      return {
-        type,
-        label: 'Listing',
-        icon: '📝',
-        color: 'text-white',
-        bgColor: 'bg-gradient-to-br from-purple-500 to-violet-700',
-        borderColor: 'border-purple-400',
-        glowColor: 'shadow-purple-400/50',
-      };
+
     case 'jail':
       return {
         type,
@@ -129,8 +120,7 @@ const getRandomFieldType = (): FieldType => {
   const types: FieldType[] = [
     'income', 'income', 'income', 'income', 'income',
     'expense',
-    'quiz', 'quiz',
-    'listing',
+    'quiz', 'quiz', 'quiz',
     'investment',
     'switch',
     'jail',
