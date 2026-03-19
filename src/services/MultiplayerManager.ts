@@ -1,4 +1,4 @@
-import { Peer, DataConnection } from 'peerjs';
+import { io, Socket } from 'socket.io-client';
 import { nanoid } from 'nanoid';
 import { Player, AvatarType } from '../types/game';
 import { generateLevels } from '../data/levelGenerator';
@@ -41,13 +41,10 @@ export type Message =
   | { type: 'ACTION_AUCTION_END' }
   | { type: 'ACTION_JAIL_SKIP' }
   | { type: 'ACTION_JAIL_PAY'; fine: number }
-
   | { type: 'UPDATE_LEVELS'; levels: Level[] };
 
 class MultiplayerManager {
-  private peer: Peer | null = null;
-  private connections: Map<string, DataConnection> = new Map();
-  private hostConnection: DataConnection | null = null;
+  private socket: Socket | null = null;
   private onStateUpdate: (state: GameState) => void = () => { };
 
   public state: GameState = {
@@ -69,7 +66,6 @@ class MultiplayerManager {
     return {
       correctQuizzes: 0,
       wrongQuizzes: 0,
-
       investmentGains: 0,
       investmentLosses: 0,
       jailVisits: 0,
@@ -79,22 +75,31 @@ class MultiplayerManager {
     };
   }
 
-
   init(onUpdate: (state: GameState) => void) {
     this.onStateUpdate = onUpdate;
+    if (this.socket) {
+      this.socket.off('message');
+      this.socket.on('message', (data: { senderId: string, msg: Message }) => {
+        this.handleMessageFromServer(data.senderId, data.msg);
+      });
+      return;
+    }
+    const isProd = window.location.hostname !== 'localhost';
+    const serverUrl = isProd ? window.location.origin : 'http://localhost:9000';
+    
+    this.socket = io(serverUrl);
+    
+    this.socket.on('message', (data: { senderId: string, msg: Message }) => {
+      this.handleMessageFromServer(data.senderId, data.msg);
+    });
+
+    this.socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+    });
   }
 
   createRoom(name: string, avatar: AvatarType): string {
     const roomId = nanoid(6).toUpperCase();
-    const isProd = window.location.hostname !== 'localhost';
-    const peerOptions = isProd ? {
-      host: window.location.hostname,
-      port: 443,
-      path: '/peerjs',
-      secure: true
-    } : {};
-    
-    this.peer = new Peer(roomId, peerOptions);
     this.state.roomId = roomId;
     this.state.status = 'waiting';
     this.state.levels = generateLevels(100, 'finance');
@@ -115,41 +120,14 @@ class MultiplayerManager {
     };
 
     this.state.players = [this.myProfile];
-
-    this.peer.on('open', () => {
-      this.onStateUpdate({ ...this.state });
-    });
-
-    this.peer.on('connection', (conn) => {
-      conn.on('data', (data: any) => {
-        this.handleMessage(conn, data as Message);
-      });
-
-      conn.on('close', () => {
-        const pid = Array.from(this.connections.entries()).find(([_, c]) => c === conn)?.[0];
-        if (pid) {
-          this.state.players = this.state.players.filter(p => p.id !== pid);
-          this.connections.delete(pid);
-          this.broadcastState();
-        }
-      });
-    });
-
+    this.socket?.emit('create-room', roomId);
+    this.onStateUpdate({ ...this.state });
+    
     return roomId;
   }
 
   joinRoom(roomId: string, name: string, avatar: AvatarType) {
-    const isProd = window.location.hostname !== 'localhost';
-    const peerOptions = isProd ? {
-      host: window.location.hostname,
-      port: 443,
-      path: '/peerjs',
-      secure: true
-    } : {};
-
-    this.peer = new Peer(peerOptions);
     this.state.roomId = roomId;
-
     this.myProfile = {
       id: this.myId,
       name,
@@ -165,59 +143,23 @@ class MultiplayerManager {
       stats: this.createInitialStats()
     };
 
-    this.peer.on('open', () => {
-      const conn = this.peer!.connect(roomId, {
-        metadata: { playerId: this.myId }
-      });
-
-      this.hostConnection = conn;
-
-      conn.on('open', () => {
-        this.sendMessage(conn, { type: 'JOIN_REQUEST', profile: this.myProfile! });
-      });
-
-      conn.on('data', (data: any) => {
-        this.handleMessage(conn, data as Message);
-      });
-
-      conn.on('close', () => {
-        alert('Disconnected from Host');
-        window.location.reload();
-      });
-    });
+    this.socket?.emit('join-room', roomId);
+    this.sendMessage({ type: 'JOIN_REQUEST', profile: this.myProfile! });
   }
 
-  private handleMessage(conn: DataConnection, msg: Message) {
+  private handleMessageFromServer(senderId: string, msg: Message) {
     if (this.myProfile?.isHost) {
-      const senderId = conn.metadata.playerId;
       switch (msg.type) {
         case 'JOIN_REQUEST':
-          if (this.state.players.length < 6) {
-            this.connections.set(msg.profile.id, conn);
+          if (this.state.players.length < 6 && !this.state.players.find(p => p.id === msg.profile.id)) {
             this.state.players.push(msg.profile);
             this.broadcastState();
           }
           break;
-        case 'ACTION_DICE_ROLL':
-        case 'ACTION_QUIZ_RESULT':
-        case 'ACTION_TAX_PAY':
-        case 'ACTION_TAX_COLLECT':
-        case 'ACTION_INVEST':
-        case 'ACTION_INSURANCE_BUY':
-        case 'ACTION_THEME_SWITCH':
-        case 'ACTION_AUCTION_START':
-        case 'ACTION_AUCTION_ROLL':
-        case 'ACTION_JAIL_WAIT':
-        case 'ACTION_JAIL_SKIP':
-        case 'ACTION_JAIL_PAY':
-
-        case 'ACTION_TAX_EXEMPT':
-        case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
-        case 'ACTION_INTERACTION_START':
-        case 'ACTION_INTERACTION_END':
-        case 'ACTION_AUCTION_END':
-        case 'UPDATE_LEVELS':
-          this.handleAction(senderId || this.myId, msg);
+        default:
+          if (msg.type !== 'STATE_UPDATE') {
+            this.handleAction(senderId, msg);
+          }
           break;
       }
     } else {
@@ -240,7 +182,6 @@ class MultiplayerManager {
     const player = this.state.players[playerIndex];
     if (!player) return;
 
-    // Turn enforcement (Host side)
     const isMyTurn = this.state.currentTurnIndex === playerIndex;
     const allowedActionsWhileNotTurn: Message['type'][] = [
       'ACTION_AUCTION_ROLL',
@@ -260,8 +201,6 @@ class MultiplayerManager {
       case 'ACTION_DICE_ROLL':
         player.position += msg.steps;
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
-
-        // AUTO TRIGGER AUCTION FOR EVERYONE
         const boardField = this.state.levels[player.position]?.type;
         if (boardField === 'auction_insurance' && this.state.mode === 'finance') {
           this.state.auction = { active: true, rolls: {}, turnIndex: 0 };
@@ -276,7 +215,6 @@ class MultiplayerManager {
           player.stats.wrongQuizzes++;
         }
         break;
-
       case 'ACTION_TAX_PAY':
         player.capital -= msg.amount;
         this.state.taxPool += msg.amount;
@@ -305,24 +243,15 @@ class MultiplayerManager {
         this.state.auction = { active: true, rolls: {}, turnIndex: 0 };
         break;
       case 'ACTION_AUCTION_ROLL':
-        // Auction turn enforcement
         const auctionPlayerIds = this.state.players.map(p => p.id);
         const expectedAuctionPlayerId = auctionPlayerIds[this.state.auction.turnIndex % auctionPlayerIds.length];
-
-        if (playerId !== expectedAuctionPlayerId) {
-          console.warn(`Auction roll ignored: expected ${expectedAuctionPlayerId}, got ${playerId}`);
-          return;
-        }
-
+        if (playerId !== expectedAuctionPlayerId) return;
         this.state.auction.rolls[playerId] = msg.roll;
         this.state.auction.turnIndex++;
-
-        // If everyone rolled, determine winner
         if (this.state.auction.turnIndex >= this.state.players.length) {
           const auctionRolls = Object.entries(this.state.auction.rolls);
           const maxAuctionRoll = Math.max(...auctionRolls.map(([_, r]) => r));
-          const winners = auctionRolls.filter(([_, r]) => r === maxAuctionRoll);
-          winners.forEach(([winId]) => {
+          auctionRolls.filter(([_, r]) => r === maxAuctionRoll).forEach(([winId]) => {
             const winnerPlayer = this.state.players.find(p => p.id === winId);
             if (winnerPlayer) {
               winnerPlayer.taxExemptTurns = 3;
@@ -337,21 +266,15 @@ class MultiplayerManager {
         player.stats.jailVisits++;
         break;
       case 'ACTION_JAIL_SKIP':
-        // DON'T set status to playing immediately.
-        // Keep status as 'jail' so lock icon persists.
         player.jailSkipped = true;
-        player.isInteracting = false; // Clear interaction state when skipping
+        player.isInteracting = false;
         player.stats.jailSkips++;
-
-        // Pass the turn
-        const jailSkipNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        this.state.currentTurnIndex = jailSkipNextIdx;
-
-        // If the NEXT player is also in jail and skipped previously, release them
-        const skipNextPlayer = this.state.players[jailSkipNextIdx];
-        if (skipNextPlayer.status === 'jail' && skipNextPlayer.jailSkipped) {
-          skipNextPlayer.status = 'playing';
-          skipNextPlayer.jailSkipped = false;
+        const jNext = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        this.state.currentTurnIndex = jNext;
+        const snp = this.state.players[jNext];
+        if (snp.status === 'jail' && snp.jailSkipped) {
+          snp.status = 'playing';
+          snp.jailSkipped = false;
         }
         break;
       case 'ACTION_JAIL_PAY':
@@ -362,19 +285,19 @@ class MultiplayerManager {
         break;
       case 'ACTION_TAX_EXEMPT':
         if (msg.playerId) {
-          const target = this.state.players.find(p => p.id === msg.playerId);
-          if (target) target.taxExemptTurns = msg.turns;
+          const tgt = this.state.players.find(p => p.id === msg.playerId);
+          if (tgt) tgt.taxExemptTurns = msg.turns;
         } else {
           player.taxExemptTurns = msg.turns;
         }
         break;
       case 'ACTION_TAX_COLLECT_FROM_PLAYERS':
-        msg.targets.forEach(targetId => {
-          const target = this.state.players.find(p => p.id === targetId);
-          if (target && target.taxExemptTurns === 0) {
-            target.capital -= msg.amountPerPlayer;
+        msg.targets.forEach(tid => {
+          const tgt = this.state.players.find(p => p.id === tid);
+          if (tgt && tgt.taxExemptTurns === 0) {
+            tgt.capital -= msg.amountPerPlayer;
             player.capital += msg.amountPerPlayer;
-            target.stats.taxesPaid++;
+            tgt.stats.taxesPaid++;
           }
         });
         break;
@@ -383,32 +306,24 @@ class MultiplayerManager {
         break;
       case 'ACTION_INTERACTION_END':
         player.isInteracting = false;
-
-        // Pass the turn only after interaction ends
-        const nextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        const nextP = this.state.players[nextIdx];
-
-        // Release from jail if they skipped previously
-        if (nextP.status === 'jail' && nextP.jailSkipped) {
-          nextP.status = 'playing';
-          nextP.jailSkipped = false;
+        const nIndex = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        const nNextP = this.state.players[nIndex];
+        if (nNextP.status === 'jail' && nNextP.jailSkipped) {
+          nNextP.status = 'playing';
+          nNextP.jailSkipped = false;
         }
-
-        this.state.currentTurnIndex = nextIdx;
+        this.state.currentTurnIndex = nIndex;
         break;
       case 'ACTION_AUCTION_END':
         this.state.auction.active = false;
-        // Explicitly clear interacting for ALL players in the auction
         this.state.players.forEach(p => p.isInteracting = false);
-
-        // Also increment turn after auction
-        const auctionNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
-        const auctionNextP = this.state.players[auctionNextIdx];
-        if (auctionNextP.status === 'jail' && auctionNextP.jailSkipped) {
-          auctionNextP.status = 'playing';
-          auctionNextP.jailSkipped = false;
+        const aNextIdx = (this.state.currentTurnIndex + 1) % this.state.players.length;
+        const aNextP = this.state.players[aNextIdx];
+        if (aNextP.status === 'jail' && aNextP.jailSkipped) {
+          aNextP.status = 'playing';
+          aNextP.jailSkipped = false;
         }
-        this.state.currentTurnIndex = auctionNextIdx;
+        this.state.currentTurnIndex = aNextIdx;
         break;
       case 'UPDATE_LEVELS':
         this.state.levels = msg.levels;
@@ -419,14 +334,12 @@ class MultiplayerManager {
   }
 
   private broadcastState() {
-    this.connections.forEach(conn => {
-      this.sendMessage(conn, { type: 'STATE_UPDATE', state: this.state });
-    });
+    this.sendMessage({ type: 'STATE_UPDATE', state: this.state });
     this.onStateUpdate({ ...this.state });
   }
 
-  private sendMessage(conn: DataConnection, msg: Message) {
-    conn.send(msg);
+  private sendMessage(msg: Message) {
+    this.socket?.emit('message', { roomId: this.state.roomId, msg });
   }
 
   startGame() {
@@ -439,8 +352,8 @@ class MultiplayerManager {
   sendAction(msg: Message) {
     if (this.myProfile?.isHost) {
       this.handleAction(this.myId, msg);
-    } else if (this.hostConnection) {
-      this.sendMessage(this.hostConnection, msg);
+    } else {
+      this.sendMessage(msg);
     }
   }
 
