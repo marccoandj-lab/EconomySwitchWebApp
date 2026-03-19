@@ -92,9 +92,25 @@ class MultiplayerManager {
     }
   };
 
+  private getPeerConfig() {
+    const isProd = window.location.hostname !== 'localhost';
+    const isRender = window.location.hostname.includes('onrender.com');
+
+    if (isProd) {
+      return {
+        ...this.config,
+        host: isRender ? window.location.hostname : 'economyswitchwebapp.onrender.com', // Match your Render app name
+        port: 443,
+        secure: true,
+        path: '/peerjs'
+      };
+    }
+    return this.config; // Use public PeerJS for localhost
+  }
+
   createRoom(name: string, avatar: AvatarType): string {
     const roomId = nanoid(6).toUpperCase();
-    this.peer = new Peer(roomId, this.config);
+    this.peer = new Peer(roomId, this.getPeerConfig());
     this.state.roomId = roomId;
     this.state.status = 'waiting';
     this.state.levels = generateLevels(100, 'finance');
@@ -139,7 +155,7 @@ class MultiplayerManager {
   }
 
   joinRoom(roomId: string, name: string, avatar: AvatarType) {
-    this.peer = new Peer(this.config);
+    this.peer = new Peer(this.getPeerConfig());
     this.state.roomId = roomId;
 
     this.myProfile = {
