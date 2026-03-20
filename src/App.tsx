@@ -3,7 +3,6 @@ import { GameMap } from './components/GameMap';
 import GameModal from './components/GameModalContainer';
 import { StartScreen } from './components/StartScreen';
 import { Sidebar } from './components/Sidebar';
-import { MobilePlayerStatus } from './components/MobilePlayerStatus';
 import { generateLevels } from './data/levelGenerator';
 import { Level, GameMode } from './data/gameData';
 import { multiplayer, GameState as MPState } from './services/MultiplayerManager';
@@ -36,9 +35,10 @@ export const App: React.FC = () => {
   const [showExpiry, setShowExpiry] = useState(false);
   const [showTurnModal, setShowTurnModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   // Audio state
-  const [volume, setVolume] = useState(0.35);
+  const [volume, setVolume] = useState(0.4);
   const [trackIndex, setTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -91,10 +91,24 @@ export const App: React.FC = () => {
   }, [trackIndex, isMusicPlaying]);
 
   const startMusic = useCallback(() => {
-    if (!isMusicPlaying && audioRef.current) {
+    if (audioRef.current) {
       audioRef.current.play().then(() => {
         setIsMusicPlaying(true);
-      }).catch(err => console.log("Audio play blocked:", err));
+      }).catch(err => {
+        console.log("Audio play blocked, waiting for user interaction:", err);
+      });
+    }
+  }, []);
+
+  const toggleMusic = useCallback(() => {
+    if (!audioRef.current) return;
+    if (isMusicPlaying) {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
+    } else {
+      audioRef.current.play().then(() => {
+        setIsMusicPlaying(true);
+      }).catch(err => console.log("Toggle play failed:", err));
     }
   }, [isMusicPlaying]);
 
@@ -134,8 +148,20 @@ export const App: React.FC = () => {
       if (state.status === 'playing' && gameState !== 'playing') {
         setGameState('playing');
       }
+    }, (error) => {
+      alert(error);
+      // If we are in lobby or playing and host is gone, we might need to reset
+      if (gameState !== 'start') {
+        setGameState('start');
+      }
     });
   }, [gameState, isSinglePlayer]);
+
+  useEffect(() => {
+    const handler = (e: any) => setShowMobileSidebar(e.detail);
+    window.addEventListener('toggle-mobile-sidebar', handler);
+    return () => window.removeEventListener('toggle-mobile-sidebar', handler);
+  }, []);
 
   const handleStart = (name: string, avatar: string, isSingle: boolean) => {
     setIsSinglePlayer(isSingle);
@@ -147,6 +173,7 @@ export const App: React.FC = () => {
 
     if (isSingle) {
       setLevels(generateLevels(100, 'finance'));
+      setBalance(50000); // Reset balance for new game
       setGameState('playing');
     } else {
       setGameState('lobby');
@@ -317,8 +344,11 @@ export const App: React.FC = () => {
         ref={audioRef}
         src={MUSIC_TRACKS[trackIndex]}
         autoPlay={false}
+        preload="auto"
         onEnded={handleTrackEnd}
-      />
+      >
+        <source src={MUSIC_TRACKS[trackIndex]} type="audio/mpeg" />
+      </audio>
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 p-4 z-30 flex justify-between items-start pointer-events-none">
         <div className="bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-white/10 pointer-events-auto">
@@ -354,15 +384,10 @@ export const App: React.FC = () => {
         currentTurnIndex={mpState?.currentTurnIndex || 0}
         myId={isSinglePlayer ? 'single' : multiplayer.getMyId()}
         levels={levels}
+        showOnMobile={showMobileSidebar}
       />
 
-      {!isSinglePlayer && mpState && (
-        <MobilePlayerStatus
-          players={mpState.players}
-          myId={multiplayer.getMyId()}
-          levels={levels}
-        />
-      )}
+      {/* Legacy Mobile Overlay removed in favor of Sidebar toggle */}
 
       <GameMap
         levels={levels}
@@ -463,7 +488,11 @@ export const App: React.FC = () => {
         onClose={() => setIsSettingsOpen(false)}
         volume={volume}
         onVolumeChange={setVolume}
+        isPlaying={isMusicPlaying}
+        onTogglePlay={toggleMusic}
         mode={gameMode}
+        showMobileSidebar={showMobileSidebar}
+        onToggleSidebar={setShowMobileSidebar}
       />
 
       {/* Floating Settings Button */}

@@ -48,6 +48,7 @@ class MultiplayerManager {
   private connections: Map<string, DataConnection> = new Map();
   private hostConnection: DataConnection | null = null;
   private onStateUpdate: (state: GameState) => void = () => { };
+  private onError: (error: string) => void = () => { };
 
   public state: GameState = {
     roomId: '',
@@ -77,8 +78,9 @@ class MultiplayerManager {
     };
   }
 
-  init(onUpdate: (state: GameState) => void) {
+  init(onUpdate: (state: GameState) => void, onError: (err: string) => void) {
     this.onStateUpdate = onUpdate;
+    this.onError = onError;
     // Notify immediate state on init to sync UI
     onUpdate({ ...this.state });
   }
@@ -114,6 +116,16 @@ class MultiplayerManager {
   createRoom(name: string, avatar: AvatarType): string {
     const roomId = nanoid(6).toUpperCase();
     this.peer = new Peer(roomId, this.getPeerConfig());
+    
+    this.peer.on('error', (err) => {
+      console.error('Peer error:', err.type);
+      if (err.type === 'unavailable-id') {
+        this.onError('Room ID already exists. Try again.');
+      } else {
+        this.onError('Connection error: ' + err.type);
+      }
+    });
+
     this.state.roomId = roomId;
     this.state.status = 'waiting';
     this.state.levels = generateLevels(100, 'finance');
@@ -159,6 +171,16 @@ class MultiplayerManager {
 
   joinRoom(roomId: string, name: string, avatar: AvatarType) {
     this.peer = new Peer(this.getPeerConfig());
+
+    this.peer.on('error', (err) => {
+      console.error('Join error:', err.type);
+      if (err.type === 'peer-unavailable') {
+        this.onError('Room does not exist! Please check the code.');
+      } else {
+        this.onError('Connection failed: ' + err.type);
+      }
+    });
+
     this.state.roomId = roomId;
 
     this.myProfile = {

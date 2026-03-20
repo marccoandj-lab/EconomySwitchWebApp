@@ -7,15 +7,28 @@ interface SidebarProps {
   currentTurnIndex: number;
   myId: string;
   levels: Level[];
+  showOnMobile?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ players, currentTurnIndex, myId, levels }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ players, currentTurnIndex, myId, levels, showOnMobile }) => {
   return (
-    <div className="fixed right-0 top-0 h-screen w-64 bg-slate-900/90 backdrop-blur-md border-l border-white/10 p-4 z-40 hidden lg:block">
-      <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-        LIVE PLAYERS
-      </h3>
+    <div className={`fixed right-0 top-0 h-screen w-64 bg-slate-900/95 backdrop-blur-xl border-l border-white/10 p-4 z-40 transition-transform duration-300 ${
+        showOnMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+    }`}>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-white font-bold flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            LIVE PLAYERS
+        </h3>
+        {showOnMobile && (
+            <button 
+                onClick={() => window.dispatchEvent(new CustomEvent('toggle-mobile-sidebar', { detail: false }))}
+                className="lg:hidden text-white/40 hover:text-white"
+            >
+                ✕
+            </button>
+        )}
+      </div>
 
       <div className="space-y-4">
         {players.map((player, index) => {
