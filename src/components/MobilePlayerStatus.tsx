@@ -15,8 +15,8 @@ export const MobilePlayerStatus: React.FC<MobilePlayerStatusProps> = ({ players,
     const currentField = levels[activePlayer.position % levels.length];
 
     return (
-        <div className="fixed bottom-40 left-4 right-4 z-20 flex flex-col gap-2 lg:hidden pointer-events-none">
-            <div className="bg-slate-900/90 backdrop-blur-xl border-2 border-blue-500/50 p-2.5 rounded-[1.5rem] flex items-center justify-between pointer-events-auto shadow-2xl animate-fade-in ring-4 ring-blue-500/10">
+        <div className="fixed bottom-[180px] left-4 right-4 z-[45] flex flex-col gap-2 lg:hidden pointer-events-none">
+            <div className="bg-slate-900/90 backdrop-blur-xl border-2 border-blue-500/50 p-2.5 rounded-[1.5rem] flex items-center justify-between pointer-events-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-fade-in ring-4 ring-blue-500/10">
                 <div className="flex items-center gap-3">
                     <div className="relative">
                         <img

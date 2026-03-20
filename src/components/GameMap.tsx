@@ -405,10 +405,10 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
       </div>
 
       {/* ── BOTTOM PANEL with Dice ── */}
-      <div className="flex-shrink-0 z-30 p-3 pb-8 sm:pb-4 mb-10">
+      <div className="flex-shrink-0 z-30 p-3 pb-6 sm:pb-4 mb-2">
         <div
           className={`max-w-sm mx-auto ${isFinance ? 'bg-blue-950/95' : 'bg-green-950/95'
-            } rounded-2xl border border-white/10 p-3 backdrop-blur-md shadow-2xl relative overflow-hidden`}
+            } rounded-2xl border border-white/10 p-3 backdrop-blur-md shadow-[0_-10px_40px_rgba(0,0,0,0.4)] relative overflow-hidden`}
         >
           {jailed && (
             <div className="absolute inset-0 pointer-events-none bg-rose-500/5 animate-pulse" />
