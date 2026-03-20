@@ -66,7 +66,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does it mean to make a profit?",
@@ -78,7 +78,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is interest on a loan?",
@@ -90,7 +90,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does inflation mean?",
@@ -102,7 +102,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does an investment represent?",
@@ -114,7 +114,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is net salary?",
@@ -126,7 +126,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is capital?",
@@ -138,7 +138,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is debt?",
@@ -150,7 +150,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is a market?",
@@ -162,7 +162,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does saving mean?",
@@ -174,7 +174,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is a company's income (revenue)?",
@@ -186,7 +186,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What are business costs (expenses)?",
@@ -198,7 +198,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does bankruptcy mean?",
@@ -210,7 +210,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is a tax?",
@@ -222,7 +222,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is gross salary?",
@@ -234,7 +234,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does an individual's credit rating represent?",
@@ -246,7 +246,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is the Effective Interest Rate (EIR)?",
@@ -258,7 +258,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does opportunity cost represent?",
@@ -270,7 +270,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does loan refinancing mean?",
@@ -282,7 +282,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does a diversified investment portfolio represent?",
@@ -294,7 +294,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does liquid asset mean?",
@@ -306,7 +306,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "How does an increase in interest rates affect borrowing?",
@@ -318,7 +318,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is loan amortization?",
@@ -330,7 +330,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does a financial reserve (emergency fund) represent?",
@@ -342,7 +342,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does nominal interest mean?",
@@ -354,7 +354,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is financial leverage?",
@@ -366,7 +366,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What are external costs (externalities)?",
@@ -378,7 +378,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is profit tax (corporate income tax)?",
@@ -390,7 +390,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does an annuity represent?",
@@ -402,7 +402,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is inflation risk?",
@@ -414,7 +414,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does it mean to be over-indebted?",
@@ -426,7 +426,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is the payback period of an investment?",
@@ -438,7 +438,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does inflation-adjusted return mean?",
@@ -450,7 +450,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does capital turnover represent?",
@@ -462,7 +462,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does the financial stability of a household mean?",
@@ -474,7 +474,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is investment diversification?",
@@ -486,7 +486,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does margin represent?",
@@ -498,7 +498,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "If you invest 100,000 at 10%, what is the amount after one year?",
@@ -510,7 +510,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is a company's liquidity?",
@@ -522,7 +522,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is VAT?",
@@ -534,7 +534,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is the minimum share capital for a limited liability company (LLC) in Serbia?",
@@ -546,7 +546,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is the Net Present Value (NPV) of an investment?",
@@ -558,7 +558,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does it mean for an investment to be highly volatile?",
@@ -570,7 +570,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "How does financial leverage affect the return on investment?",
@@ -582,7 +582,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does the Debt-to-Equity ratio represent?",
@@ -594,7 +594,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does it mean to be a lump-sum taxed entrepreneur?",
@@ -606,7 +606,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does the liquidation value of an asset mean?",
@@ -618,7 +618,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "How does an increase in the central bank's benchmark interest rate affect the credit market?",
@@ -630,7 +630,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "When does a company in Serbia become a VAT payer?",
@@ -642,7 +642,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What is the main difference between an entrepreneur and an LLC?",
@@ -654,7 +654,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does credit risk represent?",
@@ -666,7 +666,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does hedging mean in finance?",
@@ -678,7 +678,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does operating leverage represent?",
@@ -690,7 +690,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "How does high inflation affect fixed-rate debt?",
@@ -702,7 +702,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does capital gain represent?",
@@ -714,7 +714,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What does it mean for an investment to be liquid but high-risk?",
@@ -726,7 +726,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "What do compulsory social security contributions represent?",
@@ -738,7 +738,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "If the inflation rate is 8% and the interest on savings is 5%, what is the real interest rate?",
@@ -750,7 +750,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 10000, penalty: 5000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "Which institution is responsible for registering a company in Serbia?",
@@ -762,7 +762,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 20000, penalty: 10000,
+    mode: 'finance', REWARD_PENDING,
   },
   {
     question: "How does the linear economic model affect natural resources?",
@@ -774,7 +774,7 @@ export const financeQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'finance', reward: 50000, penalty: 25000,
+    mode: 'finance', REWARD_PENDING,
   },
 ];
 
@@ -792,7 +792,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is paper recycling?",
@@ -804,7 +804,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is composting?",
@@ -816,7 +816,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"reuse\" mean?",
@@ -828,7 +828,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is local food production?",
@@ -840,7 +840,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does reducing plastic in everyday life mean?",
@@ -852,7 +852,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is energy efficiency?",
@@ -864,7 +864,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is the sharing economy?",
@@ -876,7 +876,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"reduce waste\" mean?",
@@ -888,7 +888,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is an ecological product certificate?",
@@ -900,7 +900,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does regenerative agriculture mean?",
@@ -912,7 +912,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is sustainable packaging?",
@@ -924,7 +924,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"green purchasing\" mean?",
@@ -936,7 +936,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is the main goal of the circular economy?",
@@ -948,7 +948,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does recycling mean?",
@@ -960,7 +960,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does a circular business model mean?",
@@ -972,7 +972,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is a product's carbon footprint?",
@@ -984,7 +984,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is ESG reporting?",
@@ -996,7 +996,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"green product\" mean?",
@@ -1008,7 +1008,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is sustainable forestry?",
@@ -1020,7 +1020,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is energy efficiency in buildings?",
@@ -1032,7 +1032,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is the \"cradle-to-cradle\" principle?",
@@ -1044,7 +1044,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable consumption\" mean?",
@@ -1056,7 +1056,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is a regenerative economy?",
@@ -1068,7 +1068,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does the \"zero waste\" philosophy mean?",
@@ -1080,7 +1080,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What are green bonds?",
@@ -1092,7 +1092,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is ecological product design?",
@@ -1104,7 +1104,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is green transport?",
@@ -1116,7 +1116,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable supply chains\" mean?",
@@ -1128,7 +1128,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is CO2 emissions?",
@@ -1140,7 +1140,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable fashion\" mean?",
@@ -1152,7 +1152,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "Why is extending the lifespan of products given priority in the circular economy?",
@@ -1164,7 +1164,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable diet\" mean?",
@@ -1176,7 +1176,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is green infrastructure?",
@@ -1188,7 +1188,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "Which is an example of the circular economy?",
@@ -1200,7 +1200,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable water consumption\" mean?",
@@ -1212,7 +1212,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is eco-innovation?",
@@ -1224,7 +1224,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"minimal waste in production\" mean?",
@@ -1236,7 +1236,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What are green investments?",
@@ -1248,7 +1248,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does the ESG criterion represent?",
@@ -1260,7 +1260,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is a Product Life Cycle Assessment (LCA)?",
@@ -1272,7 +1272,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does a company's carbon neutrality represent?",
@@ -1284,7 +1284,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is a green loan?",
@@ -1296,7 +1296,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"closed production cycle\" mean?",
@@ -1308,7 +1308,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is regenerative agriculture in practice?",
@@ -1320,7 +1320,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is eco-efficiency in industry?",
@@ -1332,7 +1332,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable water resource management\" mean?",
@@ -1344,7 +1344,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is a green tax?",
@@ -1356,7 +1356,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is greenwashing?",
@@ -1368,7 +1368,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is green logistics?",
@@ -1380,7 +1380,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"product life cycle extension\" mean?",
@@ -1392,7 +1392,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is a carbon tax?",
@@ -1404,7 +1404,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "The \"polluter pays\" principle implies that:",
@@ -1416,7 +1416,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"green building design\" mean?",
@@ -1428,7 +1428,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does a forest ecological certificate represent?",
@@ -1440,7 +1440,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 0,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"sustainable aquaculture\" mean?",
@@ -1452,7 +1452,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What is green technology (Green Tech)?",
@@ -1464,7 +1464,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"socially and environmentally responsible investment\" mean?",
@@ -1476,7 +1476,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 10000, penalty: 5000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "Which situation is the best example of internalizing a negative externality?",
@@ -1488,7 +1488,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 2,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 20000, penalty: 10000,
+    mode: 'sustainability', REWARD_PENDING,
   },
   {
     question: "What does \"resource loop\" mean in the circular economy?",
@@ -1500,7 +1500,7 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
     ],
     correct: 1,
     explanation: "Correct! Keep making smart choices.",
-    mode: 'sustainability', reward: 50000, penalty: 25000,
+    mode: 'sustainability', REWARD_PENDING,
   },
 ];
 
@@ -1513,27 +1513,27 @@ export const sustainabilityQuizzes: QuizQuestion[] = [
 // Income: Fixed range [50k, 175k]
 export const incomeEvents: IncomeEvent[] = [
   { title: "Salary", description: "You received your monthly salary!", amount: 65000, icon: "💼" },
-  { title: "Freelance Gig", description: "You completed a project for a client!", amount: 35000, icon: "💻" },
-  { title: "Dividends", description: "Your stocks paid out a dividend!", amount: 45000, icon: "📈" },
-  { title: "Bonus", description: "A nice performance bonus!", amount: 85000, icon: "🎁" },
-  { title: "Rent Income", description: "Income from your property!", amount: 40000, icon: "🏠" },
-  { title: "Asset Sale", description: "You sold items at a profit!", amount: 90000, icon: "🚗" },
-  { title: "Savings Interest", description: "Interest on your savings account!", amount: 15000, icon: "🏦" },
-  { title: "Tax Refund", description: "Tax office refund!", amount: 30000, icon: "📋" },
-  { title: "Investment Gain", description: "Profit from small stocks!", amount: 75000, icon: "💰" },
-  { title: "Online Income", description: "Digital business earnings!", amount: 55000, icon: "🌐" },
+  { title: "Freelance Gig", description: "You completed a project for a client!", amount: 50000, icon: "💻" },
+  { title: "Dividends", description: "Your stocks paid out a dividend!", amount: 85000, icon: "📈" },
+  { title: "Bonus", description: "Your excellent performance was rewarded with a bonus!", amount: 120000, icon: "🎁" },
+  { title: "Rent Income", description: "Income from your rented apartment!", amount: 75000, icon: "🏠" },
+  { title: "Asset Sale", description: "You sold a high-value asset at a profit!", amount: 175000, icon: "🚗" },
+  { title: "Savings Interest", description: "High-yield interest on your savings account!", amount: 55000, icon: "🏦" },
+  { title: "Tax Refund", description: "The tax office returned your overpaid taxes!", amount: 90000, icon: "📋" },
+  { title: "Investment Gain", description: "Your tech investments have grown!", amount: 140000, icon: "💰" },
+  { title: "Online Income", description: "Income from your digital business!", amount: 110000, icon: "🌐" },
 ];
 
-// Expenses: Fixed range [15k, 90k]
+// Expenses: Fixed range [50k, 75k]
 export const expenseEvents: ExpenseEvent[] = [
-  { title: "Car Repair", description: "Vehicle maintenance cost.", amount: 45000, icon: "🔧" },
-  { title: "Medical Bill", description: "Unexpected medical cost.", amount: 30000, icon: "🏥" },
-  { title: "Legal Fees", description: "Cost of legal advice.", amount: 65000, icon: "⚖️" },
-  { title: "Tax Audit", description: "Small tax adjustment.", amount: 90000, icon: "📋" },
-  { title: "Home Repair", description: "Emergency structural repairs.", amount: 75000, icon: "🏠" },
-  { title: "Tech Upgrade", description: "New equipment cost.", amount: 50000, icon: "💻" },
-  { title: "Vacation", description: "Holiday travel expenses.", amount: 55000, icon: "✈️" },
-  { title: "Shopping", description: "Essential and non-essential shopping.", amount: 15000, icon: "🛍️" },
+  { title: "Luxury Car Repair", description: "Expensive vehicle maintenance.", amount: 55000, icon: "🔧" },
+  { title: "Medical Surgery", description: "Unexpected medical procedure.", amount: 60000, icon: "🏥" },
+  { title: "Legal Settlement", description: "Cost of settling a legal dispute.", amount: 75000, icon: "⚖️" },
+  { title: "Business Tax Audit", description: "Large tax settlement after audit.", amount: 70000, icon: "📋" },
+  { title: "Home Renovation", description: "Emergency structural repairs to your house.", amount: 65000, icon: "🏠" },
+  { title: "Tech Upgrade", description: "Replacing all professional equipment.", amount: 50000, icon: "💻" },
+  { title: "Vacation Spree", description: "You went overboard on a luxury holiday.", amount: 55000, icon: "✈️" },
+  { title: "Stock Crash", description: "Lost money in a localized market crash.", amount: 60000, icon: "📉" },
 ];
 
 export const jailMessages = [

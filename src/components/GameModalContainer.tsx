@@ -221,7 +221,7 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
     case 'tax_small':
       const myTaxProfile = multiplayer.state.players.find(p => p.id === multiplayer.getMyId());
       const myTaxExemption = myTaxProfile?.taxExemptTurns || 0;
-      const smallTaxAmount = 12500;
+      const smallTaxAmount = 35000;
       return (
         <TaxSmallModal
           taxExemptionTurns={myTaxExemption}
