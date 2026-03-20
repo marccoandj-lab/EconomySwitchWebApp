@@ -18,6 +18,8 @@ interface GameMapProps {
   isTaxpayer: boolean;
   taxExemptionTurns: number;
   isMyTurn: boolean;
+  players: Player[];
+  currentTurnIndex: number;
 }
 
 // Zigzag column positions
@@ -107,7 +109,7 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance, isJailed }:
   );
 }
 
-export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, onRollDice, jailed, diceValue, isRolling, isMoving, animatingLevel, taxPool, isTaxpayer, taxExemptionTurns, isMyTurn }: GameMapProps) {
+export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, onRollDice, jailed, diceValue, isRolling, isMoving, animatingLevel, taxPool, isTaxpayer, taxExemptionTurns, isMyTurn, players, currentTurnIndex }: GameMapProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const fieldRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -404,8 +406,48 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
         </div>
       </div>
 
-      {/* ── BOTTOM PANEL with Dice ── */}
-      <div className="flex-shrink-0 z-30 p-3 pb-6 sm:pb-4 mb-2">
+      {/* ── BOTTOM PANEL with Dice & Turn Info ── */}
+      <div className="flex-shrink-0 z-30 p-3 pb-6 sm:pb-4 mb-2 space-y-2">
+        {/* Turn Info Bar on Mobile */}
+        {players[currentTurnIndex] && (
+          <div className="lg:hidden bg-slate-900/90 backdrop-blur-xl border-2 border-blue-500/50 p-2.5 rounded-2xl flex items-center justify-between shadow-2xl animate-fade-in ring-2 ring-blue-500/20 max-w-sm mx-auto">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <img
+                  src={`/assets/${players[currentTurnIndex].avatar}.png`}
+                  alt={players[currentTurnIndex].name}
+                  className="w-10 h-10 object-contain rounded-xl bg-white/10 p-1"
+                />
+                <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+              </div>
+              <div className="min-w-0">
+                <div className="text-[9px] text-blue-400 font-black uppercase tracking-widest leading-none">Turn</div>
+                <div className="text-sm font-bold text-white truncate max-w-[80px]">{players[currentTurnIndex].name}</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-[9px] text-green-400 font-bold uppercase tracking-tighter">Bal.</div>
+                <div className="text-xs font-black text-white font-mono">{players[currentTurnIndex].capital.toLocaleString()}</div>
+              </div>
+              <div className="h-6 w-[1px] bg-white/10" />
+              <div className="text-right">
+                <div className="text-[9px] text-white/30 uppercase font-bold pr-1">Pos.</div>
+                <div className="flex items-center gap-1 justify-end">
+                  <span className="text-sm">{levels[players[currentTurnIndex].position % levels.length]?.icon}</span>
+                  <span className="text-[10px] text-white font-black truncate max-w-[50px] uppercase">
+                    {levels[players[currentTurnIndex].position % levels.length]?.label}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div
           className={`max-w-sm mx-auto ${isFinance ? 'bg-blue-950/95' : 'bg-green-950/95'
             } rounded-2xl border border-white/10 p-3 backdrop-blur-md shadow-[0_-10px_40px_rgba(0,0,0,0.4)] relative overflow-hidden`}

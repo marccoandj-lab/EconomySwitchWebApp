@@ -3,7 +3,6 @@ import { GameMap } from './components/GameMap';
 import GameModal from './components/GameModalContainer';
 import { StartScreen } from './components/StartScreen';
 import { Sidebar } from './components/Sidebar';
-import { MobilePlayerStatus } from './components/MobilePlayerStatus';
 import { generateLevels } from './data/levelGenerator';
 import { Level, GameMode } from './data/gameData';
 import { multiplayer, GameState as MPState } from './services/MultiplayerManager';
@@ -388,14 +387,6 @@ export const App: React.FC = () => {
         showOnMobile={showMobileSidebar}
       />
 
-      {/* Legacy Mobile Overlay removed in favor of Sidebar toggle */}
-      {mpState && (
-        <MobilePlayerStatus
-          players={isSinglePlayer ? [myProfile as Player] : mpState.players}
-          currentTurnIndex={isSinglePlayer ? 0 : mpState.currentTurnIndex}
-          levels={levels}
-        />
-      )}
 
       <GameMap
         levels={levels}
@@ -413,6 +404,8 @@ export const App: React.FC = () => {
         isTaxpayer={isSinglePlayer ? false : (myProfile?.hasPaidTax || false)}
         taxExemptionTurns={isSinglePlayer ? 0 : (myProfile?.taxExemptTurns || 0)}
         isMyTurn={isSinglePlayer ? true : (mpState?.currentTurnIndex === mpState?.players.findIndex(p => p.id === multiplayer.getMyId()))}
+        players={isSinglePlayer ? [myProfile as Player] : (mpState?.players || [])}
+        currentTurnIndex={isSinglePlayer ? 0 : (mpState?.currentTurnIndex || 0)}
       />
 
       <GameModal
