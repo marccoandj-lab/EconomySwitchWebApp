@@ -501,12 +501,12 @@ export const financeQuizzes: QuizQuestion[] = [
     mode: 'finance', reward: 85000, penalty: 70000,
   },
   {
-    question: "If you invest €100,000 at 10%, what is the amount after one year?",
+    question: "If you invest 100,000 at 10%, what is the amount after one year?",
     options: [
-      "A) €120,000",
-      "B) €100,100",
-      "C) €90,000",
-      "D) €110,000",
+      "A) 120,000",
+      "B) 100,100",
+      "C) 90,000",
+      "D) 110,000",
     ],
     correct: 3,
     explanation: "Correct! Keep making smart choices.",

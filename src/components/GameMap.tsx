@@ -119,9 +119,9 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
     : 'from-slate-900 via-green-950 to-teal-950 bg-eco-pattern';
 
   const formatBalance = (b: number) => {
-    if (b >= 1000000) return `${(b / 1000000).toFixed(2)}M €`;
-    if (b >= 1000) return `${(b / 1000).toFixed(1)}K €`;
-    return `${b.toLocaleString('en')} €`;
+    if (b >= 1000000) return `${(b / 1000000).toFixed(2)}M`;
+    if (b >= 1000) return `${(b / 1000).toFixed(1)}K`;
+    return `${b.toLocaleString('en')}`;
   };
 
   // The level to show avatar on
@@ -227,16 +227,16 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           </div>
           <div className="flex items-center gap-1">
             <span className="text-[10px] text-pink-300 font-bold uppercase tracking-widest">Public Fund:</span>
-            <span className="text-[11px] text-white font-black">{taxPool.toLocaleString('en')} €</span>
+            <span className="text-[11px] text-white font-black">{taxPool.toLocaleString('en')}</span>
           </div>
         </div>
 
         {/* Progress bar */}
         <div className="max-w-sm mx-auto mt-1.5">
           <div className="flex justify-between text-[9px] text-white/40 mb-0.5">
-            <span>0 €</span>
+            <span>0</span>
             <span>{((balance / 1000000) * 100).toFixed(1)}%</span>
-            <span>1M €</span>
+            <span>1M</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-1.5">
             <div
@@ -260,7 +260,7 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           {/* INFO badge at top */}
           <div className="text-center mb-4">
             <div className="inline-block bg-yellow-500/20 border border-yellow-400/30 rounded-xl px-4 py-2 shadow-lg shadow-yellow-400/10">
-              <p className="text-yellow-400 font-black text-sm">💰 Goal: 1,000,000 €</p>
+              <p className="text-yellow-400 font-black text-sm">💰 Goal: 1,000,000</p>
               <p className="text-white/60 text-[10px] mt-1">The map expands until you reach a million!</p>
             </div>
           </div>

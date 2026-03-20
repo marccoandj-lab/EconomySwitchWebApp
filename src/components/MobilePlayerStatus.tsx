@@ -43,7 +43,7 @@ export const MobilePlayerStatus: React.FC<MobilePlayerStatusProps> = ({ players,
                     <div className="text-right">
                         <div className="text-[9px] text-green-400 font-bold uppercase tracking-tighter">Balance</div>
                         <div className="text-xs font-black text-white font-mono">
-                            {activePlayer.capital.toLocaleString()} €
+                            {activePlayer.capital.toLocaleString()}
                         </div>
                     </div>
 

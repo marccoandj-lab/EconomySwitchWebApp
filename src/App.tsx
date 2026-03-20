@@ -360,7 +360,7 @@ export const App: React.FC = () => {
             <div>
               <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Your Capital</div>
               <div className="text-xl font-black text-white font-mono">
-                {currentBalance.toLocaleString()} €
+                {currentBalance.toLocaleString()}
               </div>
             </div>
           </div>

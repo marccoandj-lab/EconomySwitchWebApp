@@ -43,7 +43,7 @@ export function IncomeModal({ title, description, amount, icon, mode, onClose }:
         <p className="text-white/70 mb-6">{description}</p>
         <div className="bg-emerald-500/30 rounded-2xl p-4 mb-6 border border-emerald-400/30">
           <p className="text-emerald-300 text-sm uppercase tracking-wider mb-1">Gain</p>
-          <p className="text-4xl font-black text-emerald-400">+{amount.toLocaleString('en')} €</p>
+          <p className="text-emerald-400">+{amount.toLocaleString('en')}</p>
         </div>
         <p className="text-white/60 text-sm mb-4 italic">💡 Smart income management is the key to financial freedom!</p>
         <button
@@ -76,7 +76,7 @@ export function ExpenseModal({ title, description, amount, icon, mode, onClose }
         <p className="text-white/70 mb-6">{description}</p>
         <div className="bg-rose-500/30 rounded-2xl p-4 mb-6 border border-rose-400/30">
           <p className="text-rose-300 text-sm uppercase tracking-wider mb-1">Loss</p>
-          <p className="text-4xl font-black text-rose-400">-{amount.toLocaleString('en')} €</p>
+          <p className="text-4xl font-black text-rose-400">-{amount.toLocaleString('en')}</p>
         </div>
         <p className="text-white/60 text-sm mb-4 italic">💡 Always keep an emergency fund for 3-6 months of expenses!</p>
         <button
@@ -164,11 +164,11 @@ export function QuizModal({ quiz, mode, onResult }: QuizModalProps) {
           <div className="flex gap-2">
             <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-lg px-2 py-1 text-center">
               <p className="text-emerald-300 text-[10px]">✅ Win</p>
-              <p className="text-emerald-400 font-black text-xs">+{quiz.reward.toLocaleString('en')} €</p>
+              <p className="text-emerald-400 font-black text-xs">+{quiz.reward.toLocaleString('en')}</p>
             </div>
             <div className="bg-rose-500/20 border border-rose-400/30 rounded-lg px-2 py-1 text-center">
               <p className="text-rose-300 text-[10px]">❌ Lose</p>
-              <p className="text-rose-400 font-black text-xs">-{quiz.penalty.toLocaleString('en')} €</p>
+              <p className="text-rose-400 font-black text-xs">-{quiz.penalty.toLocaleString('en')}</p>
             </div>
           </div>
         </div>
@@ -204,7 +204,7 @@ export function QuizModal({ quiz, mode, onResult }: QuizModalProps) {
             </p>
             <p className="text-white/80 text-xs leading-relaxed mb-2">{quiz.explanation}</p>
             <p className={`font-black text-lg ${selected === quiz.correct ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {selected === quiz.correct ? `+${quiz.reward.toLocaleString('en')} €` : `-${quiz.penalty.toLocaleString('en')} €`}
+              {selected === quiz.correct ? `+${quiz.reward.toLocaleString('en')}` : `-${quiz.penalty.toLocaleString('en')}`}
             </p>
           </div>
         )}
@@ -369,7 +369,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
           <>
             <div className="bg-white/10 rounded-2xl p-4 mb-4 border border-white/10">
               <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Your Capital</p>
-              <p className="text-2xl font-black text-white">{balance.toLocaleString('en')} €</p>
+              <p className="text-2xl font-black text-white">{balance.toLocaleString('en')}</p>
             </div>
 
             <div className="bg-white/5 rounded-xl p-3 mb-4 border border-white/10">
@@ -394,7 +394,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
                     onClick={() => handleInvest(amount)}
                     className={`font-bold py-3 rounded-xl border transition-all ${canAfford ? "bg-blue-500/30 hover:bg-blue-500/50 border-blue-400/30 text-white" : "bg-gray-800 border-white/5 text-white/20 cursor-not-allowed"}`}
                   >
-                    {amount.toLocaleString('en')} €
+                    {amount.toLocaleString('en')}
                   </button>
                 );
               })}
@@ -405,7 +405,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
 
         {phase === 'rolling' && (
           <>
-            <p className="text-white/70 mb-4">Invested: <span className="text-blue-400 font-bold">{investAmount.toLocaleString('en')} €</span></p>
+            <p className="text-white/70 mb-4">Invested: <span className="text-blue-400 font-bold">{investAmount.toLocaleString('en')}</span></p>
             <div className="flex justify-center mb-6">
               <div className="w-24 h-24 rounded-2xl border-2 border-white/30 bg-white/10 flex items-center justify-center animate-dice-spin">
                 <span className="text-6xl">{diceFaces[displayDice]}</span>
@@ -416,7 +416,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
 
         {phase === 'result' && resultInfo && (
           <>
-            <p className="text-white/70 mb-3">Invested: <span className="text-blue-400 font-bold">{investAmount.toLocaleString('en')} €</span></p>
+            <p className="text-white/70 mb-3">Invested: <span className="text-blue-400 font-bold">{investAmount.toLocaleString('en')}</span></p>
             <div className="flex justify-center mb-4">
               <div className="w-20 h-20 rounded-2xl border-2 border-white/30 bg-white/10 flex items-center justify-center relative">
                 <span className="text-5xl">{diceFaces[diceValue - 1]}</span>
@@ -424,7 +424,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
             </div>
             <p className="text-lg font-bold text-white mb-3">{resultInfo.message}</p>
             <div className={`rounded-2xl p-4 mb-4 border ${resultInfo.result === 'win' ? 'bg-emerald-500/20 border-emerald-400/30' : resultInfo.result === 'lose' ? 'bg-rose-500/20 border-rose-400/30' : 'bg-white/10 border-white/20'}`}>
-              <p className="text-2xl font-black text-white">{(Math.round(investAmount * resultInfo.multiplier) - investAmount).toLocaleString('en')} €</p>
+              <p className="text-2xl font-black text-white">{(Math.round(investAmount * resultInfo.multiplier) - investAmount).toLocaleString('en')}</p>
             </div>
             <button onClick={handleClose} className={`w-full font-bold py-4 rounded-2xl transition-all text-lg ${resultInfo.result === 'win' ? 'bg-emerald-500 hover:bg-emerald-400 text-white' : 'bg-rose-500 hover:bg-rose-400 text-white'}`}>Continue ▶</button>
           </>
@@ -463,7 +463,7 @@ export function TaxSmallModal({ taxExemptionTurns, onClose, mode, amount }: { ta
                 You are standing on a small tax field. This incurs a fee and makes you vulnerable to large tax collections!
               </p>
               <div className="bg-rose-500/20 border border-rose-500/30 rounded-xl p-3 inline-block">
-                <p className="text-rose-400 font-black text-xl">Tax Fee: {amount.toLocaleString('en')} €</p>
+                <p className="text-rose-400 font-black text-xl">Tax Fee: {amount.toLocaleString('en')}</p>
               </div>
             </div>
             <button
@@ -514,7 +514,7 @@ export function TaxLargeModal({ targets, onCollect, onClose, mode }: TaxLargeMod
                       />
                       <span className="text-xs font-medium text-white">{p.name}</span>
                     </div>
-                    <span className="text-rose-400 text-xs font-bold">{p.taxExemptTurns > 0 ? '🛡️ EXEMPT' : `-${amountPerPlayer.toLocaleString()} €`}</span>
+                    <span className="text-rose-400 text-xs font-bold">{p.taxExemptTurns > 0 ? '🛡️ EXEMPT' : `-${amountPerPlayer.toLocaleString()}`}</span>
                   </div>
                 ))}
               </div>
@@ -522,7 +522,7 @@ export function TaxLargeModal({ targets, onCollect, onClose, mode }: TaxLargeMod
 
             <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4">
               <p className="text-white/60 text-[10px] uppercase font-bold tracking-widest mb-1">Total Collection</p>
-              <p className="text-3xl font-black text-emerald-400">{totalPotential.toLocaleString()} €</p>
+              <p className="text-3xl font-black text-emerald-400">{totalPotential.toLocaleString()}</p>
             </div>
 
             <button
@@ -693,7 +693,7 @@ export function JailModal({ title, description, icon, jailFine, balance, mode, o
 
         <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 mb-6">
           <p className="text-rose-400 text-[10px] uppercase font-bold tracking-widest mb-1">Get out fine</p>
-          <p className="text-3xl font-black text-white">{jailFine.toLocaleString('en')} €</p>
+          <p className="text-3xl font-black text-white">{jailFine.toLocaleString('en')}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -731,7 +731,7 @@ export function InsuranceModal({ balance, price, onBuy, onClose, mode }: { balan
 
         <div className="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-4 mb-6 text-center">
           <p className="text-amber-300 text-[10px] uppercase mb-1 tracking-widest font-bold">Insurance Premium</p>
-          <p className="text-4xl font-black text-amber-400">{price.toLocaleString('en')} €</p>
+          <p className="text-4xl font-black text-amber-400">{price.toLocaleString('en')}</p>
         </div>
 
         {!canAfford && (
@@ -782,7 +782,7 @@ export function VictoryModal({ players }: VictoryModalProps) {
         <div className="relative z-10 text-center">
           <div className="text-5xl sm:text-7xl mb-2 sm:mb-4 animate-bounce">🏆</div>
           <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2 uppercase tracking-tighter">Game Over!</h1>
-          <p className="text-white/50 text-[10px] sm:text-base mb-4 sm:mb-8 italic leading-tight">The first player to reach 1,000,000 € has been crowned!</p>
+          <p className="text-white/50 text-[10px] sm:text-base mb-4 sm:mb-8 italic leading-tight">The first player to reach 1,000,000 has been crowned!</p>
 
           {/* Winner Stats */}
           <div className="bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-4 sm:mb-8 text-left">
@@ -800,7 +800,7 @@ export function VictoryModal({ players }: VictoryModalProps) {
               </div>
               <div className="ml-auto text-right shrink-0">
                 <div className="text-[8px] sm:text-[10px] text-white/40 uppercase font-bold tracking-widest">Final Capital</div>
-                <div className="text-lg sm:text-2xl font-black text-green-400">{winner.capital.toLocaleString()} €</div>
+                <div className="text-lg sm:text-2xl font-black text-green-400">{winner.capital.toLocaleString()}</div>
               </div>
             </div>
 
@@ -808,8 +808,8 @@ export function VictoryModal({ players }: VictoryModalProps) {
               <StatItem label="Quiz Correct" value={winner.stats.correctQuizzes} icon="✅" />
               <StatItem label="Quiz Wrong" value={winner.stats.wrongQuizzes} icon="❌" />
               <StatItem label="Auction Wins" value={winner.stats.auctionWins} icon="⚖️" />
-              <StatItem label="Invest. Profit" value={`${winner.stats.investmentGains.toLocaleString()} €`} icon="📈" />
-              <StatItem label="Invest. Loss" value={`${winner.stats.investmentLosses.toLocaleString()} €`} icon="📉" />
+              <StatItem label="Invest. Profit" value={`${winner.stats.investmentGains.toLocaleString()}`} icon="📈" />
+              <StatItem label="Invest. Loss" value={`${winner.stats.investmentLosses.toLocaleString()}`} icon="📉" />
               <StatItem label="Jail Visits" value={winner.stats.jailVisits} icon="🔒" />
             </div>
           </div>
@@ -826,7 +826,7 @@ export function VictoryModal({ players }: VictoryModalProps) {
                     className="w-6 h-6 sm:w-8 sm:h-8 object-contain shrink-0"
                   />
                   <span className="font-bold text-white text-[11px] sm:text-sm truncate">{p.name}</span>
-                  <span className="ml-auto font-black text-white/80 text-[11px] sm:text-sm shrink-0">{p.capital.toLocaleString()} €</span>
+                  <span className="ml-auto font-black text-white/80 text-[11px] sm:text-sm shrink-0">{p.capital.toLocaleString()}</span>
                 </div>
               ))}
             </div>
