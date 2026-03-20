@@ -9,7 +9,13 @@ import { Level, GameMode } from './data/gameData';
 import { multiplayer, GameState as MPState } from './services/MultiplayerManager';
 import { AvatarType, Player } from './types/game';
 
+import { SettingsModal } from './components/SettingsModal';
+
 const WINNING_BALANCE = 1000000;
+const MUSIC_TRACKS = [
+  '/assets/music/music1.mp3',
+  '/assets/music/music2.mp3'
+];
 
 export const App: React.FC = () => {
   const [gameState, setGameState] = useState<'start' | 'lobby' | 'playing' | 'victory'>('start');
@@ -29,6 +35,13 @@ export const App: React.FC = () => {
   const [lastDiceRoll, setLastDiceRoll] = useState<number | null>(null);
   const [showExpiry, setShowExpiry] = useState(false);
   const [showTurnModal, setShowTurnModal] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Audio state
+  const [volume, setVolume] = useState(0.35);
+  const [trackIndex, setTrackIndex] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
   // Singleplayer Stats
   const [singlePlayerStats, setSinglePlayerStats] = useState({
@@ -63,6 +76,31 @@ export const App: React.FC = () => {
   }, [myExemption]);
 
   const prevTurnIndex = useRef<number | null>(null);
+
+  // Audio control effect
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  useEffect(() => {
+    if (isMusicPlaying && audioRef.current) {
+      audioRef.current.play().catch(err => console.log("Track switch play blocked:", err));
+    }
+  }, [trackIndex, isMusicPlaying]);
+
+  const startMusic = useCallback(() => {
+    if (!isMusicPlaying && audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsMusicPlaying(true);
+      }).catch(err => console.log("Audio play blocked:", err));
+    }
+  }, [isMusicPlaying]);
+
+  const handleTrackEnd = useCallback(() => {
+    setTrackIndex(prev => (prev + 1) % MUSIC_TRACKS.length);
+  }, []);
 
   useEffect(() => {
     multiplayer.init((state) => {
@@ -103,6 +141,9 @@ export const App: React.FC = () => {
     setIsSinglePlayer(isSingle);
     setUserName(name);
     setUserAvatar(avatar as AvatarType);
+    
+    // Start music on first interaction
+    startMusic();
 
     if (isSingle) {
       setLevels(generateLevels(100, 'finance'));
@@ -271,6 +312,13 @@ export const App: React.FC = () => {
   return (
     <div className={`fixed inset-0 overflow-hidden transition-colors duration-1000 ${gameMode === 'finance' ? 'bg-slate-900 bg-finance-pattern' : 'bg-emerald-950 bg-eco-pattern'
       }`}>
+      {/* Background Audio */}
+      <audio
+        ref={audioRef}
+        src={MUSIC_TRACKS[trackIndex]}
+        autoPlay={false}
+        onEnded={handleTrackEnd}
+      />
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 p-4 z-30 flex justify-between items-start pointer-events-none">
         <div className="bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-white/10 pointer-events-auto">
@@ -408,6 +456,24 @@ export const App: React.FC = () => {
           onTaxExemption={() => { }}
         />
       )}
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        volume={volume}
+        onVolumeChange={setVolume}
+        mode={gameMode}
+      />
+
+      {/* Floating Settings Button */}
+      <button
+        onClick={() => setIsSettingsOpen(true)}
+        className="fixed top-6 right-6 z-[60] w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full backdrop-blur-xl flex items-center justify-center text-xl shadow-2xl transition-all active:scale-90"
+        title="Settings"
+      >
+        ⚙️
+      </button>
     </div>
   );
 };
