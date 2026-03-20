@@ -4,70 +4,62 @@ import { Level } from '../data/gameData';
 
 interface MobilePlayerStatusProps {
     players: Player[];
-    myId: string;
+    currentTurnIndex: number;
     levels: Level[];
 }
 
-export const MobilePlayerStatus: React.FC<MobilePlayerStatusProps> = ({ players, myId, levels }) => {
-    const me = players.find(p => p.id === myId);
-    if (!me) return null;
+export const MobilePlayerStatus: React.FC<MobilePlayerStatusProps> = ({ players, currentTurnIndex, levels }) => {
+    const activePlayer = players[currentTurnIndex];
+    if (!activePlayer) return null;
 
-    const others = players.filter(p => p.id !== myId);
+    const currentField = levels[activePlayer.position % levels.length];
 
     return (
         <div className="fixed bottom-40 left-4 right-4 z-20 flex flex-col gap-2 lg:hidden pointer-events-none">
-            {others.map(player => {
-                const isAbove = player.position > me.position;
-                const currentField = levels[player.position % levels.length];
-
-                return (
-                    <div
-                        key={player.id}
-                        className="bg-slate-900/80 backdrop-blur-md border border-white/10 p-2 rounded-xl flex items-center justify-between pointer-events-auto shadow-lg animate-fade-in"
-                    >
-                        <div className="flex items-center gap-3">
-                            <img
-                                src={`/assets/${player.avatar}.png`}
-                                alt={player.name}
-                                className="w-10 h-10 object-contain rounded-lg bg-white/5 p-1"
-                            />
-                            <div>
-                                <div className="text-[10px] text-white/50 font-bold uppercase truncate max-w-[80px]">
-                                    {player.name}
-                                </div>
-                                <div className="text-xs font-black text-white">
-                                    {player.capital.toLocaleString()} €
-                                </div>
-                            </div>
+            <div className="bg-slate-900/90 backdrop-blur-xl border-2 border-blue-500/50 p-2.5 rounded-[1.5rem] flex items-center justify-between pointer-events-auto shadow-2xl animate-fade-in ring-4 ring-blue-500/10">
+                <div className="flex items-center gap-3">
+                    <div className="relative">
+                        <img
+                            src={`/assets/${activePlayer.avatar}.png`}
+                            alt={activePlayer.name}
+                            className="w-11 h-11 object-contain rounded-xl bg-white/10 p-1.5"
+                        />
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                        </span>
+                    </div>
+                    <div>
+                        <div className="text-[10px] text-blue-400 font-black uppercase tracking-widest">
+                            CURRENT TURN
                         </div>
-
-                        <div className="flex items-center gap-4">
-                            <div className="text-right">
-                                <div className="text-[8px] text-white/30 uppercase tracking-tighter">Current Field</div>
-                                <div className="flex items-center gap-1 justify-end">
-                                    <span className="text-xs">{currentField?.icon}</span>
-                                    <span className="text-[10px] text-white font-medium truncate max-w-[60px]">
-                                        {currentField?.label}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className={`p-1.5 rounded-lg flex items-center justify-center ${isAbove ? 'bg-blue-500/20 text-blue-400' : 'bg-rose-500/20 text-rose-400'
-                                }`}>
-                                {isAbove ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
-                                    </svg>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                )}
-                            </div>
+                        <div className="text-sm font-bold text-white truncate max-w-[100px]">
+                            {activePlayer.name}
                         </div>
                     </div>
-                );
-            })}
+                </div>
+
+                <div className="flex items-center gap-6">
+                    <div className="text-right">
+                        <div className="text-[9px] text-green-400 font-bold uppercase tracking-tighter">Balance</div>
+                        <div className="text-xs font-black text-white font-mono">
+                            {activePlayer.capital.toLocaleString()} €
+                        </div>
+                    </div>
+
+                    <div className="h-8 w-[1px] bg-white/10" />
+
+                    <div className="text-right pr-2">
+                        <div className="text-[9px] text-white/30 uppercase font-bold pr-1">Position</div>
+                        <div className="flex items-center gap-1.5 justify-end">
+                            <span className="text-sm">{currentField?.icon}</span>
+                            <span className="text-[10px] text-white font-black truncate max-w-[60px] uppercase">
+                                {currentField?.label}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

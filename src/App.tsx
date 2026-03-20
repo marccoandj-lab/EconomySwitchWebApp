@@ -3,6 +3,7 @@ import { GameMap } from './components/GameMap';
 import GameModal from './components/GameModalContainer';
 import { StartScreen } from './components/StartScreen';
 import { Sidebar } from './components/Sidebar';
+import { MobilePlayerStatus } from './components/MobilePlayerStatus';
 import { generateLevels } from './data/levelGenerator';
 import { Level, GameMode } from './data/gameData';
 import { multiplayer, GameState as MPState } from './services/MultiplayerManager';
@@ -388,6 +389,13 @@ export const App: React.FC = () => {
       />
 
       {/* Legacy Mobile Overlay removed in favor of Sidebar toggle */}
+      {mpState && (
+        <MobilePlayerStatus
+          players={isSinglePlayer ? [myProfile as Player] : mpState.players}
+          currentTurnIndex={isSinglePlayer ? 0 : mpState.currentTurnIndex}
+          levels={levels}
+        />
+      )}
 
       <GameMap
         levels={levels}
