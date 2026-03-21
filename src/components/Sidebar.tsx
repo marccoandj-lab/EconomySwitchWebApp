@@ -60,7 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ players, currentTurnIndex, myI
                     {player.name} {isMe && '(You)'}
                   </div>
                   <div className="text-green-400 text-sm font-mono">
-                    {player.capital.toLocaleString()}
+                    {player.capital.toLocaleString()} SC
                   </div>
                 </div>
               </div>

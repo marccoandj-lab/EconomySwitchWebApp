@@ -23,7 +23,7 @@ export const App: React.FC = () => {
 
   // Singleplayer states
   const [levels, setLevels] = useState<Level[]>([]);
-  const [balance, setBalance] = useState(50000);
+  const [balance, setBalance] = useState(150000);
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
   const [mode, setMode] = useState<GameMode>('finance');
 
@@ -173,7 +173,7 @@ export const App: React.FC = () => {
 
     if (isSingle) {
       setLevels(generateLevels(100, 'finance'));
-      setBalance(50000); // Reset balance for new game
+      setBalance(150000); // Reset balance for new game
       setGameState('playing');
     } else {
       setGameState('lobby');
@@ -359,7 +359,7 @@ export const App: React.FC = () => {
             <div>
               <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Your Capital</div>
               <div className="text-xl font-black text-white font-mono">
-                {currentBalance.toLocaleString()}
+                {currentBalance.toLocaleString()} SC
               </div>
             </div>
           </div>
