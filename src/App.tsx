@@ -365,35 +365,6 @@ export const App: React.FC = () => {
       >
         <source src={MUSIC_TRACKS[trackIndex]} type="audio/mpeg" />
       </audio>
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 p-4 z-30 flex justify-between items-start pointer-events-none">
-        <div className="bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-white/10 pointer-events-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-xl shadow-lg">
-              💰
-            </div>
-            <div>
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Your Capital</div>
-              <div className="text-xl font-black text-white font-mono">
-                {currentBalance.toLocaleString()} SC
-              </div>
-            </div>
-          </div>
-          <div className="mt-2 w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-1000"
-              style={{ width: `${Math.min((currentBalance / WINNING_BALANCE) * 100, 100)}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end gap-2">
-          <div className={`px-4 py-2 rounded-xl backdrop-blur-md border text-white font-bold text-xs uppercase tracking-widest pointer-events-auto shadow-xl ${gameMode === 'finance' ? 'bg-blue-600/80 border-blue-400/30' : 'bg-green-600/80 border-green-400/30'
-            }`}>
-            {gameMode} mode
-          </div>
-        </div>
-      </div>
 
       <Sidebar
         players={isSinglePlayer ? [myProfile as Player] : (mpState?.players || [])}
