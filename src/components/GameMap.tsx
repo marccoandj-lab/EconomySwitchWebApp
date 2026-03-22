@@ -14,8 +14,6 @@ interface GameMapProps {
   isRolling: boolean;
   isMoving: boolean;
   animatingLevel: number;
-  taxPool: number;
-  isTaxpayer: boolean;
   taxExemptionTurns: number;
   isMyTurn: boolean;
   players: Player[];
@@ -109,7 +107,7 @@ function DiceRoller({ value, isRolling, onRoll, disabled, isFinance, isJailed }:
   );
 }
 
-export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, onRollDice, jailed, diceValue, isRolling, isMoving, animatingLevel, taxPool, isTaxpayer, taxExemptionTurns, isMyTurn, players, currentTurnIndex }: GameMapProps) {
+export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, onRollDice, jailed, diceValue, isRolling, isMoving, animatingLevel, taxExemptionTurns, isMyTurn, players, currentTurnIndex }: GameMapProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const fieldRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -221,15 +219,11 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           </div>
         </div>
 
-        {/* Tax Pool Status Line */}
-        <div className="max-w-sm mx-auto mt-2 flex justify-between items-center bg-white/5 rounded-lg px-2 py-1 border border-white/10">
+        {/* Phase Status Line */}
+        <div className="max-w-sm mx-auto mt-2 flex justify-center items-center bg-white/5 rounded-lg px-2 py-1 border border-white/10">
           <div className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${isTaxpayer ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' : 'bg-gray-500'}`} />
-            <span className="text-[9px] text-white/60 font-medium uppercase tracking-wider">Taxpayer Status</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-[10px] text-pink-300 font-bold uppercase tracking-widest">Public Fund:</span>
-            <span className="text-[11px] text-white font-black">{taxPool.toLocaleString('en')} SC</span>
+            <span className="text-[10px] text-blue-300 font-bold uppercase tracking-widest">Phase:</span>
+            <span className="text-[11px] text-white font-black">{isFinance ? 'Finance' : 'Eco'} 2.0</span>
           </div>
         </div>
 
@@ -371,9 +365,17 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
                       )}
 
                       {/* Field content */}
-                      <span className="text-xl drop-shadow-md">{level.icon}</span>
+                      <span className="text-xl drop-shadow-md">
+                        {level.type === 'auction_insurance'
+                          ? (isFinance ? '⚖️' : '🛡️')
+                          : level.icon
+                        }
+                      </span>
                       <span className={`text-[10px] font-bold ${level.color} text-center leading-tight px-1 mt-0.5`}>
-                        {level.label}
+                        {level.type === 'auction_insurance'
+                          ? (isFinance ? 'Auction' : 'Insurance')
+                          : level.label
+                        }
                       </span>
                       <span className="text-white/40 text-[9px] mt-0.5">{actualIdx + 1}</span>
 

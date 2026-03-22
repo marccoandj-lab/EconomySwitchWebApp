@@ -17,7 +17,6 @@ export type GameState = {
     turnIndex: number;
   };
   levels: Level[];
-  taxPool: number;
 };
 
 export type Message =
@@ -58,8 +57,7 @@ class MultiplayerManager {
     turnTimeLeft: 60,
     mode: 'finance',
     auction: { active: false, rolls: {}, turnIndex: 0 },
-    levels: [],
-    taxPool: 0
+    levels: []
   };
 
   public myId: string = nanoid(10);
@@ -302,7 +300,6 @@ class MultiplayerManager {
         break;
       case 'ACTION_TAX_PAY':
         player.capital -= msg.amount;
-        this.state.taxPool += msg.amount;
         player.stats.taxesPaid++;
         break;
       case 'ACTION_TAX_COLLECT':
@@ -366,7 +363,6 @@ class MultiplayerManager {
         player.capital -= msg.fine;
         player.status = 'playing';
         player.jailSkipped = false;
-        this.state.taxPool += msg.fine;
         break;
       case 'ACTION_TAX_EXEMPT':
         if (msg.playerId) {

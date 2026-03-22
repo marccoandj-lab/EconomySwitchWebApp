@@ -822,6 +822,7 @@ export function VictoryModal({ players }: VictoryModalProps) {
               <StatItem label="Auction Wins" value={winner.stats.auctionWins} icon="⚖️" />
               <StatItem label="Invest. Profit" value={`${winner.stats.investmentGains.toLocaleString()} SC`} icon="📈" />
               <StatItem label="Invest. Loss" value={`${winner.stats.investmentLosses.toLocaleString()} SC`} icon="📉" />
+              <StatItem label="Net Invest." value={`${(winner.stats.investmentGains - winner.stats.investmentLosses).toLocaleString()} SC`} icon="💰" />
               <StatItem label="Jail Visits" value={winner.stats.jailVisits} icon="🔒" />
             </div>
           </div>

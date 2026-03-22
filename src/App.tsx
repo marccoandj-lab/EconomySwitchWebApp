@@ -416,8 +416,6 @@ export const App: React.FC = () => {
         isRolling={isRolling}
         isMoving={isMoving}
         animatingLevel={currentLevelIndex}
-        taxPool={0}
-        isTaxpayer={isSinglePlayer ? false : (myProfile?.hasPaidTax || false)}
         taxExemptionTurns={isSinglePlayer ? 0 : (myProfile?.taxExemptTurns || 0)}
         isMyTurn={isSinglePlayer ? true : (mpState?.currentTurnIndex === mpState?.players.findIndex(p => p.id === multiplayer.getMyId()))}
         players={isSinglePlayer ? [myProfile as Player] : (mpState?.players || [])}
