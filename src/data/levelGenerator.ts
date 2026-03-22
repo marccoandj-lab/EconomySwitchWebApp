@@ -120,8 +120,8 @@ const getRandomFieldType = (): FieldType => {
   const types: FieldType[] = [
     'income', 'income', 'income', 
     'expense',
-    'quiz', 'quiz', 'quiz', 'quiz', 'quiz',
-    'investment',
+    'quiz', 'quiz', 'quiz', 'quiz', 'quiz', 'quiz',
+    'investment', 'investment',
     'switch',
     'jail',
     'tax_small', 'tax_small',
