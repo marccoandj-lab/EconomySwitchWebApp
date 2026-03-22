@@ -64,26 +64,38 @@ interface ExpenseModalProps {
   amount: number;
   icon: string;
   mode: GameMode;
+  isInsured?: boolean;
   onClose: () => void;
 }
 
-export function ExpenseModal({ title, description, amount, icon, mode, onClose }: ExpenseModalProps) {
+export function ExpenseModal({ title, description, amount, icon, mode, isInsured, onClose }: ExpenseModalProps) {
   return (
     <Modal onClose={onClose} mode={mode}>
       <div className="p-6 text-center">
         <div className="text-6xl mb-4">{icon}</div>
         <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
         <p className="text-white/70 mb-6">{description}</p>
-        <div className="bg-rose-500/30 rounded-2xl p-4 mb-6 border border-rose-400/30">
-          <p className="text-rose-300 text-sm uppercase tracking-wider mb-1">Loss</p>
-          <p className="text-4xl font-black text-rose-400">-{amount.toLocaleString('en')} SC</p>
+        <div className={`${isInsured ? 'bg-emerald-500/30 border-emerald-400/30' : 'bg-rose-500/30 border-rose-400/30'} rounded-2xl p-4 mb-6 border`}>
+          <p className={`${isInsured ? 'text-emerald-300' : 'text-rose-300'} text-sm uppercase tracking-wider mb-1`}>
+            {isInsured ? 'Protected' : 'Loss'}
+          </p>
+          <p className={`text-4xl font-black ${isInsured ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {isInsured ? '0 SC' : `-${amount.toLocaleString('en')} SC`}
+          </p>
         </div>
-        <p className="text-white/60 text-sm mb-4 italic">💡 Always keep an emergency fund for 3-6 months of expenses!</p>
+        {isInsured ? (
+          <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-xl p-3 mb-6 animate-pulse">
+            <p className="text-emerald-400 font-black text-sm uppercase">🛡️ Insurance Covered!</p>
+            <p className="text-[10px] text-emerald-100/70">Your insurance saved you from this expense.</p>
+          </div>
+        ) : (
+          <p className="text-white/60 text-sm mb-4 italic">💡 Always keep an emergency fund for 3-6 months of expenses!</p>
+        )}
         <button
           onClick={onClose}
-          className="w-full bg-rose-500 hover:bg-rose-400 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 text-lg"
+          className={`w-full ${isInsured ? 'bg-emerald-500 hover:bg-emerald-400' : 'bg-rose-500 hover:bg-rose-400'} text-white font-bold py-4 rounded-2xl transition-all active:scale-95 text-lg`}
         >
-          Continue ▶
+          {isInsured ? 'Thank you Insurance ▶' : 'Continue ▶'}
         </button>
       </div>
     </Modal>

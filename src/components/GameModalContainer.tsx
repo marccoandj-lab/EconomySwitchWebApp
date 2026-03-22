@@ -144,6 +144,8 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         />
       );
     case 'expense':
+      const expensePlayer = players.find(p => p.id === multiplayer.getMyId());
+      const isInsured = (expensePlayer?.taxExemptTurns || 0) > 0;
       return (
         <ExpenseModal
           title={expense.title}
@@ -151,8 +153,11 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
           amount={expense.amount}
           icon={expense.icon}
           mode={mode}
+          isInsured={isInsured}
           onClose={() => {
-            onBalanceChange(-expense.amount);
+            if (!isInsured) {
+              onBalanceChange(-expense.amount);
+            }
             onClose();
           }}
         />

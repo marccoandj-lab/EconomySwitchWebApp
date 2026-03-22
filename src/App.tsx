@@ -205,24 +205,22 @@ export const App: React.FC = () => {
   const animateMovement = async (steps: number) => {
     setIsMoving(true);
     let currentPos = currentLevelIndex;
+    const finalTargetPos = currentPos + steps;
+    const isHost = isSinglePlayer || mpState?.players.find(p => p.id === multiplayer.getMyId())?.isHost;
+    const currentMode = isSinglePlayer ? mode : (mpState?.mode || 'finance');
+
+    if (isHost && finalTargetPos >= levels.length - 20) {
+      const newLevels = generateLevels(60, currentMode, levels[levels.length - 1].id + 1);
+      const updatedLevels = [...levels, ...newLevels];
+      setLevels(updatedLevels);
+      if (!isSinglePlayer) {
+        multiplayer.sendAction({ type: 'UPDATE_LEVELS', levels: updatedLevels });
+      }
+    }
 
     for (let i = 0; i < steps; i++) {
       currentPos++;
       setCurrentLevelIndex(currentPos);
-
-      // Level generation only by HOST to ensure sync
-      if (currentPos >= levels.length - 10) {
-        const isHost = isSinglePlayer || mpState?.players.find(p => p.id === multiplayer.getMyId())?.isHost;
-        if (isHost) {
-          const newLevels = generateLevels(50, mode, levels[levels.length - 1].id + 1);
-          const updatedLevels = [...levels, ...newLevels];
-          setLevels(updatedLevels);
-          if (!isSinglePlayer) {
-            multiplayer.sendAction({ type: 'UPDATE_LEVELS', levels: updatedLevels });
-          }
-        }
-      }
-
       await new Promise(resolve => setTimeout(resolve, 350));
     }
 
