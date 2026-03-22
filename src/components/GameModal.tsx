@@ -120,7 +120,7 @@ const OPTION_COLORS = [
 export function QuizModal({ quiz, mode, onResult }: QuizModalProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(35);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   useEffect(() => {
     if (answered) return;
@@ -311,7 +311,7 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
   const [diceValue, setDiceValue] = useState(1);
   const [displayDice, setDisplayDice] = useState(0);
   const [resultInfo, setResultInfo] = useState<{ multiplier: number; message: string; result: 'lose' | 'even' | 'win' } | null>(null);
-  const [timeLeft, setTimeLeft] = useState(35);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   useEffect(() => {
     if (phase !== 'choose') return;

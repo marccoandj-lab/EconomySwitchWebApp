@@ -128,7 +128,7 @@ class MultiplayerManager {
 
     this.state.roomId = roomId;
     this.state.status = 'waiting';
-    this.state.levels = generateLevels(100, 'finance');
+    this.state.levels = generateLevels(250, 'finance');
 
     this.myProfile = {
       id: this.myId,
@@ -278,6 +278,14 @@ class MultiplayerManager {
       case 'ACTION_DICE_ROLL':
         player.position += msg.steps;
         if (player.taxExemptTurns > 0) player.taxExemptTurns--;
+
+        // Robust Infinite Map: If player is near current end, Host generates more
+        if (player.position >= this.state.levels.length - 30) {
+          const lastField = this.state.levels[this.state.levels.length - 1];
+          const newLevels = generateLevels(120, this.state.mode, lastField.id + 1);
+          this.state.levels = [...this.state.levels, ...newLevels];
+        }
+
         const boardField = this.state.levels[player.position]?.type;
         if (boardField === 'auction_insurance' && this.state.mode === 'finance') {
           this.state.auction = { active: true, rolls: {}, turnIndex: 0 };

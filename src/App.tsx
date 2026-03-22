@@ -21,8 +21,7 @@ export const App: React.FC = () => {
   const [isSinglePlayer, setIsSinglePlayer] = useState(true);
   const [mpState, setMpState] = useState<MPState | null>(null);
 
-  // Singleplayer states
-  const [levels, setLevels] = useState<Level[]>([]);
+  const [levels, setLevels] = useState<Level[]>(generateLevels(300, 'finance'));
   const [balance, setBalance] = useState(150000);
   const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
   const [mode, setMode] = useState<GameMode>('finance');
@@ -116,6 +115,25 @@ export const App: React.FC = () => {
     setTrackIndex(prev => (prev + 1) % MUSIC_TRACKS.length);
   }, []);
 
+  // Auto-play music on first click/touch
+  useEffect(() => {
+    const playOnFirstInteraction = () => {
+      if (audioRef.current && !isMusicPlaying) {
+        audioRef.current.play()
+          .then(() => setIsMusicPlaying(true))
+          .catch(err => console.log("Auto-play failed:", err));
+      }
+      window.removeEventListener('click', playOnFirstInteraction);
+      window.removeEventListener('touchstart', playOnFirstInteraction);
+    };
+    window.addEventListener('click', playOnFirstInteraction);
+    window.addEventListener('touchstart', playOnFirstInteraction);
+    return () => {
+      window.removeEventListener('click', playOnFirstInteraction);
+      window.removeEventListener('touchstart', playOnFirstInteraction);
+    };
+  }, [isMusicPlaying]);
+
   useEffect(() => {
     multiplayer.init((state) => {
       if (!isSinglePlayer && state.status === 'playing') {
@@ -172,7 +190,7 @@ export const App: React.FC = () => {
     startMusic();
 
     if (isSingle) {
-      setLevels(generateLevels(100, 'finance'));
+      // Use existing already generated levels instead of resetting to 0/100
       setBalance(150000); // Reset balance for new game
       setGameState('playing');
     } else {
@@ -209,10 +227,10 @@ export const App: React.FC = () => {
     const isHost = isSinglePlayer || mpState?.players.find(p => p.id === multiplayer.getMyId())?.isHost;
     const currentMode = isSinglePlayer ? mode : (mpState?.mode || 'finance');
 
-    if (isHost && finalTargetPos >= levels.length - 20) {
-      const newLevels = generateLevels(60, currentMode, levels[levels.length - 1].id + 1);
+    if (isHost && finalTargetPos >= levels.length - 40) {
+      const newLevels = generateLevels(150, currentMode, levels[levels.length - 1].id + 1);
       const updatedLevels = [...levels, ...newLevels];
-      setLevels(updatedLevels);
+      setLevels(prev => [...prev, ...newLevels]);
       if (!isSinglePlayer) {
         multiplayer.sendAction({ type: 'UPDATE_LEVELS', levels: updatedLevels });
       }
