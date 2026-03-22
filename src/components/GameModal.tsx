@@ -302,7 +302,7 @@ export function SwitchModal({ fromMode, toMode, onClose }: SwitchModalProps) {
 interface InvestmentModalProps {
   balance: number;
   mode: GameMode;
-  onResult: (profit: number) => void;
+  onResult: (profit: number, stake: number, multiplier: number) => void;
 }
 
 export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProps) {
@@ -356,11 +356,11 @@ export function InvestmentModal({ balance, mode, onResult }: InvestmentModalProp
   const handleClose = () => {
     if (!resultInfo) return;
     const profit = Math.round(investAmount * resultInfo.multiplier) - investAmount;
-    onResult(profit);
+    onResult(profit, investAmount, resultInfo.multiplier);
   };
 
   const handleSkip = () => {
-    onResult(0);
+    onResult(0, 0, 1.0);
   };
 
   const timerColor = timeLeft > 15 ? 'text-emerald-400' : timeLeft > 8 ? 'text-amber-400' : 'text-rose-400';

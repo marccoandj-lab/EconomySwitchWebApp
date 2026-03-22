@@ -39,12 +39,12 @@ export interface ExpenseEvent {
 }
 
 export const investmentOutcomes: { diceRange: [number, number]; result: 'lose' | 'even' | 'win'; multiplier: number; message: string }[] = [
-  { diceRange: [1, 1], result: 'lose', multiplier: 0.33, message: '📉 Significant Loss. The market dipped!' },
+  { diceRange: [1, 1], result: 'lose', multiplier: 0.25, message: '📉 Significant Loss. Market crashed!' },
   { diceRange: [2, 2], result: 'lose', multiplier: 0.5, message: '📉 Small Loss. Market down.' },
   { diceRange: [3, 3], result: 'even', multiplier: 1.0, message: '⚖️ Sideways Trend. You broke even.' },
-  { diceRange: [4, 4], result: 'win', multiplier: 2.0, message: '🚀 Growth! You doubled your money.' },
-  { diceRange: [5, 5], result: 'win', multiplier: 2.5, message: '🚀 Bull Market! Your investment grew 2.5x.' },
-  { diceRange: [6, 6], result: 'win', multiplier: 3.0, message: '✨ Jackpot! You tripled your money!' },
+  { diceRange: [4, 4], result: 'win', multiplier: 1.5, message: '🚀 Growth! You made a profit.' },
+  { diceRange: [5, 5], result: 'win', multiplier: 2.0, message: '🚀 Bull Market! Your investment grew 2x.' },
+  { diceRange: [6, 6], result: 'win', multiplier: 2.5, message: '✨ Jackpot! You grew your investment 2.5x!' },
 ];
 
 export function getInvestmentResult(dice: number): { multiplier: number; message: string; result: 'lose' | 'even' | 'win' } {

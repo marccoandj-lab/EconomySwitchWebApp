@@ -436,7 +436,7 @@ export const App: React.FC = () => {
         levels={levels}
         players={isSinglePlayer ? [myProfile as Player] : (mpState?.players || [])}
         isSinglePlayer={isSinglePlayer}
-        onBalanceChange={(change) => {
+        onBalanceChange={(change, metadata) => {
           if (isSinglePlayer) {
             setBalance(prev => prev + change);
             if (activeModal === 'quiz') {
@@ -444,12 +444,27 @@ export const App: React.FC = () => {
               else setSinglePlayerStats(prev => ({ ...prev, wrongQuizzes: prev.wrongQuizzes + 1 }));
             } else if (activeModal === 'investment') {
               if (change > 0) setSinglePlayerStats(prev => ({ ...prev, investmentGains: prev.investmentGains + change }));
-              else setSinglePlayerStats(prev => ({ ...prev, investmentLosses: prev.investmentLosses + Math.abs(change) }));
+              else if (change < 0) setSinglePlayerStats(prev => ({ ...prev, investmentLosses: prev.investmentLosses + Math.abs(change) }));
             } else if (activeModal === 'tax_small') {
               setSinglePlayerStats(prev => ({ ...prev, taxesPaid: prev.taxesPaid + 1 }));
             }
           } else {
-            multiplayer.sendAction({ type: 'ACTION_QUIZ_RESULT', reward: change > 0 ? change : 0, penalty: change < 0 ? -change : 0, success: change > 0 });
+            if (activeModal === 'investment' && metadata?.type === 'investment') {
+              multiplayer.sendAction({
+                type: 'ACTION_INVEST',
+                result: metadata.multiplier || 1.0,
+                stake: metadata.stake || 0,
+                amount: change
+              });
+            } else {
+              // Quiz or other reward/penalty
+              multiplayer.sendAction({
+                type: 'ACTION_QUIZ_RESULT',
+                reward: change > 0 ? change : 0,
+                penalty: change < 0 ? -change : 0,
+                success: change > 0
+              });
+            }
           }
         }}
 

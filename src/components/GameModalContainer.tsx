@@ -9,7 +9,7 @@ interface GameModalContainerProps {
   balance: number;
   levelIndex: number;
   mode: GameMode;
-  onBalanceChange: (change: number) => void;
+  onBalanceChange: (change: number, metadata?: { type: string, stake?: number, multiplier?: number }) => void;
 
   onModeChange: (mode: GameMode) => void;
   onTaxExemption: (turns: number) => void;
@@ -217,8 +217,8 @@ const GameModalContainer: React.FC<GameModalContainerProps> = ({
         <InvestmentModal
           balance={balance}
           mode={mode}
-          onResult={(profit) => {
-            onBalanceChange(profit);
+          onResult={(profit, stake, multiplier) => {
+            onBalanceChange(profit, { type: 'investment', stake, multiplier });
             onClose();
           }}
         />

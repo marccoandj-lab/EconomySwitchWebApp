@@ -118,7 +118,7 @@ const getFieldMeta = (type: FieldType, _mode: GameMode): Omit<Level, 'id'> => {
 
 const getRandomFieldType = (): FieldType => {
   const types: FieldType[] = [
-    'income', 'income', 'income', 'income', 
+    'income', 'income', 'income', 
     'expense',
     'quiz', 'quiz', 'quiz', 'quiz', 'quiz',
     'investment',

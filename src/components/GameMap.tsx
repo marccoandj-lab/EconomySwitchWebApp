@@ -219,13 +219,7 @@ export function GameMap({ levels, currentLevel, currentPlayer, mode, balance, on
           </div>
         </div>
 
-        {/* Phase Status Line */}
-        <div className="max-w-sm mx-auto mt-2 flex justify-center items-center bg-white/5 rounded-lg px-2 py-1 border border-white/10">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-blue-300 font-bold uppercase tracking-widest">Phase:</span>
-            <span className="text-[11px] text-white font-black">{isFinance ? 'Finance' : 'Eco'} 2.0</span>
-          </div>
-        </div>
+
 
         {/* Progress bar */}
         <div className="max-w-sm mx-auto mt-1.5">
